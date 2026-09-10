@@ -1,0 +1,67 @@
+{
+  "seed": 42,
+  "n_loans": 40,
+  "seeded_exceptions": [
+    {
+      "type": "MISSING_PAYMENT",
+      "loan_id": "SYN-L000005",
+      "detail": "Loan SYN-L000005: scheduled 2580.61 for 2026-08; received 0.00; no payment postings."
+    },
+    {
+      "type": "MISSING_PAYMENT",
+      "loan_id": "SYN-L000006",
+      "detail": "Loan SYN-L000006: scheduled 2423.92 for 2026-08; received 0.00; no payment postings."
+    },
+    {
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "loan_id": "SYN-L000011",
+      "detail": "Loan SYN-L000011: 2 direct-debit postings of 1259.90 for 2026-08; received 2519.80, exactly 2 times the scheduled 1259.90."
+    },
+    {
+      "type": "RATE_MARGIN_BREACH",
+      "loan_id": "SYN-L000013",
+      "detail": "Loan SYN-L000013: charged margin 2.59% exceeds contractual margin 2.00% by 0.59 percentage points for 2026-08."
+    },
+    {
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "loan_id": "SYN-L000014",
+      "detail": "Loan SYN-L000014: 2 direct-debit postings of 2527.00 for 2026-08; received 5054.00, exactly 2 times the scheduled 2527.00."
+    },
+    {
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "loan_id": "SYN-L000015",
+      "detail": "Loan SYN-L000015: 2 direct-debit postings of 2488.48 for 2026-08; received 4976.96, exactly 2 times the scheduled 2488.48."
+    },
+    {
+      "type": "RATE_MARGIN_BREACH",
+      "loan_id": "SYN-L000016",
+      "detail": "Loan SYN-L000016: charged margin 3.02% exceeds contractual margin 2.06% by 0.96 percentage points for 2026-08."
+    },
+    {
+      "type": "RATE_MARGIN_BREACH",
+      "loan_id": "SYN-L000018",
+      "detail": "Loan SYN-L000018: charged margin 2.04% exceeds contractual margin 1.51% by 0.53 percentage points for 2026-08."
+    },
+    {
+      "type": "MISSING_PAYMENT",
+      "loan_id": "SYN-L000023",
+      "detail": "Loan SYN-L000023: scheduled 1532.36 for 2026-08; received 0.00; no payment postings."
+    },
+    {
+      "type": "MISSING_PAYMENT",
+      "loan_id": "SYN-L000024",
+      "detail": "Loan SYN-L000024: scheduled 893.12 for 2026-08; received 0.00; no payment postings."
+    },
+    {
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "loan_id": "SYN-L000039",
+      "detail": "Loan SYN-L000039: 2 direct-debit postings of 1646.47 for 2026-08; received 3292.94, exactly 2 times the scheduled 1646.47."
+    },
+    {
+      "type": "RATE_MARGIN_BREACH",
+      "loan_id": "SYN-L000040",
+      "detail": "Loan SYN-L000040: charged margin 3.78% exceeds contractual margin 3.12% by 0.66 percentage points for 2026-08."
+    }
+  ],
+  "exception_count": 12
+}
