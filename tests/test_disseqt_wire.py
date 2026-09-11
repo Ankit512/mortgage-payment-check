@@ -35,7 +35,7 @@ class TraceTests(unittest.TestCase):
             client.emit("ingest", "AGENT_EXEC")
             client.emit("mapping_confirmed", "AGENT_EXEC")
             client.emit("reconcile_engine", "TOOL_EXEC")
-            client.emit("draft_rationale", "MODEL_EXEC",attributes={"gen_ai.usage.input_tokens":12})
+            client.emit("draft_rationale", "MODEL_EXEC",attributes={"agentic.usage.input_tokens":12})
             client.finish()
             text = (Path(d)/f"{run_id}.jsonl").read_text()
             local = [json.loads(line) for line in text.splitlines()]

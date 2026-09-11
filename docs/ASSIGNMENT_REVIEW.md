@@ -40,12 +40,12 @@ while its comprehension gate remains pending. Do not invent owner answers.
 | M3 | R3: mock/OpenAI provider seam | Implemented; 22 new tests pass; real HTTP/model responses simulated; full-pipeline acceptance now covered by M4/M5; local Ollama provider added |
 | M4 | R4: validators and PASS/BLOCK policy | Implemented; six seen-to-fail guards and poisoned-provider holding verified |
 | M5 | R5: LangGraph checkpoint, FastAPI, analytics, baseline | Implemented; structural interrupt, local dashboard and API verified |
-| M6 | R6: documented Disseqt wire client and transport parity | Local/live transport seam implemented; SDK 0.8.0 wire inspected, fake-server parity verified; live connection unverified |
+| M6 | R6: documented Disseqt wire client and transport parity | Official SDK 0.8.0 and direct HTTP adapters implemented; actual SDK tested locally with Qwen; cloud connection unverified |
 | M7 | R8: complete README and CTO walkthrough; P1 if time permits | README, walkthrough, automated demo and local Qwen record delivered |
 
 Every milestone extends the suite run by `python3 -m unittest discover tests -v`.
 M1 fixture audits establish fixture relationships; M2 now separately measures
-engine recall. The combined suite now contains 86 passing tests. Real local Qwen inference and
+engine recall. The combined suite now contains 93 passing tests. Real local Qwen inference and
 browser checks are recorded separately from the offline suite.
 P1 real OpenAI calls require the owner's confirmation as stated in PRD section 7.
 Repository visibility and publication remain unresolved; this work is local.
@@ -59,3 +59,13 @@ Python SDK 0.8.0 was inspected and its custom trace format used. Application
 registration, remote policies/validators and live dashboard verification remain
 credential-dependent. The custom dashboard is a local substitute while keys
 are unavailable, not evidence of Disseqt dashboard integration.
+
+## Official SDK verification extension
+
+The owner requested actual SDK tests without Disseqt/OpenAI credentials.
+`disseqt-ai-sdk==0.8.0` is now installed, and `DISSEQT_TRANSPORT=sdk` selects
+its native transport. High-level tracing helpers, validation-client request
+serialization and failure handling are tested against loopback receivers. The
+Qwen SDK smoke harness exercises the full FastAPI/LangGraph pipeline without
+OpenAI calls. Hosted validators and cloud authentication remain unverified.
+See [DISSEQT_INTEGRATION](DISSEQT_INTEGRATION.md) for evidence boundaries.

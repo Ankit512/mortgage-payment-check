@@ -57,6 +57,9 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
     async def lifespan(app):
         yield
         executor.shutdown(wait=True)
+        for run in runs.values():
+            if hasattr(run.trace.remote, "close"):
+                run.trace.remote.close()
 
     app = FastAPI(title="Mortgage Capital · Reconciliation", version="0.1.0", lifespan=lifespan)
     app.state.runs = runs

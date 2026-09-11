@@ -1,7 +1,8 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8765
+OLLAMA_BASE_URL ?= http://127.0.0.1:11434
 
-.PHONY: install test serve dashboard demo
+.PHONY: install test serve dashboard demo sdk-demo
 install:
 	python3 -m venv .venv
 	$(PYTHON) -m pip install -r requirements.txt
@@ -14,6 +15,10 @@ serve:
 
 dashboard:
 	LLM_PROVIDER=ollama $(PYTHON) -m uvicorn app.main:app --host 127.0.0.1 --port $(PORT)
+
+# Actual Qwen inference + official SDK, with dummy credentials to loopback only.
+sdk-demo:
+	$(PYTHON) -m scripts.sdk_smoke --ollama-url $(OLLAMA_BASE_URL)
 
 # Start a temporary mock server, exercise the checkpoint/API, then stop it.
 demo:

@@ -383,3 +383,27 @@ The test harness's mapping confirmation is not owner approval.
 
 No new quiz blocks this build. The owner can use these briefs for later interview
 preparation without reopening M1 or changing the original A1–A3 answers.
+
+## Actual SDK test requested by the owner
+
+The owner asked to use the actual SDK without Disseqt or OpenAI credentials and
+to use Qwen for model tokens. The official Python SDK 0.8.0 is now installed,
+and an SDK transport adapter is available via `DISSEQT_TRANSPORT=sdk`.
+
+Testing found two compatibility details worth defending: model/usage metadata
+must use the SDK's `agentic.*` names, and its serializer omits empty attributes.
+The adapter uses the SDK's synchronous send result to expose failures; its
+buffered client's `flush()` does not return delivery success. The high-level
+client and helper methods are also exercised in separate native SDK tests.
+
+A real 40-loan Qwen run through the SDK delivered 50 spans and 12 local policy
+verdicts to a loopback capture server. All 27 model operations were Qwen, with
+9,775 measured tokens matching the SDK trace totals; zero OpenAI calls occurred.
+The engine found all 12 exceptions with zero false positives, and explanations
+split 10 passed / 2 held. All 93 offline tests pass. The model prompts and policy
+thresholds were unchanged. See [SDK_QWEN_RUN](SDK_QWEN_RUN.md).
+
+Dummy credentials to a local receiver do not prove Disseqt account access,
+hosted validators, application registry, policy binding or cloud dashboard
+visibility. A validation SDK request was tested against an explicit canned
+response only. Owner answers are not inferred from this successful test.

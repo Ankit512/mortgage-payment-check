@@ -82,6 +82,8 @@ class DisseqtClient:
                 "name": name, "spanKind": kind, "startTimeMs": start,
                 "endTimeMs": start + max(0, round(duration_ms)),
                 "status": "OK" if status == "success" else "ERROR", "attributes": attributes or {}}
+        if not span["attributes"]:
+            del span["attributes"]  # Match the official SDK's omission of empty attributes.
         resource = {"service.name": self.service_name, "service.version": "0.1.0",
                     "deployment.environment": "local-poc", "project.id": self.project_id}
         if self.application_id:
@@ -118,9 +120,13 @@ class DisseqtClient:
         self.emit(call["operation"], "MODEL_EXEC", status=call["status"],
                   started_ms=round(datetime.fromisoformat(call["started_at"]).timestamp() * 1000),
                   duration_ms=call["latency_ms"], attributes={
-                      "gen_ai.system": call["provider"], "gen_ai.request.model": call["model"],
-                      "gen_ai.usage.input_tokens": usage.get("prompt_tokens"),
-                      "gen_ai.usage.output_tokens": usage.get("completion_tokens"),
+                      "agentic.provider.name": call["provider"], "agentic.request.model": call["model"],
+                      "agentic.operation.name": "chat",
+                      "agentic.usage.input_tokens": usage.get("prompt_tokens"),
+                      "agentic.usage.output_tokens": usage.get("completion_tokens"),
+                      "agentic.usage.total_tokens": usage.get("total_tokens"),
+                      "agentic.input.messages": deepcopy(call["input_messages"]),
+                      "agentic.output.messages": deepcopy(call["output_messages"]),
                       "uc1.call": deepcopy(call),
                   })
 
@@ -133,10 +139,14 @@ class DisseqtClient:
 def get_client(run_id, *, directory="traces", environ=None):
     env = os.environ if environ is None else environ
     mode = env.get("DISSEQT_TRANSPORT", "local")
-    if mode not in ("local", "live"):
-        raise ValueError("DISSEQT_TRANSPORT must be local or live")
+    if mode not in ("local", "live", "sdk"):
+        raise ValueError("DISSEQT_TRANSPORT must be local, live or sdk")
     remote = LiveTransport(env.get("DISSEQT_API_KEY"), env.get("DISSEQT_PROJECT_ID"),
                            env.get("DISSEQT_ENDPOINT", DEFAULT_ENDPOINT)) if mode == "live" else None
+    if mode == "sdk":
+        from app.disseqt_sdk import SDKTransport
+        remote = SDKTransport(env.get("DISSEQT_API_KEY"), env.get("DISSEQT_PROJECT_ID"),
+                              env.get("DISSEQT_ENDPOINT", DEFAULT_ENDPOINT))
     return DisseqtClient(run_id, local=LocalTransport(directory), remote=remote,
                         project_id=env.get("DISSEQT_PROJECT_ID", "local"),
                         service_name=env.get("DISSEQT_SERVICE_NAME", "mortgage-capital-uc1"),

@@ -35,7 +35,7 @@ class Pipeline:
         self._data = {
             "run_id": run_id, "status": "created", "created_at": datetime.now(timezone.utc).isoformat(),
             "provider": provider.provider_name, "model": provider.model,
-            "trace_mode": "live" if trace.remote else "local", "synthetic": True,
+            "trace_mode": getattr(trace.remote, "mode", "live") if trace.remote else "local", "synthetic": True,
             "proposed_mapping": {}, "confirmed_mapping": None, "files": {},
             "ingest_scores": {}, "ingest_findings": {}, "mapping_errors": [],
             "mapping_issues": [], "engine_exceptions": [], "remediation_log": [],

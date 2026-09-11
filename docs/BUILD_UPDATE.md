@@ -67,3 +67,11 @@ Baseline input is available but no manual baseline has been invented.
 OpenAI cost remains unknown until model pricing is configured; local API spend
 is zero, excluding electricity/hardware. Mock scores describe validator checks
 against templates, not model quality.
+
+## Subsequent SDK test request
+
+The owner then asked for tests using the actual SDK and Qwen instead of OpenAI.
+The SDK is now a pinned runtime dependency with an explicit transport selector.
+`make sdk-demo` uses real local Qwen and fixed dummy Disseqt identifiers against
+a loopback capture server. No cloud validator outcome is claimed. See
+[DISSEQT_INTEGRATION](DISSEQT_INTEGRATION.md) for the current implementation.

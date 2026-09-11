@@ -1,0 +1,87 @@
+{
+  "run_id": "309f5b84-7a35-4486-93ab-8716a09354fd",
+  "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+  "ollama_version": "0.34.0",
+  "disseqt_sdk_version": "0.8.0",
+  "seed": 42,
+  "n_loans": 40,
+  "confirmation": "automated integration test; not owner review",
+  "status": "complete",
+  "trace_mode": "sdk-local",
+  "score": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "true_positives": 12,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "per_type": {
+      "MISSING_PAYMENT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "DUPLICATE_DIRECT_DEBIT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "RATE_MARGIN_BREACH": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      }
+    },
+    "missed": [],
+    "spurious": []
+  },
+  "passed": 10,
+  "held": 2,
+  "held_findings": [
+    {
+      "loan_id": "SYN-L000013",
+      "type": "RATE_MARGIN_BREACH",
+      "findings": {
+        "faithfulness": [
+          "Ungrounded number: 1",
+          "Ungrounded number: 3"
+        ]
+      }
+    },
+    {
+      "loan_id": "SYN-L000015",
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "findings": {
+        "faithfulness": [
+          "No completed rationale available"
+        ],
+        "answer_relevance": [
+          "Rationale does not identify the exception loan",
+          "Rationale does not discuss the exception type"
+        ],
+        "provider_success": [
+          "Model step failed: incomplete; deterministic evidence retained"
+        ]
+      }
+    }
+  ],
+  "model_calls": 27,
+  "token_total": 9775,
+  "sdk_recorded_tokens": 9775,
+  "unknown_usage_calls": 0,
+  "active_duration_ms": 217225.4224169883,
+  "sdk_http_requests": 50,
+  "sdk_spans": 50,
+  "policy_spans": 12,
+  "local_sdk_span_parity": true,
+  "delivery_errors": [],
+  "openai_calls": 0,
+  "real_credentials_used": false,
+  "hosted_validator_execution": false,
+  "disseqt_cloud_requests": 0
+}

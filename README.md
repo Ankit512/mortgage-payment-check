@@ -65,6 +65,20 @@ uses no model/API credentials or real network services; transport tests use a
 loopback fake server. It covers numerical boundaries, the real graph interrupt,
 wrong mappings, poisoned drafts, provider failures and trace parity.
 
+The official Disseqt SDK can also be tested with **real Qwen and no credentials**:
+
+```bash
+make sdk-demo
+# On this machine's isolated compatible Ollama runtime:
+OLLAMA_BASE_URL=http://127.0.0.1:11435 make sdk-demo
+```
+
+This starts a local capture server with dummy Disseqt identifiers and verifies
+SDK serialization/delivery against the actual pipeline trace. It records Qwen
+tokens, not OpenAI tokens. It does not authenticate with or evaluate hosted
+Disseqt validators. See [SDK test details](docs/DISSEQT_INTEGRATION.md) and the
+[measured SDK/Qwen run](docs/SDK_QWEN_RUN.md).
+
 `make demo` starts a temporary mock server, runs seed 42, submits an explicit
 **automated test confirmation**, prints results and stops that server. This is
 not evidence of a human's review. With an existing dashboard server:
@@ -107,11 +121,11 @@ an environment manager, then restart the server. Never commit keys.
 | Local Qwen | `LLM_PROVIDER=ollama` | Ollama + `OLLAMA_MODEL`; optional `OLLAMA_BASE_URL` |
 | OpenAI | `LLM_PROVIDER=openai` | `OPENAI_API_KEY`; optional `OPENAI_MODEL` |
 | Local traces | `DISSEQT_TRANSPORT=local` | Default; writes `traces/<run_id>.jsonl` |
-| Live Disseqt | `DISSEQT_TRANSPORT=live` | `DISSEQT_API_KEY`, `DISSEQT_PROJECT_ID`; optional endpoint/service attribution |
+| Official Disseqt SDK | `DISSEQT_TRANSPORT=sdk` | `DISSEQT_API_KEY`, `DISSEQT_PROJECT_ID`; optional endpoint/service attribution |
 
 A key alone never activates a paid model or live tracing. Disseqt transmission
-retains a local audit and reports delivery failures. The wire format was checked
-against published SDK source and a captured fake server; live registry, policy
+retains a local audit and reports delivery failures. The installed official SDK
+is exercised against a captured local server; live registry, policy
 binding, validators and dashboard visibility still require real credentials and
 verification. See [DISSEQT_INTEGRATION](docs/DISSEQT_INTEGRATION.md).
 
@@ -179,7 +193,8 @@ app/engine.py           Pure matching, detectors, source evidence and scoring
 app/providers.py        Mock / OpenAI / local Ollama and measured call records
 app/validators.py       Six guards and fail-closed local policy
 app/graph.py            LangGraph checkpoint, execution and safe read models
-app/disseqt_wire.py     Local audit and optional live HTTP transport
+app/disseqt_wire.py     Local audit and transport selection
+app/disseqt_sdk.py      Official Disseqt SDK transport adapter
 app/main.py             FastAPI endpoints and static dashboard hosting
 app/static/             Dashboard HTML, CSS and JavaScript
 scripts/                Automated API demo and browser smoke check

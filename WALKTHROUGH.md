@@ -71,8 +71,9 @@ contract and call records. The graph handles orchestration; validators own local
 scores; the wire client owns trace delivery. An engine import-graph test prevents
 a provider dependency entering numerical computation.
 
-**Honest integration evidence.** Current Disseqt Python SDK source was inspected;
-the custom wire format and auth handling were tested against a fake HTTP server.
+**Honest integration evidence.** The official Disseqt Python SDK is now installed;
+its native transport and high-level helpers are tested against a local HTTP
+capture server, including a real-Qwen pipeline run. `make sdk-demo` reproduces it.
 Actual remote registry, validator/policy binding, ingestion and dashboard
 visibility require credentials and a subsequent live smoke test. See
 [DISSEQT_INTEGRATION](docs/DISSEQT_INTEGRATION.md).

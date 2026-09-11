@@ -413,9 +413,12 @@ function renderAnalytics() {
   if (!analytics) return;
   const a = analytics;
   $("trace-label").textContent =
-    current.trace_mode === "local"
-      ? "Local JSONL audit"
-      : "Live transport + local audit";
+    {
+      local: "Local JSONL audit",
+      live: "Direct HTTP + local audit",
+      "sdk-local": "SDK → local capture",
+      "sdk-live": "Disseqt SDK + local audit",
+    }[current.trace_mode] || "Trace transport";
   const duration = a.active_duration_ms / 1000;
   $("analytics-summary").innerHTML =
     `<div><strong>${duration.toFixed(1)}s</strong><span>Active processing · approval wait excluded</span></div><div><strong>${a.model_calls.length}</strong><span>Model operations · ${escape(current.provider)}</span></div><div><strong>${a.token_total === null ? "Unknown" : a.token_total.toLocaleString()}</strong><span>Recorded model tokens</span></div><div><strong>${a.estimated_api_cost_usd === null ? "Unknown" : "$" + a.estimated_api_cost_usd.toFixed(2)}</strong><span>${escape(a.cost_note)}</span></div>`;
@@ -472,9 +475,11 @@ async function init() {
       ? "Key configured · explicit selection"
       : "Not configured";
     $("disseqt-state").textContent =
-      health.trace_mode === "live"
-        ? "Live transport configured"
-        : "Local traces active";
+      health.trace_mode === "sdk"
+        ? "Official SDK configured"
+        : health.trace_mode === "live"
+          ? "Direct HTTP configured"
+          : "Local traces active";
     const runs = await refreshRecent();
     const previous = localStorage.getItem("uc1-selected-run");
     if (runs.length)
