@@ -210,10 +210,12 @@ the builder has not claimed to rerun every second-pass mutation.
 
 ## M2: Deterministic reconciliation engine and scoring
 
-**Build status:** implemented; all 37 tests pass (9 M1, 28 M2).
+**Build status:** implemented; all 37 tests passed at M2 completion (9 M1, 28 M2).
 **Commit subject:** `feat: implement deterministic reconciliation and ground-truth scoring`.
-**Owner explain-back:** not yet recorded. M1 is closed; no further M1 round is
-required. The brief and three M2 discussion prompts are recorded below.
+**Owner explain-back:** written answers are not recorded. After the M1/M2
+CodeRabbit reviews, the owner explicitly directed continuation of the build;
+M3 proceeded on that instruction. No owner answers or agreement are invented.
+The brief and three M2 discussion prompts remain below as interview preparation.
 
 ### What this piece does
 
@@ -242,7 +244,7 @@ during detection.
 
 ### Verification
 
-`python3 -m unittest discover tests -v` passes 37 tests on Python 3.13.3.
+At M2 completion, `python3 -m unittest discover tests -v` passed 37 tests on Python 3.13.3.
 Seed 42: 12 true positives (four of each type), precision 1.0, recall 1.0,
 zero false positives and zero missed entries. Omitting the servicing amount or
 payments amount mapping produces a diagnostic, four rate exceptions, recall
@@ -271,6 +273,69 @@ interface and declared boundaries.
    triggers this PoC's duplicate pattern? What still cannot be inferred?
 3. What do verbatim evidence and the separate scorer establish, and why do we
    still need the human graph checkpoint and rationale validators later?
+
+### Owner answers
+
+1. Not yet recorded.
+2. Not yet recorded.
+3. Not yet recorded.
+
+## M3: Mock/OpenAI provider interface
+
+**Build status:** implemented; all 59 tests pass (9 M1, 28 M2, 22 M3).
+**Commit subject:** `feat: add mock and OpenAI providers with call records`.
+**Owner explain-back:** not yet recorded. The owner authorised this build step;
+live OpenAI execution has not been authorised or attempted.
+
+### What this piece does
+
+It supplies three operations behind one interface: propose a column mapping,
+classify an existing engine exception and draft its explanation/remediation
+note. Mock mode uses deterministic aliases and templates. OpenAI mode sends
+documented API requests and captures available outputs and token usage. The
+engine remains independent and owns every reconciliation calculation.
+
+### Three choices and why
+
+1. **Explicit modes and honest failure.** Mock is the default; a key alone does
+   not activate OpenAI. Failed real calls raise an error and retain audit data.
+   Automatically substituting mock output would conceal whether the model ran.
+2. **Structured responses with local contract checks.** A fixed model snapshot
+   and JSON-schema requests constrain the returned shape. Local checks still
+   reject refusals, truncation, malformed JSON, invented types and invalid
+   confidence. These are shape checks; fabricated prose remains M4's job.
+3. **Record measured data without pretending it is judgment.** Each operation
+   captures messages, identity, latency and available usage. Mock has zero model
+   tokens and fixed uncalibrated confidence; absent live usage stays unknown.
+   No validator score, cost or PASS/BLOCK decision is fabricated by the provider.
+
+### Verification
+
+`python3 -m unittest discover tests -v` passes 59 tests on Python 3.13.3.
+The new 22 tests exercise mock/OpenAI output parity and the keyless seam:
+3 mappings plus 24 classify/draft operations for all 12 engine exceptions,
+zero model tokens, unchanged recall 1.0 and zero false positives.
+
+Scripted OpenAI responses test request formatting, recorded token usage,
+malformed output, invalid classifications/mappings, refusals, truncation,
+unknown/inconsistent usage and unavailable transport. HTTP tests inspect the
+request URL, body, headers and timeout with simulated I/O. Failures do not
+retry or switch providers. Raw source evidence reaches the draft prompt without
+local path metadata. The engine import-graph guard remains green.
+
+The official API, structured-output and model documentation were checked; links
+and detailed limitations are in [PROVIDERS.md](PROVIDERS.md). There has been no
+live OpenAI call, no measured model-quality result, no policy verdict and no
+graph checkpoint. Full R3 pipeline acceptance waits for M4/M5 integration.
+
+### M3 discussion prompts
+
+1. Why must a successful schema check still allow M4 to block a rationale that
+   invents a payment amount or instruction?
+2. Why do mock confidence 0.95 and zero mock tokens tell us nothing about live
+   model judgment quality, and why does missing live usage stay unknown?
+3. When OpenAI refuses or times out after the engine has run, which results
+   remain valid, and what would silent fallback hide?
 
 ### Owner answers
 

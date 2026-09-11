@@ -109,8 +109,9 @@ print(json.dumps({
 PY
 ```
 
-Run all verification with `python3 -m unittest discover tests -v`: 37 tests
-(9 M1, 28 M2). Beyond seed-42 acceptance, hand-authored cases exercise arithmetic
+Run all verification with `python3 -m unittest discover tests -v`. At M2
+completion there were 37 tests (9 M1, 28 M2); README tracks the current total.
+Beyond seed-42 acceptance, hand-authored cases exercise arithmetic
 boundaries, per-loan matching even when file totals agree, wrong mappings, raw
 multiline evidence, input errors, scoring and purity. An AST import walk follows
 local dependencies and package initialisers, rejects provider/non-stdlib imports
