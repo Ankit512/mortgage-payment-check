@@ -35,8 +35,8 @@ while its comprehension gate remains pending. Do not invent owner answers.
 
 | Milestone | Scope | State |
 | --- | --- | --- |
-| M1 | R1: sample generator and answer key | Implemented; 9 tests pass; three owner answers reviewed; extra mandatory quiz withdrawn after reviewer self-audit |
-| M2 | R2: deterministic reconciliation engine and scoring | Not started during the owner's requested self-audit; next implementation milestone |
+| M1 | R1: sample generator and answer key | Complete; 9 tests pass; owner explicitly closed the gate in the second-pass handoff |
+| M2 | R2: deterministic reconciliation engine and scoring | Implemented; 28 new tests pass; 12/12 seeded exceptions found, zero false positives; brief in EXPLAIN_BACK |
 | M3 | R3: mock/OpenAI provider seam | Not started |
 | M4 | R4: validators and PASS/BLOCK policy | Not started |
 | M5 | R5: LangGraph checkpoint, FastAPI, analytics, baseline | Not started |
@@ -44,6 +44,7 @@ while its comprehension gate remains pending. Do not invent owner answers.
 | M7 | R8: complete README and CTO walkthrough; P1 if time permits | Not started |
 
 Every milestone extends the suite run by `python3 -m unittest discover tests -v`.
-M1 fixture audits do not claim R2 engine recall: the engine does not exist yet.
+M1 fixture audits establish fixture relationships; M2 now separately measures
+engine recall. The combined suite contains 37 passing tests.
 P1 real OpenAI calls require the owner's confirmation as stated in PRD section 7.
 Repository visibility and publication remain unresolved; this work is local.

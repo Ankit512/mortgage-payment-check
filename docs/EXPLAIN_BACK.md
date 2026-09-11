@@ -10,9 +10,9 @@ behalf. Each gate is completed before the next implementation milestone begins.
 strengthened manifest-description checks (the original M1 suite had 8).
 **Commit subject:** `feat: add reproducible UC1 sample data and answer key`.
 **Comprehension gate:** the three required answers were received and reviewed
-on 2026-09-11. The extra mandatory follow-up round has been withdrawn after the
-reviewer self-audit. Corrections are documented; owner agreement with revised
-wording is not assumed. M2 has not started during the requested audit.
+on 2026-09-11. The owner explicitly closed M1 in the independent second-pass
+handoff and directed implementation of M2. The extra follow-up quiz stays
+withdrawn. This does not claim agreement with every revised wording.
 
 ### What this piece does
 
@@ -39,11 +39,14 @@ checkable to find. It makes no LLM calls and needs no credentials.
 
 ### Verification
 
-`python3 -m unittest discover tests -v` passed all 8 tests on Python 3.13.3.
+The completed M1 suite passed all 9 tests on Python 3.13.3 (8 at initial commit,
+plus the source-based description check from the self-audit). The current full
+command, `python3 -m unittest discover tests -v`, also includes the M2 tests below.
 The checks cover byte-identical regeneration and checked-in fixtures, different
 seeds, isolation from global random state, independent CSV audits across five
 seed/count combinations (including N = 1 and N = 2), headers and PII patterns,
-invalid counts, and a CLI run with an empty environment from another directory.
+invalid counts, numerical description slots against source values, and a CLI
+run with an empty environment from another directory.
 
 The seed-42 fixture has 40 servicing rows, 40 payment postings, 40 investor rows
 and 12 manifest entries. The equal payment-row count is coincidental: four
@@ -188,5 +191,89 @@ three separate description mutations are rejected even after regeneration.
 **Revised review outcome:** the required three-answer exchange is complete, and
 the reviewer's corrections are recorded. The PRD did not explicitly require the
 extra compulsory round; that was the reviewer's interpretation and is withdrawn.
-This does not claim the owner has endorsed the revised wording. M2 remains
-unstarted while fulfilling the owner's request for this self-audit.
+This does not claim the owner endorsed the revised wording. M2 was unstarted
+at the time of that audit; the owner subsequently directed the next milestone.
+
+### Independent second-pass handoff
+
+The owner supplied a Grok second-pass report targeting hydroid commit `ba7c5fa`.
+Hydroid matched that commit with a clean worktree when implementation resumed.
+The report confirmed the numerical/coverage claims and that the ninth test
+catches wrong numbers in the known slots after fixture regeneration. It also
+demonstrated remaining prose holes: additional later numbers, changed relation
+words, changed posting-count prose, extended dates and wrong exception wording.
+These remain scoped limitations, not new M1 blockers or new M1 tests.
+
+The owner explicitly declared the M1 gate complete, withdrew any extra quiz,
+and directed work on M2. The handoff is attributed to the owner-supplied report;
+the builder has not claimed to rerun every second-pass mutation.
+
+## M2: Deterministic reconciliation engine and scoring
+
+**Build status:** implemented; all 37 tests pass (9 M1, 28 M2).
+**Commit subject:** `feat: implement deterministic reconciliation and ground-truth scoring`.
+**Owner explain-back:** not yet recorded. M1 is closed; no further M1 round is
+required. The brief and three M2 discussion prompts are recorded below.
+
+### What this piece does
+
+It loads the three CSVs using an explicit mapping, then compares cash and margins
+using exact integer arithmetic. It detects zero net receipts, the declared
+duplicate-direct-debit pattern, and charged margins above contract. Each result
+contains unchanged source records and a stable ID. A separate scorer compares
+the detected identities with the seeded answer key and preserves every missed
+or spurious entry. The engine has no LLM call and does not see the answer key
+during detection.
+
+### Three choices and why
+
+1. **Exact arithmetic with a small data contract.** Integer cents and basis
+   points avoid rounding decisions. All files must cover one month, and rate
+   units are explicit. This tests the brief's rules without introducing a
+   multi-month or currency-conversion system.
+2. **Visible missing mappings, clear invalid-data errors.** An unmapped amount
+   stays missing and skips dependent checks; the score exposes missed errors.
+   A mapped value such as `NaN` is rejected. Inventing zero values could create
+   false missing-payment claims; guessing a mapping would defeat the exercise.
+3. **Evidence and scoring are separate from detection.** Raw CSV records are
+   preserved and copied into each exception. Scoring happens only after the
+   engine returns. The duplicate rule requires an exact net multiple >= 2 but
+   makes no claim about authorisation that the columns cannot establish.
+
+### Verification
+
+`python3 -m unittest discover tests -v` passes 37 tests on Python 3.13.3.
+Seed 42: 12 true positives (four of each type), precision 1.0, recall 1.0,
+zero false positives and zero missed entries. Omitting the servicing amount or
+payments amount mapping produces a diagnostic, four rate exceptions, recall
+1/3 and eight verbatim missed entries. A plausible numeric-column swap also
+reduces recall, showing that structurally valid mapping is not semantic proof.
+
+Hand-authored tests include split and partial payments, reversals, zero schedules,
+exact cent boundaries, large amounts, direct-debit versus other methods, equal
+and one-basis-point margins, overlapping exceptions, aggregate cancellation,
+malformed data, duplicate source keys, and period mismatches. Evidence tests
+verify raw quoting, multiline records, source line numbers and non-mutation.
+The import-graph guard is tested against an indirect OpenAI import and a
+provider import through a package initialiser.
+
+The engine checkpoint is not a graph checkpoint: M5 still must ensure no graph
+path calls it before human confirmation. General prose validation belongs to
+M4. A perfect synthetic identity score does not establish those later controls
+or real-world detection performance. See [ENGINE.md](ENGINE.md) for the full
+interface and declared boundaries.
+
+### M2 discussion prompts
+
+1. Removing an amount mapping leaves four rate breaches and recall 1/3. Why is
+   that more honest than substituting zero or guessing the missing mapping?
+2. Why does 500 + 500 against a schedule of 1000 stay clean, while 1500 + 500
+   triggers this PoC's duplicate pattern? What still cannot be inferred?
+3. What do verbatim evidence and the separate scorer establish, and why do we
+   still need the human graph checkpoint and rationale validators later?
+
+### Owner answers
+
+1. Not yet recorded.
+2. Not yet recorded.
+3. Not yet recorded.

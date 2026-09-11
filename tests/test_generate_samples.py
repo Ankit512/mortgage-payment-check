@@ -162,6 +162,7 @@ class SampleGeneratorTests(unittest.TestCase):
     def test_manifest_details_quote_actual_source_amounts_and_margins(self):
         # A refreshed golden file can preserve an incorrect description. Check
         # the described quantities against CSV facts, not another generated key.
+        # First matching format slots only; this is not a semantic prose validator.
         def described_number(detail, pattern):
             match = re.search(pattern, detail)
             self.assertIsNotNone(match, detail)

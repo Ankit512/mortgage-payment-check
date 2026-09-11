@@ -3,7 +3,8 @@
 2026-09-11. Requested by the owner to challenge the assistant's own suggestions.
 Scope: the previous review of A1-A3, the M1 generator and tests, and the relevant
 PRD requirements. This was not an evaluation of a built reconciliation engine;
-M2 has not started.
+M2 had not started when this audit was performed; the later handoff is recorded
+in the addendum below.
 
 An independent worker challenged the review while the primary agent tested
 the suite's resistance to incorrect manifest descriptions. All adversarial
@@ -118,3 +119,21 @@ The original three owner answers remain verbatim in `EXPLAIN_BACK.md`. The
 reviewer has withdrawn the additional mandatory round. No owner agreement with
 the reviewer's revised wording has been invented, and this self-audit request
 has not been treated as authorisation to silently resolve new domain policy.
+
+## Owner-supplied independent second pass
+
+After this audit, the owner supplied a second-pass Grok report against `ba7c5fa`
+and directed the builder to continue into M2. Hydroid matched that commit when
+the handoff was received. The report confirmed the totals, representative loans,
+coverage guarantee, derived investor cash and the numerical-slot mutation catches.
+It also confirmed that the first-match checks still permit extra later numbers,
+reversed relationship wording, changed posting-count claims, extended dates and
+wrong exception vocabulary after fixture regeneration. This is consistent with
+the stated known-format limitation; it does not reopen M1 or introduce an M1
+faithfulness validator. Those cases are retained as later test considerations.
+
+The owner explicitly closed the M1 comprehension gate and kept the extra quiz
+withdrawn. The M1 verification-count wording in EXPLAIN_BACK has been corrected
+to nine. This addendum records the supplied report, not a claim that the builder
+reran every external mutation. M2 implementation and its own measured results
+are documented in ENGINE and the next EXPLAIN_BACK entry.
