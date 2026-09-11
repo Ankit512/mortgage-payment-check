@@ -127,3 +127,19 @@ Another preserves an in-set classification disagreement. M4/M5 must address
 those conditions before analyst release. Input injection/PII scanning likewise
 belongs before real provider calls in that future graph. Prompts alone are not
 proof of those controls, and no new general prose validator is added at M1/M3.
+
+## Local Ollama extension
+
+The owner selected `hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M` for
+credential-free development. Set `LLM_PROVIDER=ollama`; `OLLAMA_MODEL` and
+`OLLAMA_BASE_URL` override the exact model and loopback service address.
+The factory still defaults to mock for a zero-install test path; the dashboard
+launcher selects Ollama explicitly.
+
+`OllamaProvider` sends native schema-constrained `/api/chat` requests and
+normalizes completions to the same provider contract. Native responses and
+actual `prompt_eval_count`/`eval_count` are retained. Missing counts stay unknown;
+truncation and service errors are failures, never hidden by mock fallback.
+Only local service addresses are accepted. No API key or fine-tuning is needed.
+See [LOCAL_QWEN_RUN](LOCAL_QWEN_RUN.md) for the actual run and runtime compatibility
+finding, and [Ollama chat API](https://docs.ollama.com/api/chat) for the protocol.

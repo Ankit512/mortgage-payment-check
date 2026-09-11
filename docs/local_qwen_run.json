@@ -1,0 +1,944 @@
+{
+  "run_id": "f127b502-7ee7-4b26-9036-cf3f142cc5b8",
+  "created_at": "2026-09-11T11:19:24.033105+00:00",
+  "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+  "ollama_version": "0.34.0",
+  "model_digest": "56c1b4004458f7dfa3d1e5d76d74200ea42d8d6cc6ba9e7010d08b8461061e55",
+  "confirmation": "automated integration test; not owner approval",
+  "seed": 42,
+  "n_loans": 40,
+  "status": "complete",
+  "score": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "true_positives": 12,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "per_type": {
+      "MISSING_PAYMENT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "DUPLICATE_DIRECT_DEBIT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "RATE_MARGIN_BREACH": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      }
+    },
+    "missed": [],
+    "spurious": []
+  },
+  "passed": 10,
+  "held": 2,
+  "held_findings": [
+    {
+      "loan_id": "SYN-L000013",
+      "type": "RATE_MARGIN_BREACH",
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevance": 1.0,
+        "classification_in_set": 1.0,
+        "plan_coherence": 1.0,
+        "injection_scan": 1.0,
+        "pii_scan": 1.0,
+        "provider_success": 1.0,
+        "classification_agreement": 1.0,
+        "mapping_complete": 1.0
+      },
+      "findings": {
+        "faithfulness": [
+          "Ungrounded number: 1",
+          "Ungrounded number: 3"
+        ]
+      }
+    },
+    {
+      "loan_id": "SYN-L000015",
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevance": 0.0,
+        "classification_in_set": 1.0,
+        "plan_coherence": 1.0,
+        "injection_scan": 1.0,
+        "pii_scan": 1.0,
+        "provider_success": 0.0,
+        "classification_agreement": 1.0,
+        "mapping_complete": 1.0
+      },
+      "findings": {
+        "faithfulness": [
+          "No completed rationale available"
+        ],
+        "answer_relevance": [
+          "Rationale does not identify the exception loan",
+          "Rationale does not discuss the exception type"
+        ],
+        "provider_success": [
+          "Model step failed: incomplete; deterministic evidence retained"
+        ]
+      }
+    }
+  ],
+  "analytics": {
+    "span_timeline": [
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564045,
+        "duration_ms": 0.8452089969068766,
+        "span_id": "2c63e213-9028-4afc-9bd6-9a5d8da4ac2a"
+      },
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564046,
+        "duration_ms": 0.6767080049030483,
+        "span_id": "a7e3fdb4-bc44-4406-886f-66603b7fc762"
+      },
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564047,
+        "duration_ms": 0.6409589987015352,
+        "span_id": "5418d023-7e9f-4254-a3df-7d68ef3e212a"
+      },
+      {
+        "name": "injection_scan",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564048,
+        "duration_ms": 0.7106249977368861,
+        "span_id": "8ecfaaac-d027-4d1e-8205-41b9564b20f9"
+      },
+      {
+        "name": "pii_scan",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564048,
+        "duration_ms": 0.8681250037625432,
+        "span_id": "94e8d886-62c5-4d27-be94-86657f4d597e"
+      },
+      {
+        "name": "ingest",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789125564045,
+        "duration_ms": 4.251833001035266,
+        "span_id": "48a78423-b671-4ea8-967e-07afd599e935"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125564050,
+        "duration_ms": 2738.014209011453,
+        "span_id": "cb5d6050-f931-4976-aeb0-7838866192a3"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125566790,
+        "duration_ms": 3381.7164169886382,
+        "span_id": "629ac292-7d3d-4a08-a0dc-497f02b2523e"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125570172,
+        "duration_ms": 3236.568249994889,
+        "span_id": "524571ee-1598-4c4f-848c-7cf982a95d99"
+      },
+      {
+        "name": "mapping_confirmed",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789125573417,
+        "duration_ms": 0,
+        "span_id": "7de1e2d5-a7c4-46c2-9568-6abbc9140efc"
+      },
+      {
+        "name": "reconcile_engine",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125573418,
+        "duration_ms": 3.7157080078031868,
+        "span_id": "a46ea2c9-4b5b-4acf-b236-66af3ebbbdc6"
+      },
+      {
+        "name": "score_ground_truth",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125573422,
+        "duration_ms": 0.0457499991171062,
+        "span_id": "b9f958c8-bbfe-4604-8bf2-299eb0659110"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125573423,
+        "duration_ms": 1974.1593329963507,
+        "span_id": "4c6efe60-c2ef-4afa-92d0-87a88bfab924"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125575399,
+        "duration_ms": 6357.780000005732,
+        "span_id": "9f4f39e3-96f9-4172-bcae-9c46a9441a1b"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125581757,
+        "duration_ms": 0.30625000363215804,
+        "span_id": "1ea902fe-8546-45b5-903d-4ccac089c4ca"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125581758,
+        "duration_ms": 1799.9279170035152,
+        "span_id": "9a4db0cf-c035-4729-a130-e49f7bf05e62"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125583559,
+        "duration_ms": 7505.381916998886,
+        "span_id": "30d7dd39-a757-4386-9a68-e99a9c991fa7"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125591067,
+        "duration_ms": 1.141375003498979,
+        "span_id": "851501a9-b434-4875-ac71-738dcd2d66a1"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125591069,
+        "duration_ms": 2101.7647910048254,
+        "span_id": "c2ed80c9-0210-4977-a13c-d7e01a4b79da"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125593172,
+        "duration_ms": 9872.44799999462,
+        "span_id": "b8e91966-abdf-4540-a8b9-222e48be6f5a"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125603046,
+        "duration_ms": 0.8899160020519048,
+        "span_id": "2f04b75f-a2b7-492d-ae5e-15113ce7d999"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125603048,
+        "duration_ms": 1713.542708006571,
+        "span_id": "6a27453a-043f-48f8-bdef-c02d3e9dfa5a"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125604763,
+        "duration_ms": 7934.101417005877,
+        "span_id": "575489ba-48bc-475d-9f86-cd83f08aff78"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125612698,
+        "duration_ms": 0.408125008107163,
+        "span_id": "5acc8b85-eba8-43e4-abac-d2b766fa05d0"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125612699,
+        "duration_ms": 1860.264000002644,
+        "span_id": "cd4d3269-c2f4-45ad-9563-00b33e1d821e"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125614561,
+        "duration_ms": 8519.2255830043,
+        "span_id": "12f05168-224e-4463-aa26-578f5658aada"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125623082,
+        "duration_ms": 0.7627500017406419,
+        "span_id": "5524cf62-a349-433c-a2bc-a58bc6cf0d20"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125623084,
+        "duration_ms": 1841.9751670007827,
+        "span_id": "c5b382a8-46c7-4026-9143-7cd68eaab060"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "error",
+        "started_ms": 1789125624928,
+        "duration_ms": 50423.93791700306,
+        "span_id": "c77fe18e-a1d8-488c-9ec4-39ea892c3cc0"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125675353,
+        "duration_ms": 0.28229199233464897,
+        "span_id": "f0871e78-a994-4031-9247-222f1e779f88"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125675355,
+        "duration_ms": 2050.598166999407,
+        "span_id": "ed63076d-ec77-466e-984a-09c89e4c2fcb"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125677407,
+        "duration_ms": 8999.695792008424,
+        "span_id": "cf231dd4-2fde-4354-b577-b112cd81b512"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125686407,
+        "duration_ms": 0.635374992270954,
+        "span_id": "efb8b965-ea03-40e3-a5fb-e066a702b680"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125686408,
+        "duration_ms": 2008.6158330086619,
+        "span_id": "a634db7c-050a-4610-a17c-4b375ccb765c"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125688418,
+        "duration_ms": 10305.244792005396,
+        "span_id": "598a944e-87e4-4999-b659-1ad7f3f24e53"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125698725,
+        "duration_ms": 0.7751249941065907,
+        "span_id": "866dc0ae-e249-46be-97e2-4cceb5a977f9"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125698727,
+        "duration_ms": 2094.6826669969596,
+        "span_id": "10f39f80-b40e-4f77-b168-0294f21ec4fa"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125700822,
+        "duration_ms": 8663.2878750097,
+        "span_id": "6d7fac93-c5ca-410c-8384-b067f795518d"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125709489,
+        "duration_ms": 0.8704159990884364,
+        "span_id": "05f67d50-b306-43a4-acf6-883d930fe2ba"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125709491,
+        "duration_ms": 2564.1521670040675,
+        "span_id": "b0ed3e90-3cf1-4f12-9a41-552f03f0d821"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125712057,
+        "duration_ms": 9325.719417000073,
+        "span_id": "a486f64c-4c89-4128-ae7a-7963f18c4e58"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125721384,
+        "duration_ms": 0.6459160067606717,
+        "span_id": "6e253e91-ee60-4620-9dad-68a0f1b6821b"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125721386,
+        "duration_ms": 2461.1812079965603,
+        "span_id": "a709e27b-dbf3-42b6-9ca9-915ffae32383"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125723849,
+        "duration_ms": 16629.325041998527,
+        "span_id": "91e7e0e7-81fc-4bfd-92eb-83288e3f874b"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125740480,
+        "duration_ms": 0.8722909988136962,
+        "span_id": "8916a755-80b8-4dac-b616-4824c185778b"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125740482,
+        "duration_ms": 2499.4370419881307,
+        "span_id": "855a4bd6-2f1f-4498-8b38-85d2f33c6781"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789125742982,
+        "duration_ms": 10514.20070900349,
+        "span_id": "86bd3ce7-58c6-48a3-b274-0b77ed927de6"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789125753499,
+        "duration_ms": 0.7728339987806976,
+        "span_id": "6485fb2e-b03d-489f-b496-d5cf4cfce570"
+      },
+      {
+        "name": "emit",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789125753506,
+        "duration_ms": 0,
+        "span_id": "8ab4db07-40ce-4a89-b20a-626c242bece1"
+      },
+      {
+        "name": "reconciliation_run",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789125564031,
+        "duration_ms": 189475,
+        "span_id": "02378a39-6a6c-4e94-9a69-da9cfc47e97b"
+      }
+    ],
+    "validator_means": {
+      "answer_relevance": 0.9166666666666666,
+      "classification_agreement": 1.0,
+      "classification_in_set": 1.0,
+      "faithfulness": 0.8333333333333334,
+      "injection_scan": 1.0,
+      "mapping_complete": 1.0,
+      "pii_scan": 1.0,
+      "plan_coherence": 1.0,
+      "provider_success": 0.9166666666666666
+    },
+    "pass_count": 10,
+    "block_count": 2,
+    "model_calls": [
+      {
+        "call_id": "146c4032728d4a60829378cded12db33",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2738.014209011453,
+        "usage": {
+          "prompt_tokens": 121,
+          "completion_tokens": 57,
+          "total_tokens": 178
+        },
+        "error": null
+      },
+      {
+        "call_id": "95778f1bf8c149fd86fbf15f596fb1dc",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 3381.7164169886382,
+        "usage": {
+          "prompt_tokens": 125,
+          "completion_tokens": 62,
+          "total_tokens": 187
+        },
+        "error": null
+      },
+      {
+        "call_id": "9bacfd2be33747d49dddd6f23026d520",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 3236.568249994889,
+        "usage": {
+          "prompt_tokens": 121,
+          "completion_tokens": 57,
+          "total_tokens": 178
+        },
+        "error": null
+      },
+      {
+        "call_id": "49ad1c67b9194ec9a3557ea0da187d90",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1974.1593329963507,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "768afdef5ed743cba7a6e4d1b9280f19",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 6357.780000005732,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 116,
+          "total_tokens": 383
+        },
+        "error": null
+      },
+      {
+        "call_id": "14c27ba7629a42e9bfc41bac337412d3",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1799.9279170035152,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "ba123d6eb1224ba1b319cc6820517d45",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 7505.381916998886,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 138,
+          "total_tokens": 405
+        },
+        "error": null
+      },
+      {
+        "call_id": "e7e2929e5fa24c1b92a21ff3912816bb",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2101.7647910048254,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "a6b706bece024ab78fa0f62dd1891989",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 9872.44799999462,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 173,
+          "total_tokens": 609
+        },
+        "error": null
+      },
+      {
+        "call_id": "198a76d0f21848ef90201faff810872c",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1713.542708006571,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "fdc4581cde8b485d8982337e610fed7e",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 7934.101417005877,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 140,
+          "total_tokens": 481
+        },
+        "error": null
+      },
+      {
+        "call_id": "8cb8e2f6221a459eb115b2760c41cdc8",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1860.264000002644,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "82c7815511d44b5c9ee015f990b1aad3",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 8519.2255830043,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 141,
+          "total_tokens": 577
+        },
+        "error": null
+      },
+      {
+        "call_id": "f7824508b0704a459e9a96230269f124",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1841.9751670007827,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "06253e78a8384a74999d6f73affbbe43",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "error",
+        "latency_ms": 50423.93791700306,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 1024,
+          "total_tokens": 1460
+        },
+        "error": {
+          "code": "incomplete",
+          "message": "The model response did not finish normally"
+        }
+      },
+      {
+        "call_id": "ceeb590d650e4cac9c824e2e8d31a7c5",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2050.598166999407,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "009ad748ae0541258558e3c228275ad4",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 8999.695792008424,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 126,
+          "total_tokens": 467
+        },
+        "error": null
+      },
+      {
+        "call_id": "46e310f20d134ea7bbf8db41df58911d",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2008.6158330086619,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "576b01b243894460802a31305575087c",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 10305.244792005396,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 141,
+          "total_tokens": 482
+        },
+        "error": null
+      },
+      {
+        "call_id": "8f5bf8af0c494a2bb4a5b4f13f7aac0d",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2094.6826669969596,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "90af13aa22ed4d31b37fa98bf887f97d",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 8663.2878750097,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 114,
+          "total_tokens": 381
+        },
+        "error": null
+      },
+      {
+        "call_id": "99c4c73efa414bc28b694b5a391756ba",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2564.1521670040675,
+        "usage": {
+          "prompt_tokens": 166,
+          "completion_tokens": 25,
+          "total_tokens": 191
+        },
+        "error": null
+      },
+      {
+        "call_id": "e25a6fad69a8437a9eca728fc2a71af3",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 9325.719417000073,
+        "usage": {
+          "prompt_tokens": 265,
+          "completion_tokens": 122,
+          "total_tokens": 387
+        },
+        "error": null
+      },
+      {
+        "call_id": "d886c5b1226e41bc93f2a749a962d7ff",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2461.1812079965603,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "4a5f6cd89d8343cc8c8726a9b830cd82",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 16629.325041998527,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 224,
+          "total_tokens": 660
+        },
+        "error": null
+      },
+      {
+        "call_id": "f2b6b280ccb74b09866410435eb85aaa",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2499.4370419881307,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "9e6eb8faca174f399dd122ffc17977cc",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 10514.20070900349,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 132,
+          "total_tokens": 473
+        },
+        "error": null
+      }
+    ],
+    "known_token_total": 9775,
+    "unknown_usage_calls": 0,
+    "token_total": 9775,
+    "estimated_api_cost_usd": 0.0,
+    "cost_note": "Local compute cost excluded",
+    "active_duration_ms": 189461.27154199348,
+    "baseline": null,
+    "drift": null,
+    "delivery_errors": []
+  },
+  "final_verification": {
+    "run_id": "7a6b44b7-c1ef-4a78-b5d8-ed76f9577ab2",
+    "created_at": "2026-09-11T11:29:29.680948+00:00",
+    "status": "complete",
+    "engine_findings": 12,
+    "passed": 10,
+    "held": 2,
+    "token_total": 9775,
+    "active_duration_ms": 161721.028666012,
+    "policy_spans": 12,
+    "trace_path": "traces/7a6b44b7-c1ef-4a78-b5d8-ed76f9577ab2.jsonl",
+    "confirmation": "automated integration test"
+  }
+}

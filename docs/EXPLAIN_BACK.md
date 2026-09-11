@@ -342,3 +342,44 @@ graph checkpoint. Full R3 pipeline acceptance waits for M4/M5 integration.
 1. Not yet recorded.
 2. Not yet recorded.
 3. Not yet recorded.
+
+## M4–M7 · Credential-free pipeline and dashboard
+
+The owner explicitly requested continued building, a custom dashboard and local
+Qwen while credentials are unavailable. This supersedes the original no-UI
+constraint and pauses between milestones. Later owner comprehension answers
+have not been provided; no agreement or answers are invented here.
+
+The completed local workflow ingests/scans three files, proposes mappings,
+pauses at a real LangGraph interrupt, computes exceptions after confirmation,
+classifies/drafts, validates and separates passed explanations from held drafts.
+FastAPI and the dashboard expose safe evidence and analytics. The Disseqt seam
+writes typed JSONL and can send the same spans with live credentials later.
+
+Three decisions to defend:
+
+1. Validators produce checks, not truth certificates. Numeric/date/identifier
+   membership catches inventions but can miss reversed relationships or swapped
+   values. The engine finding and source evidence remain visible beside prose.
+2. A model outage or blocked draft never erases deterministic results. Failed
+   inference is retained and labelled; public analytics cannot leak held prose.
+   Raw output remains only in the local developer audit and private state.
+3. Integration status is explicit. Qwen actually ran locally. OpenAI remains
+   simulated in tests; Disseqt's current Python SDK wire format is verified with
+   a fake server. Credentials alone still need a live acceptance check before
+   claiming registry/policy binding or dashboard visibility.
+
+Verification: 86 offline tests pass, including numerical boundaries, each guard
+seen to fail, poisoned-provider end-to-end, repeated confirmation, wrong mapping,
+provider failure and captured-HTTP trace parity. Browser checks exercised desktop
+and mobile mapping, results, source evidence, search, activity and connections.
+
+The exact owner-selected Qwen model ran against seed 42 / 40 loans on Ollama
+0.34.0: 12 engine findings, recall 1.0, zero false positives; 10 explanations
+passed and two were held. One hold was unsupported evidence-row numbering, the
+other token-limit truncation. There were 27 attempted model calls and 9,775
+recorded tokens in 189.46 seconds. See [LOCAL_QWEN_RUN](LOCAL_QWEN_RUN.md).
+The test harness's mapping confirmation is not owner approval.
+
+No new quiz blocks this build. The owner can use these briefs for later interview
+preparation without reopening M1 or changing the original A1–A3 answers.

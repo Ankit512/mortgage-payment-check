@@ -37,14 +37,25 @@ while its comprehension gate remains pending. Do not invent owner answers.
 | --- | --- | --- |
 | M1 | R1: sample generator and answer key | Complete; 9 tests pass; owner explicitly closed the gate in the second-pass handoff |
 | M2 | R2: deterministic reconciliation engine and scoring | Implemented; 28 new tests pass; 12/12 seeded exceptions found, zero false positives; brief in EXPLAIN_BACK |
-| M3 | R3: mock/OpenAI provider seam | Implemented; 22 new tests pass; real HTTP/model responses simulated; full-pipeline validator acceptance awaits M4/M5 |
-| M4 | R4: validators and PASS/BLOCK policy | Not started |
-| M5 | R5: LangGraph checkpoint, FastAPI, analytics, baseline | Not started |
-| M6 | R6: documented Disseqt wire client and transport parity | Not started |
-| M7 | R8: complete README and CTO walkthrough; P1 if time permits | Not started |
+| M3 | R3: mock/OpenAI provider seam | Implemented; 22 new tests pass; real HTTP/model responses simulated; full-pipeline acceptance now covered by M4/M5; local Ollama provider added |
+| M4 | R4: validators and PASS/BLOCK policy | Implemented; six seen-to-fail guards and poisoned-provider holding verified |
+| M5 | R5: LangGraph checkpoint, FastAPI, analytics, baseline | Implemented; structural interrupt, local dashboard and API verified |
+| M6 | R6: documented Disseqt wire client and transport parity | Local/live transport seam implemented; SDK 0.8.0 wire inspected, fake-server parity verified; live connection unverified |
+| M7 | R8: complete README and CTO walkthrough; P1 if time permits | README, walkthrough, automated demo and local Qwen record delivered |
 
 Every milestone extends the suite run by `python3 -m unittest discover tests -v`.
 M1 fixture audits establish fixture relationships; M2 now separately measures
-engine recall. The combined suite now contains 59 passing tests, including M3.
+engine recall. The combined suite now contains 86 passing tests. Real local Qwen inference and
+browser checks are recorded separately from the offline suite.
 P1 real OpenAI calls require the owner's confirmation as stated in PRD section 7.
 Repository visibility and publication remain unresolved; this work is local.
+
+## Owner-authorized extension
+
+The owner requested continued building without keys and a custom dashboard,
+superseding the no-UI constraint and milestone pauses. See [BUILD_UPDATE](BUILD_UPDATE.md).
+Owner answers are not fabricated. The SDK is no longer Node-only: the published
+Python SDK 0.8.0 was inspected and its custom trace format used. Application
+registration, remote policies/validators and live dashboard verification remain
+credential-dependent. The custom dashboard is a local substitute while keys
+are unavailable, not evidence of Disseqt dashboard integration.

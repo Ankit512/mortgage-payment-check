@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mortgage Capital · Reconciliation desk</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Mortgage Capital home"
+        ><span class="brand-mark">m<span>c</span></span
+        ><span>Mortgage<br /><b>Capital</b></span></a
+      >
+      <div class="workspace-label">OPERATIONS WORKSPACE</div>
+      <nav aria-label="Workspace">
+        <button class="nav-item active" data-view="desk">
+          <span>▦</span> Reconciliation <span class="nav-dot"></span>
+        </button>
+        <button class="nav-item" data-view="audit">
+          <span>◷</span> Run activity
+        </button>
+        <button class="nav-item" data-view="settings">
+          <span>⚙</span> Connections
+        </button>
+      </nav>
+      <div class="sidebar-rule"></div>
+      <div class="recent-label">RECENT RUNS <span id="run-count">0</span></div>
+      <div id="recent-runs" class="recent-runs"><p>No runs yet</p></div>
+      <div class="sidebar-bottom">
+        <span class="avatar">AK</span>
+        <div>Ankit Kumar<small>Local development workspace</small></div>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          Operations <span class="slash">/</span>
+          <strong>Reconciliation desk</strong>
+        </div>
+        <div class="topbar-right">
+          <span class="local-indicator"></span> Local workspace
+          <span class="separator">|</span
+          ><span class="synthetic-badge">SYNTHETIC DATA</span>
+        </div>
+      </header>
+      <main>
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow">MORTGAGE OPERATIONS · USE CASE 01</div>
+            <h1>Every exception. Accounted for.</h1>
+            <p>
+              Reconcile the month. Trace the evidence. Keep judgment in human
+              hands.
+            </p>
+          </div>
+          <button id="new-run" class="primary">＋ New reconciliation</button>
+        </div>
+        <div id="message" role="status" aria-live="polite" hidden></div>
+
+        <section id="desk-view">
+          <div class="run-strip">
+            <div>
+              <span class="small-label">CURRENT RUN</span
+              ><strong id="run-title"
+                >Ready for your first reconciliation</strong
+              ><span id="run-subtitle" class="muted"
+                >Three source files. One confirmed mapping.</span
+              >
+            </div>
+            <span id="status-badge" class="badge neutral">Not started</span>
+          </div>
+          <ol class="steps" aria-label="Reconciliation progress">
+            <li data-step="0">
+              <span>1</span>
+              <div>Ingest files<small>Scan & prepare</small></div>
+            </li>
+            <li data-step="1">
+              <span>2</span>
+              <div>Confirm mapping<small>Human checkpoint</small></div>
+            </li>
+            <li data-step="2">
+              <span>3</span>
+              <div>Reconcile<small>Deterministic engine</small></div>
+            </li>
+            <li data-step="3">
+              <span>4</span>
+              <div>Review outcomes<small>Validate & release</small></div>
+            </li>
+          </ol>
+          <div class="metrics">
+            <article>
+              <span class="metric-label">LOANS IN SCOPE <span>▤</span></span
+              ><strong id="metric-loans">—</strong
+              ><small>From the servicing extract</small>
+            </article>
+            <article>
+              <span class="metric-label">EXCEPTIONS FOUND <span>↗</span></span
+              ><strong id="metric-found">—</strong
+              ><small>Computed from source records</small>
+            </article>
+            <article>
+              <span class="metric-label"
+                >PASSED VALIDATION <span class="green">✓</span></span
+              ><strong id="metric-pass">—</strong
+              ><small>Available in the remediation log</small>
+            </article>
+            <article>
+              <span class="metric-label"
+                >HELD FOR REVIEW <span class="amber">◷</span></span
+              ><strong id="metric-held">—</strong
+              ><small>AI explanation withheld</small>
+            </article>
+          </div>
+
+          <section id="mapping-panel" class="panel" hidden>
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">YOUR CHECKPOINT</span>
+                <h2>Review the proposed column mapping</h2>
+                <p>
+                  Check the source values and units. A model proposal is never
+                  an approval.
+                </p>
+              </div>
+              <span class="badge amber-bg">Confirmation required</span>
+            </div>
+            <div id="mapping-errors"></div>
+            <div id="mapping-tables"></div>
+            <div class="mapping-footer">
+              <label
+                ><input type="checkbox" id="mapping-reviewed" /> I reviewed the
+                mappings, sample values and units.</label
+              ><button id="confirm" class="primary" disabled>
+                Confirm & reconcile <span>→</span>
+              </button>
+            </div>
+          </section>
+
+          <div class="results-grid">
+            <section class="panel outcomes-panel">
+              <div class="panel-heading">
+                <div>
+                  <h2>Exception workspace</h2>
+                  <p id="outcome-caption">
+                    Engine findings and validated explanations, together.
+                  </p>
+                </div>
+                <button class="text-button" id="export" disabled>
+                  ↓ Export JSON
+                </button>
+              </div>
+              <div class="table-toolbar">
+                <div class="tabs" role="tablist" aria-label="Exception queue">
+                  <button
+                    role="tab"
+                    aria-selected="true"
+                    class="tab active"
+                    data-queue="pass"
+                  >
+                    Remediation log <span id="pass-tab-count">0</span></button
+                  ><button
+                    role="tab"
+                    aria-selected="false"
+                    class="tab"
+                    data-queue="held"
+                  >
+                    Held for review <span id="held-tab-count">0</span>
+                  </button>
+                </div>
+                <label class="search"
+                  ><span>⌕</span
+                  ><input
+                    id="search"
+                    placeholder="Find a loan…"
+                    aria-label="Find a loan"
+                /></label>
+              </div>
+              <div id="exception-list" class="exception-list">
+                <div class="empty-state">
+                  <div class="empty-icon">⌘</div>
+                  <h3>A clear view starts here</h3>
+                  <p>
+                    Start with the included synthetic loan book or upload three
+                    synthetic CSVs. You’ll confirm the mapping before the engine
+                    runs.
+                  </p>
+                  <button class="secondary" id="empty-start">
+                    Start a reconciliation →
+                  </button>
+                </div>
+              </div>
+            </section>
+            <aside class="insights">
+              <section class="panel">
+                <div class="panel-heading compact">
+                  <h2>Validation pulse</h2>
+                  <span class="live-label"><i></i> COMPUTED</span>
+                </div>
+                <div id="validation-pulse" class="pulse-list">
+                  <p class="muted">
+                    Scores appear after the first exception is validated.
+                  </p>
+                </div>
+                <div class="panel-note">
+                  One failed guard holds the explanation.<br />Scores measure
+                  checks, not model confidence.
+                </div>
+              </section>
+              <section class="panel">
+                <div class="panel-heading compact">
+                  <h2>Seeded-data check</h2>
+                  <span>◎</span>
+                </div>
+                <div class="ground-truth" id="ground-truth">
+                  <strong>—</strong
+                  ><span>Recall against the generated answer key</span>
+                </div>
+                <div class="panel-note">
+                  Fixture agreement demonstrates the mechanism. It does not
+                  measure real-world detection performance.
+                </div>
+              </section>
+              <section class="integration-card">
+                <div>
+                  <span class="local-indicator"></span
+                  ><b id="model-label">Local development</b>
+                </div>
+                <p id="model-note">
+                  Models propose and explain. The engine owns every calculation.
+                </p>
+                <button class="text-button" data-view="settings">
+                  View connections →
+                </button>
+              </section>
+            </aside>
+          </div>
+          <div class="desk-footer">
+            <span>↳ Every finding links back to its source records.</span
+            ><span>Single reporting month · Synthetic loan book</span>
+          </div>
+        </section>
+
+        <section id="audit-view" hidden>
+          <div class="panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Run activity</h2>
+                <p>
+                  Measured steps, model usage and validator outcomes for the
+                  selected run.
+                </p>
+              </div>
+              <span id="trace-label" class="badge neutral">Local JSONL</span>
+            </div>
+            <div id="analytics-summary" class="analytics-summary"></div>
+            <div id="timeline" class="timeline empty-state">
+              Choose a run to inspect its timeline.
+            </div>
+          </div>
+          <div class="panel baseline-panel">
+            <div>
+              <h2>Manual-process baseline</h2>
+              <p>
+                Enter an observed Week-1 baseline for a comparable loan book. No
+                baseline is invented.
+              </p>
+            </div>
+            <form id="baseline-form">
+              <label
+                >Manual processing time (minutes)<input
+                  name="minutes"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  required /></label
+              ><label
+                >Exceptions found<input
+                  name="exceptions"
+                  type="number"
+                  min="0"
+                  step="1"
+                  required /></label
+              ><button class="secondary" type="submit">Record baseline</button>
+            </form>
+            <p id="baseline-drift" class="muted">No baseline recorded.</p>
+          </div>
+        </section>
+
+        <section id="settings-view" hidden>
+          <div class="connection-grid">
+            <article class="panel connection">
+              <span class="connection-symbol">Q</span>
+              <h2>Local Qwen</h2>
+              <span class="badge green-bg">No API key required</span>
+              <p>
+                Uses your selected model through Ollama. Every call records the
+                actual model, usage and outcome.
+              </p>
+              <code id="qwen-id"></code>
+            </article>
+            <article class="panel connection">
+              <span class="connection-symbol">◎</span>
+              <h2>OpenAI</h2>
+              <span id="openai-state" class="badge neutral"
+                >Not configured</span
+              >
+              <p>
+                The same mapping, classification and drafting interface. Add the
+                key to the server environment when available.
+              </p>
+              <code>LLM_PROVIDER=openai<br />OPENAI_API_KEY=…</code>
+            </article>
+            <article class="panel connection">
+              <span class="connection-symbol">↗</span>
+              <h2>Disseqt</h2>
+              <span id="disseqt-state" class="badge neutral"
+                >Local traces active</span
+              >
+              <p>
+                Typed spans are retained locally. Enable live delivery with your
+                project credentials when available.
+              </p>
+              <code
+                >DISSEQT_TRANSPORT=live<br />DISSEQT_API_KEY=…<br />DISSEQT_PROJECT_ID=…</code
+              >
+            </article>
+          </div>
+          <div class="panel connection-note">
+            <h2>Same workflow, swappable integrations</h2>
+            <p>
+              Configuration stays on the server. Keys are never entered in this
+              dashboard. Restart the server after changing its environment. This
+              local PoC keeps run state in memory; its JSONL audit survives a
+              restart.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="run-dialog">
+      <form id="run-form">
+        <div class="dialog-heading">
+          <div>
+            <span class="eyebrow">START A RUN</span>
+            <h2>New reconciliation</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            id="close-run"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <p>Use the seeded loan book or your own synthetic source files.</p>
+        <label
+          >Language model<select id="provider">
+            <option value="ollama">Qwen · local Ollama</option>
+            <option value="mock">Mock · deterministic templates</option>
+            <option value="openai">OpenAI · requires configured key</option>
+          </select></label
+        >
+        <div class="form-row">
+          <label
+            >Seed<input id="seed" type="number" value="42" required /></label
+          ><label
+            >Loans<input
+              id="n-loans"
+              type="number"
+              min="1"
+              max="100"
+              value="40"
+              required
+          /></label>
+        </div>
+        <details class="upload-section">
+          <summary>Use three synthetic CSV files instead</summary>
+          <p>Uploads have no generated answer key. Maximum 512 KB per file.</p>
+          <label
+            >Servicing extract<input
+              type="file"
+              id="upload-servicing"
+              accept=".csv,text/csv" /></label
+          ><label
+            >Payments file<input
+              type="file"
+              id="upload-payments"
+              accept=".csv,text/csv" /></label
+          ><label
+            >Investor report<input
+              type="file"
+              id="upload-investor"
+              accept=".csv,text/csv"
+          /></label>
+        </details>
+        <label class="checkbox-label"
+          ><input type="checkbox" id="synthetic-confirm" required /> These files
+          contain synthetic data only.</label
+        >
+        <div class="dialog-actions">
+          <span>Mapping approval comes next.</span
+          ><button type="submit" class="primary" id="start-run">
+            Prepare mapping →
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="evidence-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">SOURCE EVIDENCE</span>
+          <h2 id="evidence-title"></h2>
+        </div>
+        <button
+          class="icon-button"
+          id="close-evidence"
+          aria-label="Close evidence"
+        >
+          ×
+        </button>
+      </div>
+      <div id="evidence-content"></div>
+    </dialog>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

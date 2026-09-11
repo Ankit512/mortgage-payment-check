@@ -14,12 +14,14 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 from data.generate_samples import EXCEPTION_TYPES
 
 
 DEFAULT_MODEL = "gpt-4.1-mini-2025-04-14"
+DEFAULT_OLLAMA_MODEL = "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M"
 OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 MOCK_CONFIDENCE = 0.95  # A fixed fixture value, not measured classification quality.
 ALIAS_GROUPS = {
@@ -337,6 +339,57 @@ class OpenAIProvider(LLMProvider):
         return self._transport(request)
 
 
+class OllamaProvider(LLMProvider):
+    """Local GGUF inference, normalized to the same audited completion contract."""
+
+    provider_name = "ollama"
+
+    def __init__(self, *, model=DEFAULT_OLLAMA_MODEL, base_url="http://127.0.0.1:11434", timeout=120, transport=None):
+        super().__init__()
+        self.model = _nonempty(model, "OLLAMA_MODEL")
+        parsed = urlsplit(base_url)
+        if parsed.scheme not in ("http", "https") or parsed.hostname not in ("localhost", "127.0.0.1", "::1", "host.docker.internal") or parsed.username or parsed.query or parsed.fragment:
+            raise ProviderConfigurationError("OLLAMA_BASE_URL must address the local Ollama service")
+        if not isinstance(timeout, (float, int)) or not math.isfinite(timeout) or timeout <= 0:
+            raise ProviderConfigurationError("Ollama timeout must be positive")
+        self.base_url, self.timeout, self._transport = base_url.rstrip("/"), timeout, transport
+
+    def _request(self, operation: str, inputs: dict, request: dict) -> dict:
+        payload = {
+            "model": self.model, "messages": request["messages"], "stream": False,
+            "think": False, "format": request["response_format"]["json_schema"]["schema"],
+            "options": {"temperature": 0, "num_predict": 1024, "num_ctx": 8192},
+            "keep_alive": "10m",
+        }
+        if self._transport is not None:
+            response = self._transport(payload)
+        else:
+            req = Request(self.base_url + "/api/chat", data=json.dumps(payload).encode(),
+                          headers={"Content-Type": "application/json"}, method="POST")
+            try:
+                with build_opener(_NoRedirect()).open(req, timeout=self.timeout) as stream:
+                    response = _json_loads(stream.read().decode())
+            except HTTPError as error:
+                error.close()
+                raise ProviderError("http_error", "Ollama rejected the request; check the installed model") from None
+            except (URLError, TimeoutError, OSError):
+                raise ProviderError("unavailable", "Local Ollama is unavailable or timed out") from None
+        if not isinstance(response, dict) or response.get("error"):
+            raise ProviderError("invalid_response", "Ollama returned an invalid response")
+        usage = None
+        prompt, completion = response.get("prompt_eval_count"), response.get("eval_count")
+        if prompt is not None and completion is not None:
+            if any(type(value) is not int or value < 0 for value in (prompt, completion)):
+                raise ProviderError("invalid_response", "Ollama returned invalid token counts")
+            usage = {"prompt_tokens": prompt, "completion_tokens": completion, "total_tokens": prompt + completion}
+        return {
+            "id": None, "model": response.get("model"), "usage": usage,
+            "choices": [{"finish_reason": response.get("done_reason") if response.get("done") else "incomplete",
+                         "message": response.get("message")}],
+            "ollama_response": response,  # Preserve native counts/timings as well as the normalized envelope.
+        }
+
+
 def get_provider(environ=None) -> LLMProvider:
     """Explicit selection only. An available API key does not activate live mode."""
     environ = os.environ if environ is None else environ
@@ -345,4 +398,7 @@ def get_provider(environ=None) -> LLMProvider:
         return MockProvider()
     if choice == "openai":
         return OpenAIProvider(api_key=environ.get("OPENAI_API_KEY"), model=environ.get("OPENAI_MODEL", DEFAULT_MODEL))
-    raise ProviderConfigurationError("LLM_PROVIDER must be mock or openai")
+    if choice == "ollama":
+        return OllamaProvider(model=environ.get("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL),
+                              base_url=environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434"))
+    raise ProviderConfigurationError("LLM_PROVIDER must be mock, ollama or openai")
