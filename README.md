@@ -90,14 +90,24 @@ not evidence of a human's review. With an existing dashboard server:
 
 Optional browser verification: install `requirements-dev.txt`, then
 `.venv/bin/python -m playwright install chromium`. The checked-in browser smoke
-script exercises mapping, results, evidence and mobile overflow:
+script exercises the tutorial, keyboard focus, dismissal/replay, preservation of
+mapping edits, explicit confirmation, results, evidence and mobile overflow:
 
 ```bash
 .venv/bin/python scripts/check_dashboard.py
+# Target an isolated test server instead of your demo session:
+.venv/bin/python scripts/check_dashboard.py --url http://127.0.0.1:8767
 ```
 
 ## What the dashboard shows
 
+- An optional six-step **Help & tour** guide: the workflow, sample files, mapping,
+  results, source evidence and run activity. The introduction can be dismissed;
+  the tour can always be replayed from the top bar. Dismissal is saved in this
+  browser. Help works locally without model calls.
+- A **Your next step** card that follows the selected run, plus mapping/results
+  help beside those panels. Tutorial links open the normal screens; they do not
+  submit a run, change mapping selections or tick review checkboxes.
 - Synthetic generated files or three uploaded synthetic CSVs (512 KB each).
 - Editable proposed mappings and source values, followed by a required checkbox.
 - Engine findings, validated explanations and verbatim source-row evidence.

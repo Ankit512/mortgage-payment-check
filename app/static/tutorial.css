@@ -1,0 +1,170 @@
+.help-button {
+  border: 1px solid #cbd9ce;
+  border-radius: 7px;
+  background: #fff;
+  color: #28573f;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.tutorial-welcome {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 23px;
+  margin-bottom: 20px;
+  background: #e5efe1;
+  border: 1px solid #c8d9c1;
+  border-radius: 10px;
+}
+.guide-symbol {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #eff5e8;
+  background: #315d40;
+  font: italic 28px Georgia, serif;
+}
+.tutorial-welcome h2 { font-size: 16px; }
+.tutorial-welcome p { font-size: 12px; color: #51664d; }
+.tutorial-welcome > div { flex: 1; }
+.tutorial-welcome .primary { white-space: nowrap; }
+.tutorial-welcome .icon-button { flex-shrink: 0; }
+.next-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-left: 3px solid #64835b;
+  padding: 6px 0 6px 18px;
+  margin: 26px 0;
+}
+.next-step .eyebrow { font-size: 9px; margin-bottom: 9px; display: block; }
+.next-step h2 { font-size: 15px; }
+.next-step p { font-size: 12px; max-width: 740px; }
+.next-step button { flex-shrink: 0; }
+.tutorial-link { font-size: 11px; margin-top: 9px; text-decoration: underline; text-underline-offset: 3px; }
+.form-help { font-size: 11px; color: #62765a; }
+.guide-highlight { outline: 3px solid #72985e; outline-offset: 5px; }
+#tutorial-dialog {
+  padding: 0;
+  max-width: min(900px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  border-radius: 15px;
+  background: #fffefa;
+  overflow: auto;
+}
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 30px;
+  border-bottom: 1px solid #e2e7dc;
+}
+.tutorial-header .eyebrow { font-size: 10px; display: block; margin-bottom: 8px; }
+.tutorial-header p { font-size: 12px; margin: 0; }
+.tutorial-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); }
+#tutorial-chapters { padding: 26px 14px; background: #eff3e9; }
+#tutorial-chapters button {
+  border: 0;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 12px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  color: #54644d;
+  border-radius: 7px;
+}
+#tutorial-chapters button span { font-size: 10px; color: #65795e; }
+#tutorial-chapters button[aria-current] { background: #dce7d3; color: #284b34; font-weight: 600; }
+.tutorial-lesson { padding: 30px; min-width: 0; }
+#tutorial-progress { font-size: 10px; display: block; margin-bottom: 14px; }
+#tutorial-title { font-size: 26px; line-height: 1.2; letter-spacing: -0.6px; margin-bottom: 14px; }
+#tutorial-title:focus { outline: none; }
+#tutorial-description { font-size: 14px; color: #576852; margin-bottom: 22px; }
+#tutorial-visual { margin: 0 0 22px; }
+#tutorial-visual p { font-size: 12px; margin: 8px 0 0; color: #576852; }
+.lesson-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.lesson-flow > div { padding: 16px 13px; background: #edf3e5; border: 1px solid #dae4ce; border-radius: 8px; }
+.lesson-flow span { display: block; font-size: 9px; letter-spacing: 0.7px; margin-bottom: 20px; color: #5b7750; }
+.lesson-flow b { font-size: 14px; line-height: 1.5; display: block; }
+.lesson-files { border: 1px solid #dce5d4; border-radius: 8px; overflow: hidden; }
+.lesson-files > div { padding: 14px 17px; display: grid; grid-template-columns: 140px 1fr; gap: 15px; background: #f4f7ed; }
+.lesson-files > div + div { border-top: 1px solid #dce5d4; }
+.lesson-files b { font-size: 12px; }
+.lesson-files span { font-size: 12px; line-height: 1.5; color: #586b4f; }
+.lesson-caption { font-size: 10px; line-height: 1.6; color: #64765b; }
+.lesson-mapping { background: #edf3e5; border: 1px solid #d4e1c8; padding: 17px; border-radius: 8px; }
+.lesson-mapping > div { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.lesson-mapping code { font-size: 12px; color: #36552e; overflow-wrap: anywhere; min-width: 0; }
+.lesson-terms { margin: 12px 0 0; }
+.lesson-terms > div { padding: 12px 0; border-bottom: 1px solid #e7ebdf; }
+.lesson-terms dt { font-size: 12px; font-weight: 600; line-height: 1.5; }
+.lesson-terms dd { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: #596952; }
+.lesson-queues { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lesson-queues > div { border: 1px solid #dce5d4; padding: 18px; border-radius: 8px; }
+.lesson-queues > div:last-child { background: #fff9ed; border-color: #e9ddbe; }
+.lesson-queues h3 { font-size: 14px; margin: 16px 0 8px; }
+.lesson-queues .badge { font-size: 10px; display: inline-block; }
+.lesson-checklist { list-style: none; counter-reset: lesson; padding: 0; margin: 0; }
+.lesson-checklist li { counter-increment: lesson; position: relative; padding: 10px 0 14px 40px; }
+.lesson-checklist li::before { content: counter(lesson); display: grid; place-items: center; position: absolute; left: 0; width: 26px; height: 26px; background: #e5edda; border-radius: 50%; font-size: 12px; }
+.lesson-checklist b { font-size: 13px; display: block; margin-bottom: 5px; }
+.lesson-checklist span { font-size: 12px; line-height: 1.6; display: block; color: #596952; }
+.final-terms { background: #f0f5e9; border-radius: 8px; padding: 4px 18px 14px; }
+.tutorial-takeaway { border-left: 3px solid #91aa75; padding-left: 14px; }
+.tutorial-takeaway b { font-size: 11px; color: #446337; text-transform: uppercase; letter-spacing: 0.7px; }
+.tutorial-takeaway p { font-size: 13px; color: #53664b; margin: 7px 0 0; }
+#tutorial-show { font-size: 12px; margin-top: 17px; text-decoration: underline; text-underline-offset: 3px; white-space: normal; text-align: left; }
+.tutorial-footer { border-top: 1px solid #e2e7dc; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 30px; background: #fffefa; }
+.tutorial-footer > div { display: flex; gap: 10px; }
+.tutorial-footer .text-button { font-size: 12px; }
+@media (max-width: 1100px) {
+  .tutorial-welcome { flex-wrap: wrap; }
+  .tutorial-welcome > div { min-width: 220px; }
+  .next-step { align-items: start; flex-direction: column; gap: 12px; }
+}
+@media (max-width: 700px) {
+  .topbar-right { gap: 7px; }
+  .topbar-right > .local-indicator { display: none; }
+  .help-button { font-size: 11px; padding: 7px 9px; }
+  .tutorial-welcome { padding: 18px; gap: 12px; position: relative; }
+  .tutorial-welcome .guide-symbol { display: none; }
+  .tutorial-welcome > div { min-width: 0; padding-right: 24px; flex-basis: 100%; }
+  .tutorial-welcome h2 { font-size: 15px; line-height: 1.4; }
+  .tutorial-welcome .icon-button { position: absolute; right: 12px; top: 12px; }
+  .next-step { margin: 22px 0; padding-left: 13px; }
+  #tutorial-dialog { max-width: calc(100vw - 20px); max-height: calc(100dvh - 20px); }
+  .tutorial-header { padding: 18px; }
+  .tutorial-header .eyebrow { font-size: 8px; }
+  .tutorial-layout { grid-template-columns: 1fr; }
+  #tutorial-chapters { display: flex; gap: 6px; padding: 9px 16px; }
+  #tutorial-chapters button { padding: 9px; margin: 0; display: block; flex: 1; width: auto; font-size: 0; text-align: center; }
+  #tutorial-chapters button span { font-size: 12px; }
+  .tutorial-lesson { padding: 22px 20px; }
+  #tutorial-title { font-size: 23px; }
+  #tutorial-description { font-size: 13px; }
+  .lesson-flow { grid-template-columns: 1fr; }
+  .lesson-flow > div { padding: 12px 14px; }
+  .lesson-flow span { margin-bottom: 6px; }
+  .lesson-flow b { font-size: 13px; }
+  .lesson-files > div { grid-template-columns: 1fr; gap: 5px; }
+  .lesson-queues { gap: 8px; }
+  .lesson-queues > div { padding: 12px; }
+  .lesson-queues .badge { white-space: normal; }
+  .lesson-mapping { padding: 13px; }
+  .lesson-mapping > div { gap: 7px; }
+  .lesson-mapping code { font-size: 10px; }
+  .tutorial-footer { padding: 16px; position: sticky; bottom: 0; }
+  .tutorial-footer button { font-size: 11px; }
+  .tutorial-footer .primary, .tutorial-footer .secondary { padding: 10px 12px; }
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Mortgage Capital · Reconciliation desk</title>
     <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/tutorial.css" />
   </head>
   <body>
     <aside class="sidebar">
@@ -40,6 +41,7 @@
           <strong>Reconciliation desk</strong>
         </div>
         <div class="topbar-right">
+          <button class="help-button" id="help-tour">? Help &amp; tour</button>
           <span class="local-indicator"></span> Local workspace
           <span class="separator">|</span
           ><span class="synthetic-badge">SYNTHETIC DATA</span>
@@ -59,7 +61,25 @@
         </div>
         <div id="message" role="status" aria-live="polite" hidden></div>
 
+        <section id="tutorial-welcome" class="tutorial-welcome" aria-labelledby="welcome-title" hidden>
+          <span class="guide-symbol" aria-hidden="true">?</span>
+          <div>
+            <h2 id="welcome-title">First time here? Let’s walk through it.</h2>
+            <p>Learn what the files mean, what to check, and how to read a result.</p>
+          </div>
+          <button class="primary" id="start-tour">Take the 2-minute tour →</button>
+          <button class="icon-button" id="dismiss-welcome" aria-label="Dismiss introduction">×</button>
+        </section>
+
         <section id="desk-view">
+          <section class="next-step" aria-labelledby="next-step-title">
+            <div>
+              <span class="eyebrow">YOUR NEXT STEP</span>
+              <h2 id="next-step-title">Start with the included sample</h2>
+              <p id="next-step-copy">Choose New reconciliation. The sample files are already included, so you don’t need to upload anything.</p>
+            </div>
+            <button class="secondary" id="next-step-action">Open new run →</button>
+          </section>
           <div class="run-strip">
             <div>
               <span class="small-label">CURRENT RUN</span
@@ -86,7 +106,7 @@
             </li>
             <li data-step="3">
               <span>4</span>
-              <div>Review outcomes<small>Validate & release</small></div>
+              <div>Review outcomes<small>Check & review</small></div>
             </li>
           </ol>
           <div class="metrics">
@@ -123,6 +143,7 @@
                   Check the source values and units. A model proposal is never
                   an approval.
                 </p>
+                <button class="text-button tutorial-link" data-tutorial="2">How do I check these mappings?</button>
               </div>
               <span class="badge amber-bg">Confirmation required</span>
             </div>
@@ -146,6 +167,7 @@
                   <p id="outcome-caption">
                     Engine findings and validated explanations, together.
                   </p>
+                  <button class="text-button tutorial-link" data-tutorial="3">Help me read these results</button>
                 </div>
                 <button class="text-button" id="export" disabled>
                   ↓ Export JSON
@@ -356,7 +378,7 @@
             ×
           </button>
         </div>
-        <p>Use the seeded loan book or your own synthetic source files.</p>
+        <p>For your first run, keep seed 42 and 40 loans. We supply all three sample files. Qwen runs locally and may take a few minutes; Mock gives a quick practice run with fixed explanations.</p>
         <label
           >Language model<select id="provider">
             <option value="ollama">Qwen · local Ollama</option>
@@ -377,6 +399,7 @@
               required
           /></label>
         </div>
+        <p class="form-help">Seed chooses the sample dataset. The same seed and loan count recreate the same files. Loans is the number of accounts to check.</p>
         <details class="upload-section">
           <summary>Use three synthetic CSV files instead</summary>
           <p>Uploads have no generated answer key. Maximum 512 KB per file.</p>
@@ -425,6 +448,28 @@
       </div>
       <div id="evidence-content"></div>
     </dialog>
+    <dialog id="tutorial-dialog" aria-labelledby="tutorial-title" aria-describedby="tutorial-description">
+      <header class="tutorial-header">
+        <div><span class="eyebrow">A QUICK GUIDE TO YOUR WORKSPACE</span><p>Follow along at your own pace.</p></div>
+        <button class="icon-button" id="close-tour" aria-label="Close tutorial">×</button>
+      </header>
+      <div class="tutorial-layout">
+        <nav id="tutorial-chapters" aria-label="Tutorial topics"></nav>
+        <section class="tutorial-lesson">
+          <span id="tutorial-progress" class="eyebrow"></span>
+          <h2 id="tutorial-title" tabindex="-1"></h2>
+          <p id="tutorial-description"></p>
+          <div id="tutorial-visual"></div>
+          <div class="tutorial-takeaway"><b>What to do</b><p id="tutorial-instruction"></p></div>
+          <button class="text-button" id="tutorial-show"></button>
+        </section>
+      </div>
+      <footer class="tutorial-footer">
+        <button class="text-button" id="skip-tour">Close guide</button>
+        <div><button class="secondary" id="tutorial-back">← Back</button><button class="primary" id="tutorial-next">Next →</button></div>
+      </footer>
+    </dialog>
     <script src="/static/app.js" defer></script>
+    <script src="/static/tutorial.js" defer></script>
   </body>
 </html>

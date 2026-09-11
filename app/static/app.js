@@ -259,6 +259,7 @@ function renderRun() {
         : "Recall against the generated answer key") +
       "</span>";
   renderExceptions();
+  document.dispatchEvent(new CustomEvent("uc1:run-rendered", { detail: r }));
 }
 
 function renderMapping() {
