@@ -9,29 +9,50 @@ const escape = (value) =>
       ],
   );
 const labels = {
-  MISSING_PAYMENT: "Missing payment",
-  DUPLICATE_DIRECT_DEBIT: "Duplicate direct debit",
-  RATE_MARGIN_BREACH: "Rate margin breach",
+  MISSING_PAYMENT: "Payment not recorded",
+  DUPLICATE_DIRECT_DEBIT: "Possible repeated payment",
+  RATE_MARGIN_BREACH: "Higher rate margin recorded",
+};
+const fields = {
+  loan_id: "Account number",
+  period: "Payment month",
+  scheduled_amount: "Payment due",
+  contractual_margin: "Agreed rate margin (%)",
+  posting_id: "Payment reference",
+  received_amount: "Payment recorded",
+  payment_method: "Payment method",
+  reported_amount: "Cash in lender report",
+  charged_margin: "Recorded rate margin (%)",
+};
+const fileLabels = {
+  servicing: "Payment schedule",
+  payments: "Payment record",
+  investor: "Lender report",
+};
+const fileKinds = {
+  "servicing_extract.csv": "servicing",
+  "payments_file.csv": "payments",
+  "investor_report.csv": "investor",
 };
 const statusLabels = {
-  created: "Queued",
-  ingesting: "Scanning input",
-  proposing_mapping: "Proposing mapping",
-  awaiting_confirmation: "Awaiting your confirmation",
-  queued: "Mapping confirmed · queued",
-  reconciling: "Reconciling",
-  explaining: "Validating explanations",
-  complete: "Run complete",
-  input_blocked: "Input held",
-  error: "Run failed",
+  created: "Getting ready",
+  ingesting: "Reading files",
+  proposing_mapping: "Reading file labels",
+  awaiting_confirmation: "Check the file labels",
+  queued: "Ready to compare",
+  reconciling: "Comparing payments",
+  explaining: "Preparing explanations",
+  complete: "Check complete",
+  input_blocked: "Files need attention",
+  error: "Check stopped",
 };
 const validatorLabels = {
-  faithfulness: "Grounded values & IDs",
-  answer_relevance: "Answer relevance",
-  classification_in_set: "Allowed classification",
-  plan_coherence: "Execution order",
-  injection_scan: "Injection scan",
-  pii_scan: "PII scan",
+  faithfulness: "Numbers and account references",
+  answer_relevance: "Relevant explanation",
+  classification_in_set: "Recognised issue type",
+  plan_coherence: "Steps in the right order",
+  injection_scan: "Input instruction scan",
+  pii_scan: "Personal information scan",
 };
 const activeStatuses = new Set([
   "created",
@@ -44,11 +65,26 @@ const activeStatuses = new Set([
 let current = null,
   analytics = null,
   health = null,
-  queue = "pass",
+  queue = "all",
   mappingRendered = null,
   pollTimer = null,
-  pollGeneration = 0;
+  pollGeneration = 0,
+  selectedAccount = "",
+  examples = [];
 
+// Format exact server decimal strings. Floating point is used only for visual
+// bar proportions, never for sums or the values displayed to the customer.
+const money = (value) =>
+  value == null ? "—" : String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function month(value) {
+  return /^\d{4}-\d{2}$/.test(value || "")
+    ? new Date(value + "-01T00:00:00Z").toLocaleDateString(undefined, {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    : "Month not available";
+}
 async function api(path, options = {}) {
   const response = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -59,7 +95,7 @@ async function api(path, options = {}) {
     throw new Error(
       typeof data.detail === "string"
         ? data.detail
-        : "The request is invalid. Check the supplied fields.",
+        : "Check the supplied fields and try again.",
     );
   return data;
 }
@@ -70,13 +106,19 @@ function notice(message) {
   $("message").hidden = !message;
 }
 function switchView(view) {
-  for (const name of ["desk", "audit", "settings"])
+  for (const name of ["desk", "examples", "audit", "settings"])
     $(name + "-view").hidden = name !== view;
   document
     .querySelectorAll(".nav-item")
     .forEach((button) =>
       button.classList.toggle("active", button.dataset.view === view),
     );
+  $("view-name").textContent = {
+    desk: "Payment overview",
+    examples: "Example files",
+    audit: "Check details",
+    settings: "Connections",
+  }[view];
   if (view === "audit") renderAnalytics();
 }
 document
@@ -84,33 +126,62 @@ document
   .forEach((button) =>
     button.addEventListener("click", () => switchView(button.dataset.view)),
   );
-function openRun() {
+
+function sourceMode() {
+  return document.querySelector('[name="source"]:checked').value;
+}
+function renderSourceOptions() {
+  const upload = sourceMode() === "upload";
+  $("upload-source").hidden = !upload;
+  $("example-source").hidden = upload;
+  const generated = !upload && !$("example-select").value;
+  $("generated-options").hidden = !generated;
+  $("seed").disabled = $("n-loans").disabled = !generated;
+  const example = examples.find(
+    (item) => item.id === $("example-select").value,
+  );
+  $("example-description").textContent =
+    example?.description ||
+    "Includes missing payments, repeated debits and differences in rate margins.";
+  $("provider-help").textContent =
+    $("provider").value === "mock"
+      ? "Quick practice uses fixed explanations. The same payment calculations and file checks still run."
+      : "AI explanations may take a few minutes. You will check the file labels before payment comparisons begin.";
+}
+function openRun(exampleId = "") {
+  $("run-form").reset();
+  $("provider").value = health?.default_provider || "mock";
+  $("example-select").value = typeof exampleId === "string" ? exampleId : "";
+  $("run-form-error").hidden = true;
+  renderSourceOptions();
   $("run-dialog").showModal();
 }
-$("new-run").addEventListener("click", openRun);
-$("empty-start").addEventListener("click", openRun);
+$("new-run").addEventListener("click", () => openRun());
+$("empty-start").addEventListener("click", () => switchView("examples"));
 $("close-run").addEventListener("click", () => $("run-dialog").close());
 $("close-evidence").addEventListener("click", () =>
   $("evidence-dialog").close(),
 );
+document
+  .querySelectorAll('[name="source"]')
+  .forEach((radio) => radio.addEventListener("change", renderSourceOptions));
+$("example-select").addEventListener("change", renderSourceOptions);
+$("provider").addEventListener("change", renderSourceOptions);
 $("run-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const button = $("start-run");
-  button.disabled = true;
+  $("start-run").disabled = true;
+  $("run-form-error").hidden = true;
   try {
-    const body = {
-      seed: Number($("seed").value),
-      n_loans: Number($("n-loans").value),
-      provider: $("provider").value,
-      synthetic_data: true,
-    };
-    const files = ["servicing", "payments", "investor"].map((kind) => [
-      kind,
-      $("upload-" + kind).files[0],
-    ]);
-    if (files.some(([, file]) => file)) {
+    const body = { provider: $("provider").value, synthetic_data: true };
+    if (sourceMode() === "upload") {
+      const files = ["servicing", "payments", "investor"].map((kind) => [
+        kind,
+        $("upload-" + kind).files[0],
+      ]);
       if (files.some(([, file]) => !file))
-        throw new Error("Choose all three synthetic CSV files.");
+        throw new Error(
+          "Add all three CSV files: the payment schedule, payment record and lender report.",
+        );
       if (files.some(([, file]) => file.size > 512000))
         throw new Error("Each CSV must be at most 512 KB.");
       body.files = Object.fromEntries(
@@ -118,23 +189,54 @@ $("run-form").addEventListener("submit", async (event) => {
           files.map(async ([kind, file]) => [kind, await file.text()]),
         ),
       );
+    } else if ($("example-select").value) {
+      body.files = (
+        await api("/examples/" + encodeURIComponent($("example-select").value))
+      ).files;
+    } else {
+      body.seed = Number($("seed").value);
+      body.n_loans = Number($("n-loans").value);
     }
     notice("");
-    current = await post("/runs?background=true", body);
+    const started = await post("/runs?background=true", body);
     mappingRendered = null;
-    queue = "pass";
+    queue = "all";
+    selectedAccount = "";
     $("search").value = "";
     $("run-dialog").close();
     switchView("desk");
-    await selectRun(current.run_id);
+    await selectRun(started.run_id);
   } catch (error) {
-    notice(error.message);
-    $("run-dialog").close();
+    $("run-form-error").textContent = error.message;
+    $("run-form-error").hidden = false;
   } finally {
-    button.disabled = false;
+    $("start-run").disabled = false;
   }
 });
 
+function renderExamples() {
+  $("example-select").innerHTML =
+    '<option value="">Monthly sample · 40 accounts</option>' +
+    examples
+      .map(
+        (entry) =>
+          `<option value="${escape(entry.id)}">${escape(entry.title)}</option>`,
+      )
+      .join("");
+  $("example-cards").innerHTML =
+    examples
+      .map(
+        (entry, index) =>
+          `<article class="panel example-card"><span class="eyebrow">EXAMPLE ${String(index + 1).padStart(2, "0")} · 3 CSV FILES</span><h3>${escape(entry.title)}</h3><p>${escape(entry.description)}</p><p class="example-note">${escape(entry.expected_note)}</p><div class="example-actions"><button class="primary" data-example="${escape(entry.id)}">Use these files →</button><a href="/examples/${encodeURIComponent(entry.id)}/download" download>Download CSV pack ↓</a></div></article>`,
+      )
+      .join("") ||
+    '<p class="chart-empty">Example packs are not available yet. The monthly sample is available in Check payment files.</p>';
+  $("example-cards")
+    .querySelectorAll("[data-example]")
+    .forEach((button) =>
+      button.addEventListener("click", () => openRun(button.dataset.example)),
+    );
+}
 async function refreshRecent() {
   const runs = await api("/runs");
   $("run-count").textContent = runs.length;
@@ -142,10 +244,10 @@ async function refreshRecent() {
     ? runs
         .map(
           (run) =>
-            `<button class="recent-run ${current?.run_id === run.run_id ? "active" : ""}" data-run="${escape(run.run_id)}"><span>▤</span><span>${escape(run.run_id.slice(0, 8))}<small>${escape(statusLabels[run.status] || run.status)} · ${escape(run.provider)}</small></span></button>`,
+            `<button class="recent-run ${current?.run_id === run.run_id ? "active" : ""}" data-run="${escape(run.run_id)}"><span aria-hidden="true">◴</span><span>Check ${escape(run.run_id.slice(0, 6))}<small>${escape(statusLabels[run.status] || run.status)}</small></span></button>`,
         )
         .join("")
-    : "<p>No runs yet</p>";
+    : "<p>Your checks will appear here.</p>";
   $("recent-runs")
     .querySelectorAll("[data-run]")
     .forEach((button) =>
@@ -159,6 +261,11 @@ async function refreshRecent() {
 async function selectRun(id) {
   clearTimeout(pollTimer);
   const generation = ++pollGeneration;
+  if (current?.run_id !== id) {
+    selectedAccount = "";
+    $("search").value = "";
+    queue = "all";
+  }
   async function refresh() {
     try {
       const [run, stats] = await Promise.all([
@@ -168,7 +275,11 @@ async function selectRun(id) {
       if (generation !== pollGeneration) return;
       current = run;
       analytics = stats;
-      localStorage.setItem("uc1-selected-run", id);
+      try {
+        localStorage.setItem("uc1-selected-run", id);
+      } catch (_) {
+        /* Optional browser preference. */
+      }
       renderRun();
       renderAnalytics();
       await refreshRecent();
@@ -179,20 +290,29 @@ async function selectRun(id) {
   }
   await refresh();
 }
-
 function renderRun() {
   if (!current) return;
-  const r = current,
-    afterEngine = ["explaining", "complete"].includes(r.status);
-  $("run-title").textContent = "Run " + r.run_id.slice(0, 8);
+  const r = current;
+  $("run-title").textContent = "Check " + r.run_id.slice(0, 8);
   $("run-subtitle").textContent =
-    `${r.provider === "ollama" ? "Local Qwen" : r.provider === "mock" ? "Mock templates" : "OpenAI"} · ${new Date(r.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}`;
+    (r.provider === "ollama"
+      ? "Local AI explanations"
+      : r.provider === "mock"
+        ? "Practice mode · fixed explanations"
+        : "OpenAI explanations") +
+    " · " +
+    new Date(r.created_at).toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   $("status-badge").textContent = statusLabels[r.status] || r.status;
   $("status-badge").className =
     "badge " +
     (r.status === "complete"
       ? "green-bg"
-      : ["input_blocked", "error"].includes(r.status)
+      : ["error", "input_blocked"].includes(r.status)
         ? "red-bg"
         : "amber-bg");
   const stage = [
@@ -211,68 +331,194 @@ function renderRun() {
     item.classList.toggle("active", index === stage);
     item.classList.toggle("done", index < stage || r.status === "complete");
   });
-  $("metric-loans").textContent = r.files.servicing?.row_count ?? "—";
-  $("metric-found").textContent = afterEngine
-    ? r.engine_exceptions.length
-    : "—";
-  $("metric-pass").textContent = afterEngine ? r.remediation_log.length : "—";
-  $("metric-held").textContent = afterEngine ? r.held_for_review.length : "—";
-  $("pass-tab-count").textContent = r.remediation_log.length;
-  $("held-tab-count").textContent = r.held_for_review.length;
-  $("export").disabled = r.status !== "complete";
-  $("outcome-caption").textContent =
-    r.status === "explaining"
-      ? `Validating exception ${r.progress.completed} of ${r.progress.total}. Engine findings are already available.`
-      : "Engine findings and validated explanations, together.";
   $("mapping-panel").hidden = r.status !== "awaiting_confirmation";
   if (r.status === "awaiting_confirmation" && mappingRendered !== r.run_id)
     renderMapping();
-  if (r.error) notice(r.error);
+  $("export").disabled = r.status !== "complete";
+  if (r.error)
+    notice(
+      "This check stopped. Review the file labels and values. More detail is available in the local audit.",
+    );
   else if (r.status === "input_blocked")
     notice(
-      "Input scans blocked this run before any model call. " +
-        Object.values(r.ingest_findings).flat().join(" · "),
+      "The input checks found content needing attention. Use invented sample accounts and check the files before trying again.",
     );
   else if (r.mapping_issues.length)
-    notice("Detection coverage is reduced: " + r.mapping_issues.join(" · "));
+    notice(
+      "Some file columns were not matched, so parts of the payment check could not run. Start a new check and confirm all required labels before relying on these results.",
+    );
+  else notice("");
   $("model-label").textContent =
     r.provider === "mock"
-      ? "Mock templates · no model judgment"
-      : r.provider === "ollama"
-        ? "Qwen · local inference"
-        : "OpenAI · configured provider";
+      ? "Practice mode · fixed explanations"
+      : "Selected explanation service";
   $("model-note").textContent = r.model;
-  const means = analytics?.validator_means || {};
-  $("validation-pulse").innerHTML = Object.keys(means).length
-    ? Object.entries(validatorLabels)
-        .map(
-          ([key, label]) =>
-            `<div class="pulse-row"><div><span>${escape(label)}</span><span>${Math.round((means[key] ?? 0) * 100)}%</span></div><div class="bar"><span class="${means[key] < 1 ? "warn" : ""}" style="width:${(means[key] ?? 0) * 100}%"></span></div></div>`,
-        )
-        .join("")
-    : '<p class="muted">Scores appear after the first exception is validated.</p>';
-  $("ground-truth").innerHTML = r.score
-    ? `<strong>${Math.round(r.score.recall * 100)}<small>% recall</small></strong><span>${r.score.true_positives} true positives · ${r.score.false_positives} false positives · ${r.score.false_negatives} missed</span>`
-    : "<strong>—</strong><span>" +
-      (afterEngine
-        ? "No answer key supplied for uploaded files."
-        : "Recall against the generated answer key") +
-      "</span>";
+  renderPaymentSummary();
   renderExceptions();
   document.dispatchEvent(new CustomEvent("uc1:run-rendered", { detail: r }));
 }
+
+function displaySummary() {
+  const s = current?.payment_summary;
+  if (!s?.available) return null;
+  if (!selectedAccount) return s;
+  const account = s.accounts.find((item) => item.loan_id === selectedAccount);
+  if (!account) return s;
+  return {
+    ...account,
+    available: true,
+    accounts: [account],
+    account_count: 1,
+    accounts_with_findings: account.issue_types.length ? 1 : 0,
+    cash_counts: {
+      matched: account.cash_status === "matched" ? 1 : 0,
+      under: account.cash_status === "under" ? 1 : 0,
+      over: account.cash_status === "over" ? 1 : 0,
+    },
+    margin_checked_accounts: account.charged_margin === null ? 0 : 1,
+  };
+}
+function renderPaymentSummary() {
+  const full = current?.payment_summary,
+    s = displaySummary();
+  const accounts = full?.accounts || [];
+  const options =
+    '<option value="">All sample accounts' +
+    (accounts.length ? ` (${accounts.length})` : "") +
+    "</option>" +
+    accounts
+      .map(
+        (account) =>
+          `<option value="${escape(account.loan_id)}">${escape(account.loan_id)}</option>`,
+      )
+      .join("");
+  if ($("account-select").innerHTML !== options)
+    $("account-select").innerHTML = options;
+  $("account-select").value = selectedAccount || "";
+  $("account-select").disabled = !accounts.length;
+  $("summary-unavailable").hidden = Boolean(s);
+  if (!s) {
+    $("summary-unavailable").textContent =
+      full?.reason ||
+      (current?.status === "complete"
+        ? "This older check has no payment summary. Start a new check to see the payment charts."
+        : "Payment figures appear after you confirm the file labels.");
+    for (const id of [
+      "metric-due",
+      "metric-paid",
+      "metric-shortfall",
+      "metric-accounts",
+      "chart-shortfall",
+      "chart-excess",
+      "donut-total",
+    ])
+      $(id).textContent = "—";
+    $("month-label").textContent = "Payment month not confirmed";
+    $("payment-bars").innerHTML =
+      '<p class="chart-empty">No confirmed payment figures to display.</p>';
+    $("payment-donut").style.background = "#edf1e7";
+    $("payment-donut").setAttribute(
+      "aria-label",
+      "No confirmed payment figures to display",
+    );
+    $("payment-legend").innerHTML =
+      '<p class="muted">Waiting for confirmed figures.</p>';
+    $("account-table").innerHTML =
+      '<p class="chart-empty">Account amounts are not available for this check.</p>';
+    $("account-table-count").textContent = "";
+    return;
+  }
+  $("month-label").textContent = s.period ? month(s.period) : "No account rows";
+  if (s.margin_checked_accounts < s.account_count) {
+    $("summary-unavailable").hidden = false;
+    $("summary-unavailable").textContent =
+      `Rate margins could be compared for ${s.margin_checked_accounts} of ${s.account_count} accounts shown. Some accounts have no matching row in the lender report.`;
+  }
+  $("metric-due").textContent = money(s.scheduled);
+  $("metric-paid").textContent = money(s.received);
+  $("metric-shortfall").textContent = money(s.shortfall);
+  $("metric-accounts").textContent = s.accounts_with_findings;
+  $("metric-accounts-note").textContent =
+    `Of ${s.account_count} ${s.account_count === 1 ? "account" : "accounts"} shown · three checks`;
+  $("chart-shortfall").textContent = money(s.shortfall);
+  $("chart-excess").textContent = money(s.excess);
+  const scale = Math.max(
+    Math.abs(Number(s.scheduled)),
+    Math.abs(Number(s.received)),
+    1,
+  );
+  const difference = Number(s.net_difference);
+  const differenceText =
+    difference === 0
+      ? "The total received matches the total due."
+      : `${money(String(s.net_difference).replace(/^-/, ""))} ${difference < 0 ? "less" : "more"} recorded than due${selectedAccount ? " on this account" : " overall"}.`;
+  $("payment-bars").innerHTML =
+    [
+      { label: "Payment due", value: s.scheduled, css: "due" },
+      { label: "Payment recorded", value: s.received, css: "paid" },
+    ]
+      .map(
+        (bar) =>
+          `<div class="payment-bar-row ${bar.css}"><div><span>${bar.label}</span><b>${money(bar.value)}</b></div><div class="payment-bar-track" role="img" aria-label="${bar.label}: ${escape(bar.value)}"><span style="width:${(Math.abs(Number(bar.value)) / scale) * 100}%"></span></div></div>`,
+      )
+      .join("") +
+    `<p class="chart-difference">${differenceText}${Number(s.received) < 0 ? " Net payments are negative because of reversals." : ""}</p>`;
+  const colors = ["#7ea989", "#cda45e", "#9a8ab8"],
+    names = ["Matches amount due", "Less received", "More received"],
+    values = [s.cash_counts.matched, s.cash_counts.under, s.cash_counts.over];
+  const first = s.account_count ? (values[0] / s.account_count) * 100 : 0,
+    second = s.account_count
+      ? ((values[0] + values[1]) / s.account_count) * 100
+      : 0;
+  $("payment-donut").style.background = s.account_count
+    ? `conic-gradient(${colors[0]} 0% ${first}%,${colors[1]} ${first}% ${second}%,${colors[2]} ${second}% 100%)`
+    : "#edf1e7";
+  $("payment-donut").setAttribute(
+    "aria-label",
+    values
+      .map((value, index) => `${value} accounts: ${names[index].toLowerCase()}`)
+      .join("; "),
+  );
+  $("donut-total").textContent = s.account_count;
+  $("payment-legend").innerHTML = values
+    .map(
+      (value, index) =>
+        `<div class="legend-item"><i style="background:${colors[index]}"></i><span>${names[index]}</span><b>${value}</b></div>`,
+    )
+    .join("");
+  $("account-table-count").textContent = `(${s.accounts.length})`;
+  $("account-table").innerHTML =
+    `<table><thead><tr><th>Sample account</th><th class="num">Due</th><th class="num">Received</th><th>Payment comparison</th></tr></thead><tbody>${s.accounts.map((account) => `<tr><td><button class="text-button" data-account="${escape(account.loan_id)}">${escape(account.loan_id)}</button></td><td class="num">${money(account.scheduled)}</td><td class="num">${money(account.received)}</td><td><span class="cash-label ${account.cash_status}">${{ matched: "Amount matches", under: "Less received", over: "More received" }[account.cash_status]}</span></td></tr>`).join("")}</tbody></table>`;
+  $("account-table")
+    .querySelectorAll("[data-account]")
+    .forEach((button) =>
+      button.addEventListener("click", () => {
+        selectedAccount = button.dataset.account;
+        $("search").value = "";
+        renderPaymentSummary();
+        renderExceptions();
+        $("account-select").focus();
+      }),
+    );
+}
+$("account-select").addEventListener("change", () => {
+  selectedAccount = $("account-select").value;
+  $("search").value = "";
+  renderPaymentSummary();
+  renderExceptions();
+});
 
 function renderMapping() {
   mappingRendered = current.run_id;
   $("mapping-reviewed").checked = false;
   $("confirm").disabled = true;
-  $("mapping-errors").textContent = current.mapping_errors
-    .map((error) => error.file_kind + ": " + error.message)
-    .join(" · ");
+  $("mapping-errors").textContent = current.mapping_errors.length
+    ? "Some labels could not be suggested. Choose their meanings in the dropdowns below."
+    : "";
   $("mapping-tables").innerHTML = Object.entries(current.files)
     .map(
       ([kind, file]) =>
-        `<section class="mapping-table"><h3>${escape(file.filename)} <small>${file.row_count} records</small></h3><div class="mapping-grid heading"><span>SOURCE COLUMN</span><span>SAMPLE VALUES</span><span>MAPS TO</span></div>${file.headers.map((raw) => `<div class="mapping-grid"><code>${escape(raw)}</code><span class="samples">${escape(file.preview.map((row) => row[raw]).join(" · "))}</span><select aria-label="${escape(kind + " " + raw + " mapping")}" data-kind="${escape(kind)}" data-raw="${escape(raw)}"><option value="">Leave unmapped</option>${health.canonical_fields[kind].map((field) => `<option value="${escape(field)}" ${current.proposed_mapping[kind]?.[raw] === field ? "selected" : ""}>${escape(field)}</option>`).join("")}</select></div>`).join("")}</section>`,
+        `<section class="mapping-table"><h3>${fileLabels[kind]}<small>${escape(file.filename)} · ${file.row_count} rows</small></h3><div class="mapping-grid heading"><span>LABEL IN YOUR FILE</span><span>EXAMPLE VALUES</span><span>THIS MEANS</span></div>${file.headers.map((raw) => `<div class="mapping-grid"><code>${escape(raw)}</code><span class="samples">${escape(file.preview.map((row) => row[raw]).join(" · "))}</span><select aria-label="${escape(kind + " " + raw + " mapping")}" data-kind="${kind}" data-raw="${escape(raw)}"><option value="">Choose a meaning…</option>${health.canonical_fields[kind].map((field) => `<option value="${field}" ${current.proposed_mapping[kind]?.[raw] === field ? "selected" : ""}>${escape(fields[field] || field)}</option>`).join("")}</select></div>`).join("")}</section>`,
     )
     .join("");
   $("mapping-tables")
@@ -314,129 +560,216 @@ document.querySelectorAll("[data-queue]").forEach((button) =>
   }),
 );
 $("search").addEventListener("input", renderExceptions);
-
+function explanationFor(id) {
+  return [
+    ...(current?.remediation_log || []),
+    ...(current?.held_for_review || []),
+  ].find((item) => item.ex_id === id);
+}
+function accountFor(id) {
+  return current?.payment_summary?.accounts?.find(
+    (account) => account.loan_id === id,
+  );
+}
+function describe(item) {
+  const a = accountFor(item.loan_id),
+    type = item.ex_type;
+  if (!a)
+    return {
+      title: labels[type],
+      body: "The records triggered this check. Some payment figures are unavailable; review the original file details.",
+      chips: [],
+      next: "Check the file labels and original records before drawing a conclusion.",
+    };
+  if (type === "MISSING_PAYMENT")
+    return {
+      title: a.posting_count
+        ? "Payments were recorded, but the net amount is zero."
+        : "No payment is recorded for this month.",
+      body: `${money(a.scheduled)} was due for ${month(a.period)}. ${a.posting_count ? "The payment entries add up to 0.00 after reversals." : "There is no payment entry for this account in the supplied file."}`,
+      chips: [`Due ${money(a.scheduled)}`, `Recorded ${money(a.received)}`],
+      next: "Compare the payment record with the schedule for this account and month. The supplied files may not reflect later payments.",
+    };
+  if (type === "DUPLICATE_DIRECT_DEBIT")
+    return {
+      title: "A payment may have been collected more than once.",
+      body: `${a.direct_debit_count} direct-debit entries total ${money(a.direct_debit_total)}, against a scheduled payment of ${money(a.scheduled)}. This matches the repeated-payment pattern.`,
+      chips: [
+        `Due ${money(a.scheduled)}`,
+        `Direct debits ${money(a.direct_debit_total)}`,
+      ],
+      next: "Check the payment references and whether each collection was intended. These files cannot establish whether the extra debit was authorised.",
+    };
+  return {
+    title: "The recorded rate margin is higher than agreed.",
+    body: `The lender report shows ${a.charged_margin}% while the payment schedule shows an agreed margin of ${a.contractual_margin}%.`,
+    chips: [`Agreed ${a.contractual_margin}%`, `Recorded ${a.charged_margin}%`],
+    next: "Compare the margin in the lender report with the agreement. This margin is one part of a rate, not the full interest rate or APR. The files do not show a monetary overcharge.",
+  };
+}
 function renderExceptions() {
   document.querySelectorAll("[data-queue]").forEach((button) => {
     button.classList.toggle("active", button.dataset.queue === queue);
     button.setAttribute("aria-selected", button.dataset.queue === queue);
   });
   if (!current) return;
-  const r = current,
-    all = queue === "pass" ? r.remediation_log : r.held_for_review;
-  const entries = all.filter((item) =>
-    item.loan_id.toLowerCase().includes($("search").value.toLowerCase()),
+  const r = current;
+  const scoped = r.engine_exceptions.filter(
+    (item) => !selectedAccount || item.loan_id === selectedAccount,
   );
+  $("all-tab-count").textContent = scoped.length;
+  $("payments-tab-count").textContent = scoped.filter(
+    (item) => item.ex_type !== "RATE_MARGIN_BREACH",
+  ).length;
+  $("rates-tab-count").textContent = scoped.filter(
+    (item) => item.ex_type === "RATE_MARGIN_BREACH",
+  ).length;
+  const entries = scoped.filter(
+    (item) =>
+      (queue === "all" ||
+        (queue === "rates") === (item.ex_type === "RATE_MARGIN_BREACH")) &&
+      item.loan_id.toLowerCase().includes($("search").value.toLowerCase()),
+  );
+  $("outcome-caption").textContent =
+    r.status === "explaining"
+      ? `The figures are ready. Extra explanations: ${r.progress.completed} of ${r.progress.total} prepared.`
+      : scoped.length
+        ? `${scoped.length} ${scoped.length === 1 ? "item" : "items"} across ${new Set(scoped.map((item) => item.loan_id)).size} ${selectedAccount ? "selected account" : "sample accounts"}. Select an item to see the figures behind it.`
+        : "We check for unrecorded payments, repeated debit patterns and higher rate margins.";
   if (entries.length) {
     $("exception-list").innerHTML = entries
-      .map(
-        (item) =>
-          `<article class="exception-row"><div class="exception-top"><strong>${escape(item.loan_id)}</strong><span class="type-tag">${escape(labels[item.type] || item.type)}</span><span class="badge ${item.verdict === "PASS" ? "green-bg" : "amber-bg"}">${item.verdict === "PASS" ? "✓ Passed" : "Held"}</span></div><p>${escape(item.engine_detail)}</p>${
-            item.verdict === "BLOCK"
-              ? '<p class="held-note">AI explanation withheld. ' +
-                escape(
-                  Object.keys(item.findings)
-                    .map((name) => name.replaceAll("_", " "))
-                    .join(" · "),
-                ) +
-                ".</p>"
-              : ""
-          }<div class="exception-bottom"><span><span>${escape(item.owner)}</span><span>·</span><span>${escape(item.priority)} priority</span></span><button class="text-button evidence-button" data-ex="${escape(item.ex_id)}">${item.evidence.length} source rows ↗</button></div></article>`,
-      )
+      .map((item) => {
+        const info = describe(item);
+        return `<article class="exception-row"><span class="issue-icon ${item.ex_type === "RATE_MARGIN_BREACH" ? "rate" : ""}" aria-hidden="true">${item.ex_type === "RATE_MARGIN_BREACH" ? "%" : item.ex_type === "MISSING_PAYMENT" ? "−" : "↺"}</span><div class="issue-main"><span class="issue-kicker">SAMPLE ACCOUNT ${escape(item.loan_id)}</span><h3>${escape(info.title)}</h3><p>${escape(info.body)}</p><div class="issue-chips">${info.chips.map((chip) => `<span>${escape(chip)}</span>`).join("")}</div></div><button class="secondary evidence-button" data-ex="${escape(item.ex_id)}">See details →</button></article>`;
+      })
       .join("");
     $("exception-list")
       .querySelectorAll("[data-ex]")
       .forEach((button) =>
         button.addEventListener("click", () => showEvidence(button.dataset.ex)),
       );
-  } else if (all.length)
-    $("exception-list").innerHTML =
-      '<div class="filter-empty">No loans match your search.</div>';
-  else {
+  } else {
     const busy = activeStatuses.has(r.status);
-    let title = "No explanations in this queue",
-      description =
-        queue === "held"
-          ? "No exceptions have been held for review."
-          : "Passed explanations appear here once validation completes.";
+    let title = "No items in this view",
+      copy = "Try another account or clear the search to see other results.";
     if (r.status === "awaiting_confirmation") {
-      title = "Your mapping review comes first";
-      description =
-        "The graph is paused. Confirm the column mapping above to start deterministic reconciliation.";
+      title = "Check the file labels first";
+      copy =
+        "Confirm that each column has the right meaning above. Payment comparisons start only after your confirmation.";
     } else if (busy) {
-      title =
-        r.status === "explaining"
-          ? "Checking every explanation"
-          : "Preparing your reconciliation";
-      description =
-        r.status === "explaining"
-          ? `${r.engine_exceptions.length} engine findings retained. ${r.progress.completed} of ${r.progress.total} explanations processed.`
-          : "Input scans and mapping proposals are recorded as the run progresses.";
-    } else if (r.status === "input_blocked") {
-      title = "Source files need review";
-      description =
-        "An input scan failed. No model has consumed the data and reconciliation has not started.";
-    } else if (r.status === "error") {
-      title = "This run needs attention";
-      description = r.error;
-    } else if (r.status === "complete" && r.engine_exceptions.length === 0) {
-      title = "No configured exception patterns found";
-      description = r.mapping_issues.length
-        ? "Some fields were not mapped. Review the coverage warnings before interpreting this result."
-        : "The engine found none of the three supported patterns. This is not a completeness guarantee.";
+      title = "Your files are being checked";
+      copy =
+        "This page updates automatically. Local AI may take a few minutes to read headings and prepare explanations.";
+    } else if (["input_blocked", "error"].includes(r.status)) {
+      title = "These files need a closer look";
+      copy =
+        "See the message above. The check could not finish with the supplied files.";
+    } else if (
+      r.status === "complete" &&
+      !scoped.length &&
+      !$("search").value
+    ) {
+      title = "No items found by these three checks";
+      copy = r.mapping_issues.length
+        ? "Some file labels were not confirmed, so checks were skipped. This is not an all-clear."
+        : "No unrecorded payment, repeated debit pattern or higher rate margin was found. Other differences can still exist; compare the payment amounts above.";
     }
     $("exception-list").innerHTML =
-      `<div class="empty-state"><div class="${busy ? "busy-dot" : "empty-icon"}">${busy ? "" : "✓"}</div><h3>${escape(title)}</h3><p>${escape(description)}</p></div>`;
+      `<div class="empty-state"><div class="${busy ? "busy-dot" : "empty-icon"}">${busy ? "" : "✓"}</div><h3>${escape(title)}</h3><p>${escape(copy)}</p></div>`;
   }
 }
 function showEvidence(exId) {
-  const item = [...current.remediation_log, ...current.held_for_review].find(
-    (row) => row.ex_id === exId,
-  );
+  const item = current.engine_exceptions.find((entry) => entry.ex_id === exId);
   if (!item) return;
-  $("evidence-title").textContent = item.loan_id + " · " + labels[item.type];
+  const info = describe(item),
+    account = accountFor(item.loan_id),
+    explanation = explanationFor(exId);
+  $("evidence-title").textContent = labels[item.ex_type];
+  const factPairs = !account
+    ? []
+    : item.ex_type === "RATE_MARGIN_BREACH"
+      ? [
+          ["Agreed margin", account.contractual_margin + "%"],
+          ["Recorded margin", account.charged_margin + "%"],
+        ]
+      : [
+          ["Payment due", money(account.scheduled)],
+          ["Net payment recorded", money(account.received)],
+          ["Payment entries", account.posting_count],
+        ];
+  const extra =
+    explanation?.verdict === "PASS"
+      ? `<p>${escape(explanation.rationale)}</p><p class="form-help">This extra explanation passed the configured checks. It still needs your judgment.</p>`
+      : `<p class="held-note">${explanation ? "An extra AI explanation is not available because it did not pass all checks. The payment figures and original records above remain available." : "An extra explanation is still being prepared. You can already inspect the payment figures."}</p>`;
   $("evidence-content").innerHTML =
-    `<div class="engine-fact"><b>Deterministic finding</b><br>${escape(item.engine_detail)}</div>${item.rationale ? "<h3>AI explanation · passed configured checks</h3><p>" + escape(item.rationale) + "</p>" : '<p class="held-note">AI explanation withheld. Review the engine facts and original source records below.</p>'}<h3>Validation results</h3>${Object.entries(
-      item.scores,
-    )
-      .map(
-        ([name, score]) =>
-          `<div class="score-detail"><span>${escape(name.replaceAll("_", " "))}</span><span>${Math.round(score * 100)}%</span></div>`,
-      )
-      .join("")}${Object.values(item.findings)
-      .flat()
-      .map((finding) => '<p class="finding">' + escape(finding) + "</p>")
+    `<p class="issue-kicker">${escape(item.loan_id)}${account ? " · " + month(account.period) : ""}</p><p class="detail-intro">${escape(info.body)}</p><div class="detail-facts">${factPairs.map(([label, value]) => `<div><span>${label}</span><strong>${escape(value)}</strong></div>`).join("")}</div><div class="detail-next"><h3>What to look at</h3><p>${escape(info.next)}</p></div><h3>Where these figures came from</h3>${account?.posting_count === 0 ? '<p class="form-help">No payment row exists for this account in the supplied payment file.</p>' : ""}${item.evidence
+      .map((row) => {
+        const filename = row.file.split("/").pop(),
+          kind = fileKinds[filename];
+        return `<section class="file-evidence"><h3>${escape(fileLabels[kind] || filename)}</h3><small>${escape(filename)} · row ${row.row_number}</small><dl class="source-fields">${Object.entries(
+          row.raw,
+        )
+          .map(
+            ([raw, value]) =>
+              `<div><dt>${escape(fields[current.confirmed_mapping?.[kind]?.[raw]] || raw)}</dt><dd>${escape(value)}</dd></div>`,
+          )
+          .join("")}</dl></section>`;
+      })
       .join(
         "",
-      )}<h3>Verbatim source records</h3>${item.evidence.map((row) => `<h3>${escape(row.file.split("/").pop())} · line ${row.row_number}</h3><pre>${escape(row.raw_text)}</pre><details><summary class="muted">Column names and values</summary><pre>${escape(JSON.stringify(row.raw, null, 2))}</pre></details>`).join("")}`;
+      )}<details class="detail-disclosure"><summary>Extra explanation</summary>${extra}</details><details class="detail-disclosure"><summary>Original rows &amp; technical checks</summary><div class="engine-fact">${escape(item.detail)}</div>${
+      explanation
+        ? Object.entries(explanation.scores)
+            .map(
+              ([name, score]) =>
+                `<div class="score-detail"><span>${escape(name.replaceAll("_", " "))}</span><span>${Math.round(score * 100)}%</span></div>`,
+            )
+            .join("") +
+          Object.values(explanation.findings)
+            .flat()
+            .map((finding) => `<p class="finding">${escape(finding)}</p>`)
+            .join("")
+        : ""
+    }${item.evidence.map((row) => `<h3>${escape(row.file.split("/").pop())} · line ${row.row_number}</h3><pre>${escape(row.raw_text)}</pre>`).join("")}</details>`;
   $("evidence-dialog").showModal();
 }
 function renderAnalytics() {
-  if (!analytics) return;
-  const a = analytics;
+  if (!analytics || !current) return;
+  const a = analytics,
+    means = a.validator_means || {};
   $("trace-label").textContent =
     {
-      local: "Local JSONL audit",
+      local: "Local audit",
       live: "Direct HTTP + local audit",
       "sdk-local": "SDK → local capture",
       "sdk-live": "Disseqt SDK + local audit",
     }[current.trace_mode] || "Trace transport";
-  const duration = a.active_duration_ms / 1000;
+  $("validation-pulse").innerHTML = Object.keys(means).length
+    ? Object.entries(validatorLabels)
+        .map(
+          ([key, label]) =>
+            `<div class="pulse-row"><div><span>${label}</span><span>${Math.round((means[key] ?? 0) * 100)}%</span></div><div class="bar"><span class="${means[key] < 1 ? "warn" : ""}" style="width:${(means[key] ?? 0) * 100}%"></span></div></div>`,
+        )
+        .join("")
+    : '<p class="muted">No explanation checks yet.</p>';
+  $("ground-truth").innerHTML = current.score
+    ? `<strong>${Math.round(current.score.recall * 100)}% recall</strong><span>${current.score.true_positives} found · ${current.score.false_positives} unexpected · ${current.score.false_negatives} missed</span>`
+    : "<strong>Not scored here</strong><span>Uploaded files do not include a generated answer key.</span>";
   $("analytics-summary").innerHTML =
-    `<div><strong>${duration.toFixed(1)}s</strong><span>Active processing · approval wait excluded</span></div><div><strong>${a.model_calls.length}</strong><span>Model operations · ${escape(current.provider)}</span></div><div><strong>${a.token_total === null ? "Unknown" : a.token_total.toLocaleString()}</strong><span>Recorded model tokens</span></div><div><strong>${a.estimated_api_cost_usd === null ? "Unknown" : "$" + a.estimated_api_cost_usd.toFixed(2)}</strong><span>${escape(a.cost_note)}</span></div>`;
+    `<div><strong>${(a.active_duration_ms / 1000).toFixed(1)}s</strong><span>Processing time · confirmation wait excluded</span></div><div><strong>${a.model_calls.length}</strong><span>Model operations</span></div><div><strong>${a.token_total === null ? "Unknown" : a.token_total.toLocaleString()}</strong><span>Recorded model tokens</span></div><div><strong>${a.estimated_api_cost_usd === null ? "Unknown" : "$" + a.estimated_api_cost_usd.toFixed(2)}</strong><span>${escape(a.cost_note)}</span></div>`;
   const max = Math.max(1, ...a.span_timeline.map((span) => span.duration_ms));
-  $("timeline").className = "timeline";
   $("timeline").innerHTML = a.span_timeline
     .map(
       (span, index) =>
-        `<div class="timeline-row"><span>${String(index + 1).padStart(2, "0")}</span><div>${escape(span.name)} ${span.status === "error" ? '<span class="amber">· failed</span>' : ""}</div><small>${escape(span.kind.replace("_EXEC", "").toLowerCase())}</small><div class="timeline-bar"><div style="width:${Math.max(1, (span.duration_ms / max) * 100)}%"></div></div><span>${span.duration_ms < 1000 ? span.duration_ms.toFixed(0) + " ms" : (span.duration_ms / 1000).toFixed(1) + " s"}</span></div>`,
+        `<div class="timeline-row"><span>${String(index + 1).padStart(2, "0")}</span><div>${escape(span.name)}${span.status === "error" ? '<span class="amber"> · failed</span>' : ""}</div><small>${escape(span.kind.replace("_EXEC", "").toLowerCase())}</small><div class="timeline-bar"><div style="width:${Math.max(1, (span.duration_ms / max) * 100)}%"></div></div><span>${span.duration_ms < 1000 ? span.duration_ms.toFixed(0) + " ms" : (span.duration_ms / 1000).toFixed(1) + " s"}</span></div>`,
     )
     .join("");
   $("baseline-drift").textContent = a.drift
-    ? `Difference from “${a.baseline.label}”: ${(a.drift.active_duration_ms / 60000).toFixed(2)} minutes of processing; ${a.drift.exception_count >= 0 ? "+" : ""}${a.drift.exception_count} detected exceptions. Comparability depends on using the same loan book.`
+    ? `Difference from “${a.baseline.label}”: ${(a.drift.active_duration_ms / 60000).toFixed(2)} minutes; ${a.drift.exception_count >= 0 ? "+" : ""}${a.drift.exception_count} items. Compare the same account set for a meaningful result.`
     : "No baseline recorded.";
   if (a.delivery_errors.length)
     notice(
-      "Some Disseqt deliveries failed. Full local traces have been retained.",
+      "Some audit deliveries failed. The local processing records have been retained.",
     );
 }
 $("baseline-form").addEventListener("submit", async (event) => {
@@ -460,11 +793,10 @@ $("export").addEventListener("click", () => {
   );
   const link = document.createElement("a");
   link.href = url;
-  link.download = "reconciliation-" + current.run_id + ".json";
+  link.download = "payment-check-" + current.run_id + ".json";
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
-
 async function init() {
   try {
     health = await api("/health");
@@ -482,13 +814,25 @@ async function init() {
           ? "Direct HTTP configured"
           : "Local traces active";
     const runs = await refreshRecent();
-    const previous = localStorage.getItem("uc1-selected-run");
+    let previous;
+    try {
+      previous = localStorage.getItem("uc1-selected-run");
+    } catch (_) {
+      /* Optional preference. */
+    }
     if (runs.length)
       await selectRun(
         runs.some((run) => run.run_id === previous) ? previous : runs[0].run_id,
       );
+    try {
+      examples = await api("/examples");
+      renderExamples();
+    } catch (_) {
+      $("example-cards").innerHTML =
+        '<p class="chart-empty">The example library is unavailable. The monthly sample can still be opened from Check payment files.</p>';
+    }
   } catch (error) {
-    notice("Cannot reach the local API: " + error.message);
+    notice("Cannot reach the local service: " + error.message);
   }
 }
 init();

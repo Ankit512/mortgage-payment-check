@@ -7,27 +7,32 @@ Live OpenAI/Disseqt outcomes are not claimed.
 
 ## Six-minute demo
 
-1. **0:00–0:45 · State the boundary.** Open the dashboard and start seed 42 / 40
-   loans. Choose explicit mock for an instant mechanics demo or Qwen for actual
+1. **0:00–0:45 · State the boundary.** Open **Check payment files**, keep the
+   monthly sample (seed 42 / 40 accounts). In **Explanation options**, choose
+   quick practice for an instant mechanics demo or Qwen for actual
    local inference. Servicing, payments and investor files intentionally have
    different raw headers. Their equal row counts hide per-loan discrepancies.
-2. **0:45–1:30 · Show the checkpoint.** Inspect proposed mapping and sample values.
+2. **0:45–1:30 · Show the checkpoint.** Inspect the file labels and example values.
    No engine findings exist yet. The graph has a saved LangGraph interrupt.
-   Correct a mapping if needed, check the review box, and confirm. API approval
+   Correct a dropdown if needed, check the review box, and confirm. API approval
    is explicit; reviewer identity is not authenticated in this local PoC.
 3. **1:30–2:15 · Follow the evidence.** The engine finds four missing payments,
    four duplicate debit patterns and four margin breaches. Open SYN-L000005:
    scheduled 2580.61, zero postings. Open SYN-L000011: two postings of 1259.90.
-   Open SYN-L000013: 2.59% charged versus 2.00% contract. All arithmetic is code.
-4. **2:15–3:15 · Show why PASS is limited.** Evidence dialogs show engine facts,
-   validated model text and verbatim CSV rows. The six guards produce measured
+   Open SYN-L000013: 2.59% charged versus 2.00% contract. Use the account selector
+   and **See details**. The overview shows 66,561.34 due and 67,053.18 recorded,
+   but also the separate 7,430.01 shortfall and 7,921.85 excess receipts. These
+   amounts must not cancel across accounts. All arithmetic is code.
+4. **2:15–3:15 · Show why PASS is limited.** Detail dialogs show a plain-language
+   description and source figures. Expand **Extra explanation** or **Original
+   rows & technical checks** for model text and CSV rows. The guards produce measured
    scores. Unknown numbers/IDs can fail; correct numbers in wrong relationships
    can survive. PASS means the configured checks passed, not semantic certainty.
 5. **3:15–4:15 · Demonstrate a failure.** Run the poisoned-provider test below:
    all 12 findings remain, all 12 drafts are held, and analyst responses contain
    no poisoned prose. A separate unavailable-provider test preserves engine
    results and labels unattempted prose honestly. No model fallback conceals it.
-6. **4:15–5:15 · Inspect activity and connection seams.** Run activity shows model,
+6. **4:15–5:15 · Inspect activity and connection seams.** **Check details** shows model,
    tool and agent spans, actual token usage and processing time. Local API spend
    excludes compute costs. Connections shows Qwen, OpenAI and Disseqt settings;
    adding credentials later changes the server environment, not the engine/UI.
@@ -35,6 +40,12 @@ Live OpenAI/Disseqt outcomes are not claimed.
    seeded-fixture agreement. The answer key comes from the generator, not a real
    operational ground-truth set. Investor cash is derived, authorisation data
    is absent, and a baseline must be observed before drift can be interpreted.
+
+For a shorter consumer demonstration, open **Example files** and select a small
+pack. Download its ZIP and upload the three CSVs to demonstrate real ingestion.
+The six independent packs are verified twice each by
+`.venv/bin/python -m scripts.check_scenarios`; expected outcomes never enter the
+application as an answer key. All uploaded runs retain a null fixture score.
 
 ## Demonstrate the guards
 

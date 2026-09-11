@@ -1,0 +1,74 @@
+{
+  "period": "2026-08",
+  "account_count": 4,
+  "affected_account_count": 0,
+  "row_counts": {
+    "servicing": 4,
+    "payments": 4,
+    "investor": 4
+  },
+  "totals": {
+    "scheduled": "3050.50",
+    "received": "3050.50",
+    "reported": "3050.50",
+    "net_difference": "0.00",
+    "shortfall": "0.00",
+    "excess": "0.00"
+  },
+  "findings": [],
+  "accounts": [
+    {
+      "loan_id": "SYN-L000101",
+      "scheduled": "1000.00",
+      "received": "1000.00",
+      "reported": "1000.00",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "2.00",
+      "charged_margin": "2.00",
+      "posting_count": 1,
+      "direct_debit_count": 1
+    },
+    {
+      "loan_id": "SYN-L000102",
+      "scheduled": "1250.50",
+      "received": "1250.50",
+      "reported": "1250.50",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "2.25",
+      "charged_margin": "2.25",
+      "posting_count": 2,
+      "direct_debit_count": 2
+    },
+    {
+      "loan_id": "SYN-L000103",
+      "scheduled": "800.00",
+      "received": "800.00",
+      "reported": "800.00",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "1.95",
+      "charged_margin": "1.95",
+      "posting_count": 1,
+      "direct_debit_count": 1
+    },
+    {
+      "loan_id": "SYN-L000104",
+      "scheduled": "0.00",
+      "received": "0.00",
+      "reported": "0.00",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "2.10",
+      "charged_margin": "2.10",
+      "posting_count": 0,
+      "direct_debit_count": 0
+    }
+  ],
+  "sha256": {
+    "servicing_extract.csv": "a002950760523d8d4fb30aaf54821d44cd2603a4b52d1c66e9c6a3dd6d965be1",
+    "payments_file.csv": "d2da538db7a43cb221feebcd52ade5cd1f075fdd15a4e3e2d4c09f5bcb417866",
+    "investor_report.csv": "92a4cb710dcb65158b2be43b4f347a9e4d467cd71a4bd75dd5f9deee3011441f"
+  }
+}

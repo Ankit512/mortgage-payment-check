@@ -1,0 +1,92 @@
+{
+  "run_id": "80c5a4a8-e394-48b2-8e0e-4a9a6524eed1",
+  "created_at": "2026-09-11T21:19:42.526634+00:00",
+  "provider": "ollama",
+  "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+  "confirmation": "automated integration test; not owner review",
+  "status": "complete",
+  "seed": 42,
+  "account_count": 40,
+  "totals": {
+    "scheduled": "66561.34",
+    "received": "67053.18",
+    "shortfall": "7430.01",
+    "excess": "7921.85",
+    "net_difference": "491.84"
+  },
+  "currency": null,
+  "cash_counts": {
+    "matched": 32,
+    "under": 4,
+    "over": 4
+  },
+  "accounts_with_findings": 12,
+  "engine_findings": 12,
+  "fixture_score": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "true_positives": 12,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "per_type": {
+      "MISSING_PAYMENT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "DUPLICATE_DIRECT_DEBIT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "RATE_MARGIN_BREACH": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4,
+        "false_positives": 0,
+        "false_negatives": 0
+      }
+    },
+    "missed": [],
+    "spurious": []
+  },
+  "explanations_available": 10,
+  "explanations_withheld": 2,
+  "held_findings": [
+    {
+      "loan_id": "SYN-L000013",
+      "type": "RATE_MARGIN_BREACH",
+      "findings": {
+        "faithfulness": [
+          "Ungrounded number: 1",
+          "Ungrounded number: 3"
+        ]
+      }
+    },
+    {
+      "loan_id": "SYN-L000015",
+      "type": "DUPLICATE_DIRECT_DEBIT",
+      "findings": {
+        "faithfulness": [
+          "No completed rationale available"
+        ],
+        "answer_relevance": [
+          "Rationale does not identify the exception loan",
+          "Rationale does not discuss the exception type"
+        ],
+        "provider_success": [
+          "Model step failed: incomplete; deterministic evidence retained"
+        ]
+      }
+    }
+  ],
+  "model_operations": 27,
+  "model_tokens": 9775,
+  "active_duration_ms": 282723.91383298964,
+  "openai_calls": 0,
+  "trace_mode": "local"
+}

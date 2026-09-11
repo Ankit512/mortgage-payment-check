@@ -19,7 +19,7 @@ project. The source is the [publisher's model card](https://huggingface.co/emper
 - A LangGraph interrupt with an in-memory checkpointer. Start returns a paused
   run; confirmation resumes it. Repeated confirmation is rejected.
 - FastAPI endpoints, a responsive dashboard, synthetic CSV uploads, editable
-  mapping/sample values, source evidence, separate passed/held queues, exports,
+  mapping/sample values, source evidence, separate passed/held API results, exports,
   run activity, token/latency statistics and a user-supplied baseline.
 - Local Ollama, mock and OpenAI behind the same provider interface. Failed
   inference is recorded honestly; deterministic evidence survives. An
@@ -56,7 +56,7 @@ intentional limits are in `tests/test_validators.py`.
 Injection/PII scans use patterns, not a complete security or PII detector.
 Input values and headers are scanned before any model call. Blocked drafts
 are retained in developer JSONL and private run state; public run/analytics
-responses omit them. The held queue shows trusted engine facts and validation
+responses omit them. The consumer view shows trusted engine facts and validation
 findings only. There is no automatic release or payment execution endpoint.
 
 The UI's approval checkbox is an interaction guard, not identity verification.
@@ -75,3 +75,17 @@ The SDK is now a pinned runtime dependency with an explicit transport selector.
 `make sdk-demo` uses real local Qwen and fixed dummy Disseqt identifiers against
 a loopback capture server. No cloud validator outcome is claimed. See
 [DISSEQT_INTEGRATION](DISSEQT_INTEGRATION.md) for the current implementation.
+
+## Consumer dashboard and independent CSV packs
+
+The owner asked for an overhaul aimed at mortgage/financial consumers, plus a
+separate agent creating multiple mock CSV sets. The dashboard now leads with
+payment amounts and charts, an account selector and plain-language descriptions.
+Technical validation and model details are optional. The tutorial uses the new
+labels and actions. Original M1 generation and detector definitions are unchanged.
+
+The independent agent authored six packs (18 CSVs) and expected results. The
+upload harness checked each pack twice through FastAPI/LangGraph and compared
+figures, unique affected accounts, source evidence and chart counts. Browser
+checks also downloaded and uploaded every pack. See
+[CONSUMER_DASHBOARD](CONSUMER_DASHBOARD.md) for definitions, limits and results.

@@ -1,0 +1,99 @@
+{
+  "period": "2026-08",
+  "account_count": 5,
+  "affected_account_count": 3,
+  "row_counts": {
+    "servicing": 5,
+    "payments": 7,
+    "investor": 5
+  },
+  "totals": {
+    "scheduled": "5095.50",
+    "received": "6095.49",
+    "reported": "6095.49",
+    "net_difference": "999.99",
+    "shortfall": "1050.00",
+    "excess": "2049.99"
+  },
+  "findings": [
+    {
+      "loan_id": "SYN-L000601",
+      "type": "MISSING_PAYMENT"
+    },
+    {
+      "loan_id": "SYN-L000602",
+      "type": "DUPLICATE_DIRECT_DEBIT"
+    },
+    {
+      "loan_id": "SYN-L000603",
+      "type": "RATE_MARGIN_BREACH"
+    }
+  ],
+  "accounts": [
+    {
+      "loan_id": "SYN-L000601",
+      "scheduled": "1050.00",
+      "received": "0.00",
+      "reported": "0.00",
+      "shortfall": "1050.00",
+      "excess": "0.00",
+      "contractual_margin": "2.00",
+      "charged_margin": "2.00",
+      "posting_count": 0,
+      "direct_debit_count": 0
+    },
+    {
+      "loan_id": "SYN-L000602",
+      "scheduled": "1050.00",
+      "received": "2100.00",
+      "reported": "2100.00",
+      "shortfall": "0.00",
+      "excess": "1050.00",
+      "contractual_margin": "2.10",
+      "charged_margin": "2.10",
+      "posting_count": 2,
+      "direct_debit_count": 2
+    },
+    {
+      "loan_id": "SYN-L000603",
+      "scheduled": "995.50",
+      "received": "995.50",
+      "reported": "995.50",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "2.00",
+      "charged_margin": "2.01",
+      "posting_count": 1,
+      "direct_debit_count": 1
+    },
+    {
+      "loan_id": "SYN-L000604",
+      "scheduled": "1000.00",
+      "received": "1999.99",
+      "reported": "1999.99",
+      "shortfall": "0.00",
+      "excess": "999.99",
+      "contractual_margin": "2.20",
+      "charged_margin": "2.20",
+      "posting_count": 2,
+      "direct_debit_count": 2
+    },
+    {
+      "loan_id": "SYN-L000605",
+      "scheduled": "1000.00",
+      "received": "1000.00",
+      "reported": "1000.00",
+      "shortfall": "0.00",
+      "excess": "0.00",
+      "contractual_margin": "2.30",
+      "charged_margin": "2.30",
+      "posting_count": 2,
+      "direct_debit_count": 2
+    }
+  ],
+  "sha256": {
+    "servicing_extract.csv": "ea1bf3fc047d9909613e0a57b047b53bcaf036a800f505dc6df2202d62c917dd",
+    "payments_file.csv": "e9c006d3ef3f0fbcb5ae4fad5972d5fc4461e3e335b6a9ed0da11e9a88827936",
+    "investor_report.csv": "8506955573d6359cbd181c59f2bdaac69ff5a2d342d08ed0cba2f62801f2fc6c"
+  }
+}

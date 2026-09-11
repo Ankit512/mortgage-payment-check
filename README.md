@@ -1,15 +1,16 @@
-# Mortgage Capital · UC1 reconciliation desk
+# Mortgage Capital · Mortgage payment overview
 
-A local dashboard and auditable agent for reconciling three synthetic mortgage
-files. Humans confirm the mapping; an integer-based engine finds discrepancies;
-model explanations pass deterministic checks before release.
+A local dashboard for understanding mortgage payment records: what was due,
+what was recorded, and which accounts need a closer look. It compares three
+synthetic files using a human-confirmed mapping and integer-based calculations.
+Optional model explanations pass checks before they can be shown.
 
 Works without OpenAI or Disseqt credentials. Choose real local Qwen inference or
 explicit mock templates. The owner-requested dashboard and local-model extension
 are recorded in [BUILD_UPDATE](docs/BUILD_UPDATE.md); the [original PRD](docs/PRD.md)
 is preserved unchanged.
 
-![Local Qwen reconciliation dashboard showing 12 findings, 10 passed and 2 held](docs/dashboard.png)
+![Payment overview with due-versus-received charts and accounts to check](docs/consumer-dashboard.png)
 
 ## Start the dashboard
 
@@ -21,9 +22,13 @@ make serve
 ```
 
 Open **http://127.0.0.1:8765**. The default is mock mode, requiring no model
-installation or credentials. Click **New reconciliation**, use seed 42 / 40
-loans, review the mapping and sample values, then **Confirm & reconcile**.
-All 12 seeded exceptions should be found with zero false positives.
+installation or credentials. Click **Example files**, choose **Use these files**,
+confirm that the data is synthetic, then **Read these files**. Review the file
+labels and example values, then **Confirm & check payments**.
+
+For the original 40-account dataset, use **Check payment files → Monthly sample**.
+The default sample number is 42. It contains 12 seeded exceptions. The
+**Showing** dropdown narrows charts and results to one sample account.
 
 For the owner's chosen local model, use a compatible Ollama release:
 
@@ -58,6 +63,7 @@ was performed.
 ```bash
 make test
 make demo
+.venv/bin/python -m scripts.check_scenarios
 ```
 
 `make test` runs `python -m unittest discover tests -v` inside `.venv`. The suite
@@ -101,23 +107,38 @@ mapping edits, explicit confirmation, results, evidence and mobile overflow:
 
 ## What the dashboard shows
 
-- An optional six-step **Help & tour** guide: the workflow, sample files, mapping,
-  results, source evidence and run activity. The introduction can be dismissed;
+- Payment totals, a due-versus-received bar chart, payment comparison counts,
+  shortfalls and excess receipts, and an individual-account selector. Totals
+  come from all validated rows, not the three-row previews or model output.
+- Plain-language descriptions and **See details** for source figures. Extra AI
+  explanations and technical check results are collapsed by default.
+- Six downloadable example packs containing **18 CSVs**. Each ZIP also includes
+  a mapping guide and independently written expected results. **Use these files**
+  and manual uploads both send CSVs through the regular upload/checkpoint flow.
+- An optional six-step **Help & tour** guide: payment figures, example files, file
+  labels, charts and source evidence. The introduction can be dismissed;
   the tour can always be replayed from the top bar. Dismissal is saved in this
   browser. Help works locally without model calls.
-- A **Your next step** card that follows the selected run, plus mapping/results
+- A **Start here** card that follows the selected run, plus mapping/results
   help beside those panels. Tutorial links open the normal screens; they do not
   submit a run, change mapping selections or tick review checkboxes.
 - Synthetic generated files or three uploaded synthetic CSVs (512 KB each).
 - Editable proposed mappings and source values, followed by a required checkbox.
 - Engine findings, validated explanations and verbatim source-row evidence.
-- Held findings with scores/reasons; blocked model prose is absent from analyst
+- Held explanations with scores/reasons in the optional technical details;
+  blocked model prose is absent from analyst
   APIs, the dashboard and JSON exports.
-- Run activity, per-validator averages, provider usage and measured latency.
+- **Check details** for processing activity, per-validator averages, provider
+  usage and measured latency.
 - Recall/false positives for generated datasets. Uploaded datasets have no
   invented answer key. Incomplete mappings show coverage warnings.
 - A manual-baseline form; drift is unavailable until actual observations are
   entered. Comparable loan books are necessary for meaningful comparisons.
+
+See [the consumer dashboard notes](docs/CONSUMER_DASHBOARD.md) for metric
+definitions and verification, and [the CSV pack guide](data/scenarios/README.md)
+for expected outcomes. No currency, outstanding balance, full interest rate,
+repayment forecast or multi-month trend is inferred from these files.
 
 ## Connect credentials later
 
@@ -151,6 +172,9 @@ Interactive schema: **http://127.0.0.1:8765/docs**.
 | `GET /runs/{id}/analytics` | Safe span/call summaries, validation means, usage, drift |
 | `POST /baseline` / `GET /baseline` | Record/read observed `active_duration_ms` and `exception_count` |
 | `GET /health` | Non-secret configuration and canonical field names |
+| `GET /examples` | Available synthetic CSV packs |
+| `GET /examples/{id}` | The pack's three CSV texts, without an answer key |
+| `GET /examples/{id}/download` | ZIP with CSVs, mapping guide and expected results |
 
 For interactive clients, add `?background=true` to start/confirm and poll the
 run endpoint. Local-model inference may take several minutes for 27 operations.
@@ -200,6 +224,7 @@ PoC without multiuser authentication, durable job recovery or production control
 
 ```text
 app/engine.py           Pure matching, detectors, source evidence and scoring
+app/payment_summary.py  Exact account/payment figures for the consumer charts
 app/providers.py        Mock / OpenAI / local Ollama and measured call records
 app/validators.py       Six guards and fail-closed local policy
 app/graph.py            LangGraph checkpoint, execution and safe read models
@@ -209,6 +234,7 @@ app/main.py             FastAPI endpoints and static dashboard hosting
 app/static/             Dashboard HTML, CSS and JavaScript
 scripts/                Automated API demo and browser smoke check
 data/generate_samples.py  Seeded synthetic generator and independent answer key
+data/scenarios/          Six independent, hand-authored CSV upload packs
 tests/                  Offline unittest suite
 docs/                   PRD, audits, contracts, build notes and local-run record
 WALKTHROUGH.md          Six-minute reviewer narrative and honest limitations

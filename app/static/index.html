@@ -3,322 +3,467 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Mortgage Capital · Reconciliation desk</title>
+    <title>Mortgage Capital · Payment overview</title>
     <link rel="stylesheet" href="/static/style.css" />
     <link rel="stylesheet" href="/static/tutorial.css" />
   </head>
   <body>
     <aside class="sidebar">
       <a class="brand" href="/" aria-label="Mortgage Capital home"
-        ><span class="brand-mark">m<span>c</span></span
+        ><span class="brand-mark">mc</span
         ><span>Mortgage<br /><b>Capital</b></span></a
       >
-      <div class="workspace-label">OPERATIONS WORKSPACE</div>
+      <span class="workspace-label">YOUR PAYMENT PICTURE</span>
       <nav aria-label="Workspace">
         <button class="nav-item active" data-view="desk">
-          <span>▦</span> Reconciliation <span class="nav-dot"></span>
+          <span aria-hidden="true">◴</span><span>Payment overview</span>
         </button>
-        <button class="nav-item" data-view="audit">
-          <span>◷</span> Run activity
+        <button class="nav-item" data-view="examples">
+          <span aria-hidden="true">▧</span><span>Example files</span>
         </button>
-        <button class="nav-item" data-view="settings">
-          <span>⚙</span> Connections
+        <div class="nav-divider"></div>
+        <button class="nav-item quiet" data-view="audit">
+          <span aria-hidden="true">≡</span><span>Check details</span>
+        </button>
+        <button class="nav-item quiet" data-view="settings">
+          <span aria-hidden="true">⚙</span><span>Connections</span>
         </button>
       </nav>
-      <div class="sidebar-rule"></div>
-      <div class="recent-label">RECENT RUNS <span id="run-count">0</span></div>
-      <div id="recent-runs" class="recent-runs"><p>No runs yet</p></div>
-      <div class="sidebar-bottom">
-        <span class="avatar">AK</span>
-        <div>Ankit Kumar<small>Local development workspace</small></div>
+      <div class="recent-label">
+        RECENT CHECKS <span id="run-count">0</span>
+      </div>
+      <div id="recent-runs" class="recent-runs">
+        <p>Your checks will appear here.</p>
+      </div>
+      <div class="sidebar-note">
+        <b>A place to understand.</b>
+        <p>Compare payment records and see which figures need a closer look.</p>
+        <span>Demo · sample accounts only</span>
       </div>
     </aside>
-
     <div class="workspace">
       <header class="topbar">
-        <div>
-          Operations <span class="slash">/</span>
-          <strong>Reconciliation desk</strong>
-        </div>
+        <span class="breadcrumb"
+          >Home <span>/</span> <b id="view-name">Payment overview</b></span
+        >
         <div class="topbar-right">
-          <button class="help-button" id="help-tour">? Help &amp; tour</button>
-          <span class="local-indicator"></span> Local workspace
-          <span class="separator">|</span
-          ><span class="synthetic-badge">SYNTHETIC DATA</span>
+          <span class="demo-pill"><i></i> Sample data</span
+          ><button id="help-tour" class="help-button">? Help &amp; tour</button>
         </div>
       </header>
       <main>
         <div class="page-heading">
           <div>
-            <div class="eyebrow">MORTGAGE OPERATIONS · USE CASE 01</div>
-            <h1>Every exception. Accounted for.</h1>
+            <span class="eyebrow">MORTGAGE PAYMENT CHECK</span>
+            <h1>Know where your payments stand.</h1>
             <p>
-              Reconcile the month. Trace the evidence. Keep judgment in human
-              hands.
+              What was due, what was recorded, and what needs a closer look.
             </p>
           </div>
-          <button id="new-run" class="primary">＋ New reconciliation</button>
+          <button class="primary" id="new-run">＋ Check payment files</button>
         </div>
         <div id="message" role="status" aria-live="polite" hidden></div>
-
-        <section id="tutorial-welcome" class="tutorial-welcome" aria-labelledby="welcome-title" hidden>
+        <section
+          id="tutorial-welcome"
+          class="tutorial-welcome"
+          aria-labelledby="welcome-title"
+          hidden
+        >
           <span class="guide-symbol" aria-hidden="true">?</span>
           <div>
-            <h2 id="welcome-title">First time here? Let’s walk through it.</h2>
-            <p>Learn what the files mean, what to check, and how to read a result.</p>
+            <h2 id="welcome-title">A little help getting started?</h2>
+            <p>
+              Take a quick tour, or explore one of the sample payment checks.
+            </p>
           </div>
-          <button class="primary" id="start-tour">Take the 2-minute tour →</button>
-          <button class="icon-button" id="dismiss-welcome" aria-label="Dismiss introduction">×</button>
+          <button id="start-tour" class="secondary">Show me around →</button
+          ><button
+            id="dismiss-welcome"
+            class="icon-button"
+            aria-label="Dismiss introduction"
+          >
+            ×
+          </button>
         </section>
 
         <section id="desk-view">
           <section class="next-step" aria-labelledby="next-step-title">
             <div>
-              <span class="eyebrow">YOUR NEXT STEP</span>
-              <h2 id="next-step-title">Start with the included sample</h2>
-              <p id="next-step-copy">Choose New reconciliation. The sample files are already included, so you don’t need to upload anything.</p>
+              <span class="eyebrow">START HERE</span>
+              <h2 id="next-step-title">Try a sample payment check</h2>
+              <p id="next-step-copy">
+                We have example files ready. You don’t need to prepare anything.
+              </p>
             </div>
-            <button class="secondary" id="next-step-action">Open new run →</button>
+            <button id="next-step-action" class="secondary">
+              Explore examples →
+            </button>
           </section>
-          <div class="run-strip">
+          <div class="scope-bar">
             <div>
-              <span class="small-label">CURRENT RUN</span
-              ><strong id="run-title"
-                >Ready for your first reconciliation</strong
-              ><span id="run-subtitle" class="muted"
-                >Three source files. One confirmed mapping.</span
-              >
+              <span class="small-label">PAYMENT MONTH</span
+              ><strong id="month-label">Choose files to begin</strong
+              ><span id="status-badge" class="badge neutral">Not started</span>
             </div>
-            <span id="status-badge" class="badge neutral">Not started</span>
+            <label class="account-picker"
+              >Showing
+              <select
+                id="account-select"
+                aria-label="Choose a sample account"
+                disabled
+              >
+                <option value="">All sample accounts</option>
+              </select></label
+            >
           </div>
-          <ol class="steps" aria-label="Reconciliation progress">
+          <div class="run-strip">
+            <span id="run-title">No check selected</span
+            ><span id="run-subtitle" class="muted"
+              >Example data, never real customer accounts.</span
+            >
+          </div>
+          <ol class="steps" aria-label="Payment check progress">
             <li data-step="0">
               <span>1</span>
-              <div>Ingest files<small>Scan & prepare</small></div>
+              <div>Add files<small>Choose an example or upload</small></div>
             </li>
             <li data-step="1">
               <span>2</span>
-              <div>Confirm mapping<small>Human checkpoint</small></div>
+              <div>
+                Check file labels<small>Confirm what each column means</small>
+              </div>
             </li>
             <li data-step="2">
               <span>3</span>
-              <div>Reconcile<small>Deterministic engine</small></div>
+              <div>Compare payments<small>We check the figures</small></div>
             </li>
             <li data-step="3">
               <span>4</span>
-              <div>Review outcomes<small>Check & review</small></div>
+              <div>
+                See your results<small>Understand any differences</small>
+              </div>
             </li>
           </ol>
-          <div class="metrics">
-            <article>
-              <span class="metric-label">LOANS IN SCOPE <span>▤</span></span
-              ><strong id="metric-loans">—</strong
-              ><small>From the servicing extract</small>
-            </article>
-            <article>
-              <span class="metric-label">EXCEPTIONS FOUND <span>↗</span></span
-              ><strong id="metric-found">—</strong
-              ><small>Computed from source records</small>
-            </article>
-            <article>
-              <span class="metric-label"
-                >PASSED VALIDATION <span class="green">✓</span></span
-              ><strong id="metric-pass">—</strong
-              ><small>Available in the remediation log</small>
-            </article>
-            <article>
-              <span class="metric-label"
-                >HELD FOR REVIEW <span class="amber">◷</span></span
-              ><strong id="metric-held">—</strong
-              ><small>AI explanation withheld</small>
-            </article>
-          </div>
 
           <section id="mapping-panel" class="panel" hidden>
             <div class="panel-heading">
               <div>
-                <span class="eyebrow">YOUR CHECKPOINT</span>
-                <h2>Review the proposed column mapping</h2>
+                <span class="eyebrow">ONE CHECK BEFORE WE START</span>
+                <h2>Are we reading your files correctly?</h2>
                 <p>
-                  Check the source values and units. A model proposal is never
-                  an approval.
+                  Match each file label to its meaning. The examples show what
+                  is in that column.
                 </p>
-                <button class="text-button tutorial-link" data-tutorial="2">How do I check these mappings?</button>
+                <button class="text-button tutorial-link" data-tutorial="2">
+                  Help with file labels
+                </button>
               </div>
-              <span class="badge amber-bg">Confirmation required</span>
+              <span class="badge amber-bg">Your confirmation needed</span>
             </div>
-            <div id="mapping-errors"></div>
+            <div class="mapping-intro">
+              For example, a column containing the amount due each month should
+              say <b>Payment due</b>. A column containing a percentage should be
+              a <b>Rate margin</b>.
+            </div>
+            <div id="mapping-errors" role="status"></div>
             <div id="mapping-tables"></div>
             <div class="mapping-footer">
               <label
-                ><input type="checkbox" id="mapping-reviewed" /> I reviewed the
-                mappings, sample values and units.</label
+                ><input type="checkbox" id="mapping-reviewed" /> I checked the
+                labels, example values and units in all three files.</label
               ><button id="confirm" class="primary" disabled>
-                Confirm & reconcile <span>→</span>
+                Confirm &amp; check payments →
               </button>
             </div>
           </section>
 
-          <div class="results-grid">
-            <section class="panel outcomes-panel">
+          <div id="summary-unavailable" class="summary-note">
+            Payment figures appear after you confirm the file labels.
+          </div>
+          <div class="metrics" aria-label="Payment summary">
+            <article>
+              <span class="metric-label">DUE THIS MONTH</span
+              ><strong id="metric-due">—</strong
+              ><small>Total scheduled payments</small>
+            </article>
+            <article>
+              <span class="metric-label">PAYMENTS RECORDED</span
+              ><strong id="metric-paid">—</strong
+              ><small>Net amount in the payment file</small>
+            </article>
+            <article class="metric-attention">
+              <span class="metric-label">LESS RECEIVED THAN DUE</span
+              ><strong id="metric-shortfall">—</strong
+              ><small>Shortfalls added account by account</small>
+            </article>
+            <article>
+              <span class="metric-label">ACCOUNTS TO CHECK</span
+              ><strong id="metric-accounts">—</strong
+              ><small id="metric-accounts-note"
+                >Accounts flagged by our three checks</small
+              >
+            </article>
+          </div>
+          <div class="chart-grid">
+            <section class="panel payment-chart">
               <div class="panel-heading">
                 <div>
-                  <h2>Exception workspace</h2>
-                  <p id="outcome-caption">
-                    Engine findings and validated explanations, together.
-                  </p>
-                  <button class="text-button tutorial-link" data-tutorial="3">Help me read these results</button>
+                  <span class="eyebrow">THE MONTH AT A GLANCE</span>
+                  <h2>Due compared with received</h2>
                 </div>
-                <button class="text-button" id="export" disabled>
-                  ↓ Export JSON
-                </button>
+                <span class="chart-symbol" aria-hidden="true">↗</span>
               </div>
-              <div class="table-toolbar">
-                <div class="tabs" role="tablist" aria-label="Exception queue">
-                  <button
-                    role="tab"
-                    aria-selected="true"
-                    class="tab active"
-                    data-queue="pass"
-                  >
-                    Remediation log <span id="pass-tab-count">0</span></button
-                  ><button
-                    role="tab"
-                    aria-selected="false"
-                    class="tab"
-                    data-queue="held"
-                  >
-                    Held for review <span id="held-tab-count">0</span>
-                  </button>
-                </div>
-                <label class="search"
-                  ><span>⌕</span
-                  ><input
-                    id="search"
-                    placeholder="Find a loan…"
-                    aria-label="Find a loan"
-                /></label>
-              </div>
-              <div id="exception-list" class="exception-list">
-                <div class="empty-state">
-                  <div class="empty-icon">⌘</div>
-                  <h3>A clear view starts here</h3>
-                  <p>
-                    Start with the included synthetic loan book or upload three
-                    synthetic CSVs. You’ll confirm the mapping before the engine
-                    runs.
-                  </p>
-                  <button class="secondary" id="empty-start">
-                    Start a reconciliation →
-                  </button>
-                </div>
-              </div>
-            </section>
-            <aside class="insights">
-              <section class="panel">
-                <div class="panel-heading compact">
-                  <h2>Validation pulse</h2>
-                  <span class="live-label"><i></i> COMPUTED</span>
-                </div>
-                <div id="validation-pulse" class="pulse-list">
-                  <p class="muted">
-                    Scores appear after the first exception is validated.
-                  </p>
-                </div>
-                <div class="panel-note">
-                  One failed guard holds the explanation.<br />Scores measure
-                  checks, not model confidence.
-                </div>
-              </section>
-              <section class="panel">
-                <div class="panel-heading compact">
-                  <h2>Seeded-data check</h2>
-                  <span>◎</span>
-                </div>
-                <div class="ground-truth" id="ground-truth">
-                  <strong>—</strong
-                  ><span>Recall against the generated answer key</span>
-                </div>
-                <div class="panel-note">
-                  Fixture agreement demonstrates the mechanism. It does not
-                  measure real-world detection performance.
-                </div>
-              </section>
-              <section class="integration-card">
-                <div>
-                  <span class="local-indicator"></span
-                  ><b id="model-label">Local development</b>
-                </div>
-                <p id="model-note">
-                  Models propose and explain. The engine owns every calculation.
+              <div id="payment-bars" class="payment-bars">
+                <p class="chart-empty">
+                  Your payment comparison will appear here.
                 </p>
-                <button class="text-button" data-view="settings">
-                  View connections →
-                </button>
-              </section>
-            </aside>
+              </div>
+              <div class="money-breakdown">
+                <div>
+                  <span>Less received</span
+                  ><strong id="chart-shortfall">—</strong>
+                </div>
+                <div>
+                  <span>More received</span><strong id="chart-excess">—</strong>
+                </div>
+                <p>
+                  Extra money on one account does not make up a shortfall on
+                  another.
+                </p>
+              </div>
+              <p class="panel-note">
+                Amounts use the units in your files. No currency is specified.
+                Received amounts include reversals.
+              </p>
+            </section>
+            <section class="panel account-chart">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">PAYMENTS ONLY</span>
+                  <h2>How accounts compare</h2>
+                </div>
+              </div>
+              <div class="donut-layout">
+                <div
+                  id="payment-donut"
+                  class="payment-donut"
+                  role="img"
+                  aria-label="No payment comparison yet"
+                >
+                  <div>
+                    <strong id="donut-total">—</strong><span>accounts</span>
+                  </div>
+                </div>
+                <div id="payment-legend" class="payment-legend">
+                  <p class="muted">Counts appear after checking.</p>
+                </div>
+              </div>
+              <p class="panel-note">
+                A matching payment amount does not confirm that the rate margin
+                is correct.
+              </p>
+            </section>
           </div>
+          <details class="panel accounts-disclosure">
+            <summary>
+              See individual accounts and amounts
+              <span id="account-table-count"></span>
+            </summary>
+            <div id="account-table" class="table-scroll">
+              <p class="chart-empty">No accounts checked yet.</p>
+            </div>
+          </details>
+
+          <section class="panel outcomes-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">YOUR RESULTS</span>
+                <h2>Things to take a closer look at</h2>
+                <p id="outcome-caption">
+                  Each item explains what the records show and where to look.
+                </p>
+              </div>
+              <button id="export" class="secondary" disabled>
+                Download results ↓
+              </button>
+            </div>
+            <div class="table-toolbar">
+              <div class="tabs" role="tablist" aria-label="Types of checks">
+                <button
+                  class="tab active"
+                  role="tab"
+                  aria-selected="true"
+                  data-queue="all"
+                >
+                  All items <span id="all-tab-count">0</span></button
+                ><button
+                  class="tab"
+                  role="tab"
+                  aria-selected="false"
+                  data-queue="payments"
+                >
+                  Payments <span id="payments-tab-count">0</span></button
+                ><button
+                  class="tab"
+                  role="tab"
+                  aria-selected="false"
+                  data-queue="rates"
+                >
+                  Rate margins <span id="rates-tab-count">0</span>
+                </button>
+              </div>
+              <label class="search"
+                ><span aria-hidden="true">⌕</span
+                ><input
+                  id="search"
+                  placeholder="Find an account…"
+                  aria-label="Find an account"
+              /></label>
+            </div>
+            <div id="exception-list" class="exception-list">
+              <div class="empty-state">
+                <span class="empty-icon">⌁</span>
+                <h3>A clearer picture starts with three files.</h3>
+                <p>
+                  Try an example to see a missed payment, a possible repeated
+                  debit or a difference in the rate margin.
+                </p>
+                <button id="empty-start" class="primary">
+                  Try a sample check →
+                </button>
+              </div>
+            </div>
+            <div class="results-footer">
+              <button class="text-button tutorial-link" data-tutorial="3">
+                Help me understand these results</button
+              ><span
+                >A record difference is a reason to check, not a final
+                decision.</span
+              >
+            </div>
+          </section>
           <div class="desk-footer">
-            <span>↳ Every finding links back to its source records.</span
-            ><span>Single reporting month · Synthetic loan book</span>
+            <span
+              >Sample accounts · One reporting month · No payments are
+              moved</span
+            ><span>Only the three described checks are performed.</span>
+          </div>
+        </section>
+
+        <section id="examples-view" hidden>
+          <div class="section-intro">
+            <span class="eyebrow">LEARN BY TRYING</span>
+            <h2>Different files. A clearer understanding.</h2>
+            <p>
+              Choose a small set of sample mortgage records. Use it directly, or
+              download the CSV pack and upload the three files yourself.
+            </p>
+          </div>
+          <div id="example-cards" class="example-grid"></div>
+          <div class="panel library-note">
+            <h3>Want to test the upload yourself?</h3>
+            <ol>
+              <li>Download a CSV pack and unzip it.</li>
+              <li>Choose <b>Check payment files → Upload CSV files</b>.</li>
+              <li>
+                Add the payment schedule, payment record and lender report from
+                the same pack.
+              </li>
+              <li>
+                Confirm the file labels, then compare the result with the pack’s
+                notes.
+              </li>
+            </ol>
+            <p>
+              Each pack uses invented accounts. These examples check the
+              workflow, not real-world detection accuracy.
+            </p>
           </div>
         </section>
 
         <section id="audit-view" hidden>
+          <div class="section-intro">
+            <span class="eyebrow">OPTIONAL DETAIL</span>
+            <h2>How this check was carried out</h2>
+            <p>
+              Technical checks and activity for the selected file set. The
+              payment overview is the place to start.
+            </p>
+          </div>
+          <div class="audit-grid">
+            <section class="panel">
+              <div class="panel-heading"><h2>Explanation checks</h2></div>
+              <div id="validation-pulse" class="pulse-list">
+                <p>No explanation checks yet.</p>
+              </div>
+              <p class="panel-note">
+                These percentages measure checks, not confidence or proof of
+                correctness.
+              </p>
+            </section>
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>Generated sample comparison</h2>
+              </div>
+              <div id="ground-truth" class="ground-truth">
+                <strong>—</strong><span>No generated answer key.</span>
+              </div>
+              <p class="panel-note">
+                Only generated files have an answer key. Uploaded example packs
+                are tested separately.
+              </p>
+            </section>
+          </div>
           <div class="panel">
             <div class="panel-heading">
-              <div>
-                <h2>Run activity</h2>
-                <p>
-                  Measured steps, model usage and validator outcomes for the
-                  selected run.
-                </p>
-              </div>
-              <span id="trace-label" class="badge neutral">Local JSONL</span>
+              <h2>Processing activity</h2>
+              <span id="trace-label" class="badge neutral">Local audit</span>
             </div>
             <div id="analytics-summary" class="analytics-summary"></div>
-            <div id="timeline" class="timeline empty-state">
-              Choose a run to inspect its timeline.
+            <div id="timeline" class="timeline">
+              <p class="chart-empty">Choose a check to inspect its activity.</p>
             </div>
           </div>
-          <div class="panel baseline-panel">
-            <div>
-              <h2>Manual-process baseline</h2>
-              <p>
-                Enter an observed Week-1 baseline for a comparable loan book. No
-                baseline is invented.
-              </p>
-            </div>
+          <details class="panel baseline-panel">
+            <summary>Compare with a recorded manual process</summary>
+            <p>
+              Enter an observed baseline for comparable files. No baseline is
+              invented.
+            </p>
             <form id="baseline-form">
               <label
-                >Manual processing time (minutes)<input
+                >Time taken (minutes)<input
                   name="minutes"
                   type="number"
                   min="0"
                   step="0.1"
                   required /></label
               ><label
-                >Exceptions found<input
+                >Items found<input
                   name="exceptions"
                   type="number"
                   min="0"
                   step="1"
                   required /></label
-              ><button class="secondary" type="submit">Record baseline</button>
+              ><button type="submit" class="secondary">Record baseline</button>
             </form>
-            <p id="baseline-drift" class="muted">No baseline recorded.</p>
-          </div>
+            <p id="baseline-drift">No baseline recorded.</p>
+          </details>
         </section>
-
         <section id="settings-view" hidden>
+          <div class="section-intro">
+            <span class="eyebrow">OPTIONAL DETAIL</span>
+            <h2>Connected services</h2>
+            <p>The local version works without API keys.</p>
+          </div>
           <div class="connection-grid">
             <article class="panel connection">
               <span class="connection-symbol">Q</span>
               <h2>Local Qwen</h2>
               <span class="badge green-bg">No API key required</span>
               <p>
-                Uses your selected model through Ollama. Every call records the
-                actual model, usage and outcome.
+                Reads file headings and adds explanations. Payment calculations
+                use fixed rules.
               </p>
               <code id="qwen-id"></code>
             </article>
@@ -328,10 +473,7 @@
               <span id="openai-state" class="badge neutral"
                 >Not configured</span
               >
-              <p>
-                The same mapping, classification and drafting interface. Add the
-                key to the server environment when available.
-              </p>
+              <p>An optional alternative for explanations.</p>
               <code>LLM_PROVIDER=openai<br />OPENAI_API_KEY=…</code>
             </article>
             <article class="panel connection">
@@ -341,8 +483,8 @@
                 >Local traces active</span
               >
               <p>
-                Typed spans are retained locally. Enable live delivery with your
-                project credentials when available.
+                Processing records are kept locally. Cloud delivery requires
+                project credentials.
               </p>
               <code
                 >DISSEQT_TRANSPORT=sdk<br />DISSEQT_API_KEY=…<br />DISSEQT_PROJECT_ID=…</code
@@ -350,108 +492,165 @@
             </article>
           </div>
           <div class="panel connection-note">
-            <h2>Same workflow, swappable integrations</h2>
+            <h3>About this demo</h3>
             <p>
-              Configuration stays on the server. Keys are never entered in this
-              dashboard. Restart the server after changing its environment. This
-              local PoC keeps run state in memory; its JSONL audit survives a
-              restart.
+              Service settings are managed on the server. This is a sample-data
+              workspace; restarting the server clears the on-screen check
+              history. Local audit files remain available.
             </p>
+            <b id="model-label"></b>
+            <p id="model-note"></p>
           </div>
         </section>
       </main>
     </div>
-
-    <dialog id="run-dialog">
+    <dialog id="run-dialog" aria-labelledby="run-dialog-title">
       <form id="run-form">
         <div class="dialog-heading">
           <div>
-            <span class="eyebrow">START A RUN</span>
-            <h2>New reconciliation</h2>
+            <span class="eyebrow">START A PAYMENT CHECK</span>
+            <h2 id="run-dialog-title">Choose your files</h2>
           </div>
           <button
             type="button"
-            class="icon-button"
             id="close-run"
+            class="icon-button"
             aria-label="Close"
           >
             ×
           </button>
         </div>
-        <p>For your first run, keep seed 42 and 40 loans. We supply all three sample files. Qwen runs locally and may take a few minutes; Mock gives a quick practice run with fixed explanations.</p>
-        <label
-          >Language model<select id="provider">
-            <option value="ollama">Qwen · local Ollama</option>
-            <option value="mock">Mock · deterministic templates</option>
-            <option value="openai">OpenAI · requires configured key</option>
-          </select></label
-        >
-        <div class="form-row">
+        <p>
+          We compare the schedule of payments due, the payments recorded and the
+          lender’s report for the same month.
+        </p>
+        <div class="source-options">
           <label
-            >Seed<input id="seed" type="number" value="42" required /></label
+            ><input type="radio" name="source" value="example" checked /> Try
+            example files</label
           ><label
-            >Loans<input
-              id="n-loans"
-              type="number"
-              min="1"
-              max="100"
-              value="40"
-              required
-          /></label>
+            ><input type="radio" name="source" value="upload" /> Upload CSV
+            files</label
+          >
         </div>
-        <p class="form-help">Seed chooses the sample dataset. The same seed and loan count recreate the same files. Loans is the number of accounts to check.</p>
-        <details class="upload-section">
-          <summary>Use three synthetic CSV files instead</summary>
-          <p>Uploads have no generated answer key. Maximum 512 KB per file.</p>
+        <div id="example-source">
           <label
-            >Servicing extract<input
-              type="file"
-              id="upload-servicing"
-              accept=".csv,text/csv" /></label
-          ><label
-            >Payments file<input
-              type="file"
-              id="upload-payments"
-              accept=".csv,text/csv" /></label
-          ><label
-            >Investor report<input
-              type="file"
-              id="upload-investor"
-              accept=".csv,text/csv"
-          /></label>
+            >Choose a sample<select id="example-select">
+              <option value="">Monthly sample · 40 accounts</option>
+            </select></label
+          >
+          <p id="example-description" class="form-help">
+            Includes missing payments, repeated debits and differences in rate
+            margins.
+          </p>
+        </div>
+        <div id="upload-source" hidden>
+          <div class="upload-section">
+            <label
+              >1. Payment schedule
+              <small
+                >Servicing extract: amounts due and agreed rate margins.</small
+              ><input
+                type="file"
+                id="upload-servicing"
+                accept=".csv,text/csv" /></label
+            ><label
+              >2. Payment record
+              <small>Payments file: each payment entry.</small
+              ><input
+                type="file"
+                id="upload-payments"
+                accept=".csv,text/csv" /></label
+            ><label
+              >3. Lender report
+              <small
+                >Investor report: cash reported and rate margins charged.</small
+              ><input type="file" id="upload-investor" accept=".csv,text/csv"
+            /></label>
+            <p>
+              CSV files only, up to 512 KB each. Use sample data for this demo.
+            </p>
+          </div>
+        </div>
+        <details class="run-options">
+          <summary>Explanation options &amp; sample size</summary>
+          <label
+            >Explanations<select id="provider">
+              <option value="ollama">Local AI · Qwen (a few minutes)</option>
+              <option value="mock">Quick practice · fixed explanations</option>
+              <option value="openai">OpenAI · requires a configured key</option>
+            </select></label
+          >
+          <div id="generated-options">
+            <div class="form-row">
+              <label
+                >Sample number (seed)<input
+                  id="seed"
+                  type="number"
+                  value="42"
+                  required /></label
+              ><label
+                >Number of accounts<input
+                  id="n-loans"
+                  type="number"
+                  min="1"
+                  max="100"
+                  value="40"
+                  required
+              /></label>
+            </div>
+            <p class="form-help">
+              These settings apply to the monthly sample. The same settings
+              recreate the same files.
+            </p>
+          </div>
         </details>
+        <p id="provider-help" class="form-help">
+          Local AI may take a few minutes. You will check the file labels before
+          payment comparisons begin.
+        </p>
         <label class="checkbox-label"
           ><input type="checkbox" id="synthetic-confirm" required /> These files
-          contain synthetic data only.</label
+          contain invented sample accounts only.</label
         >
+        <p id="run-form-error" class="form-error" role="alert" hidden></p>
         <div class="dialog-actions">
-          <span>Mapping approval comes next.</span
-          ><button type="submit" class="primary" id="start-run">
-            Prepare mapping →
+          <span>Next: check the file labels.</span
+          ><button type="submit" id="start-run" class="primary">
+            Read these files →
           </button>
         </div>
       </form>
     </dialog>
-    <dialog id="evidence-dialog">
+    <dialog id="evidence-dialog" aria-labelledby="evidence-title">
       <div class="dialog-heading">
         <div>
-          <span class="eyebrow">SOURCE EVIDENCE</span>
+          <span class="eyebrow">UNDERSTAND THIS ITEM</span>
           <h2 id="evidence-title"></h2>
         </div>
         <button
-          class="icon-button"
           id="close-evidence"
-          aria-label="Close evidence"
+          class="icon-button"
+          aria-label="Close details"
         >
           ×
         </button>
       </div>
       <div id="evidence-content"></div>
     </dialog>
-    <dialog id="tutorial-dialog" aria-labelledby="tutorial-title" aria-describedby="tutorial-description">
+    <dialog
+      id="tutorial-dialog"
+      aria-labelledby="tutorial-title"
+      aria-describedby="tutorial-description"
+    >
       <header class="tutorial-header">
-        <div><span class="eyebrow">A QUICK GUIDE TO YOUR WORKSPACE</span><p>Follow along at your own pace.</p></div>
-        <button class="icon-button" id="close-tour" aria-label="Close tutorial">×</button>
+        <div>
+          <span class="eyebrow">A QUICK GUIDE TO YOUR WORKSPACE</span>
+          <p>Follow along at your own pace.</p>
+        </div>
+        <button id="close-tour" class="icon-button" aria-label="Close tutorial">
+          ×
+        </button>
       </header>
       <div class="tutorial-layout">
         <nav id="tutorial-chapters" aria-label="Tutorial topics"></nav>
@@ -460,13 +659,19 @@
           <h2 id="tutorial-title" tabindex="-1"></h2>
           <p id="tutorial-description"></p>
           <div id="tutorial-visual"></div>
-          <div class="tutorial-takeaway"><b>What to do</b><p id="tutorial-instruction"></p></div>
-          <button class="text-button" id="tutorial-show"></button>
+          <div class="tutorial-takeaway">
+            <b>What to do</b>
+            <p id="tutorial-instruction"></p>
+          </div>
+          <button id="tutorial-show" class="text-button"></button>
         </section>
       </div>
       <footer class="tutorial-footer">
-        <button class="text-button" id="skip-tour">Close guide</button>
-        <div><button class="secondary" id="tutorial-back">← Back</button><button class="primary" id="tutorial-next">Next →</button></div>
+        <button id="skip-tour" class="text-button">Close guide</button>
+        <div>
+          <button id="tutorial-back" class="secondary">← Back</button
+          ><button id="tutorial-next" class="primary">Next →</button>
+        </div>
       </footer>
     </dialog>
     <script src="/static/app.js" defer></script>

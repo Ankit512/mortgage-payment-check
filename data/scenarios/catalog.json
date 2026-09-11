@@ -1,0 +1,68 @@
+[
+  {
+    "id": "all_clear",
+    "title": "Everything matches",
+    "description": "Four mortgage accounts with the expected money received, including one payment split into two parts.",
+    "expected_note": "0 issues. Expected and received: 3,050.50. The split payment is normal.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  },
+  {
+    "id": "missing_payment",
+    "title": "A payment is missing",
+    "description": "Three mortgage accounts. One has 1,500.00 due and no payment entry for the month.",
+    "expected_note": "1 issue on 1 account. Received money is 1,500.00 below the amount due.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  },
+  {
+    "id": "duplicate_payment",
+    "title": "A payment may have been taken twice",
+    "description": "One mortgage has two full direct-debit payments. Other accounts show normal payments made in parts.",
+    "expected_note": "1 issue on 1 account. Received money is 1,200.00 above the amount due.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  },
+  {
+    "id": "margin_mismatch",
+    "title": "A mortgage margin needs checking",
+    "description": "All payments match, but the report applies a higher mortgage margin to one account.",
+    "expected_note": "1 issue on 1 account. Payments match at 3,450.00; one margin is 0.25 percentage points above the agreement.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  },
+  {
+    "id": "mixed_checks",
+    "title": "Several things need checking",
+    "description": "Six accounts with missing money, an extra collection, higher margins, a reversed payment and normal split payments.",
+    "expected_note": "5 issues on 3 accounts. Shortfalls total 1,900.00 and extra receipts total 800.00; the overall difference is -1,100.00.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  },
+  {
+    "id": "unfamiliar_headers",
+    "title": "Different file headings",
+    "description": "Five accounts using unfamiliar column names. Match the columns before running the payment and margin checks.",
+    "expected_note": "After matching columns: 3 issues on 3 accounts. Shortfalls are 1,050.00 and extra receipts are 2,049.99.",
+    "files": {
+      "servicing": "servicing_extract.csv",
+      "payments": "payments_file.csv",
+      "investor": "investor_report.csv"
+    }
+  }
+]

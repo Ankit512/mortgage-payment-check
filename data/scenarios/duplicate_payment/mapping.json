@@ -1,0 +1,21 @@
+{
+  "servicing": {
+    "LoanIdentifier": "loan_id",
+    "Period": "period",
+    "ScheduledInstalment": "scheduled_amount",
+    "ContractMarginPct": "contractual_margin"
+  },
+  "payments": {
+    "PostingReference": "posting_id",
+    "loan_ref": "loan_id",
+    "payment_period": "period",
+    "amount_received": "received_amount",
+    "payment_method": "payment_method"
+  },
+  "investor": {
+    "Loan_ID": "loan_id",
+    "ReportMonth": "period",
+    "ReportedCash": "reported_amount",
+    "ChargedMarginPct": "charged_margin"
+  }
+}

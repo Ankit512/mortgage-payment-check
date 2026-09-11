@@ -1,6 +1,9 @@
 """Local-only FastAPI dashboard and UC1 API. No credentials required."""
 
 import os
+import io
+import json
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -9,7 +12,7 @@ from typing import Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -78,6 +81,36 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
                 "openai_configured": bool(env.get("OPENAI_API_KEY")),
                 "trace_mode": env.get("DISSEQT_TRANSPORT", "local"),
                 "canonical_fields": CANONICAL_FIELDS}
+
+    def examples():
+        catalog = ROOT / "data" / "scenarios" / "catalog.json"
+        return json.loads(catalog.read_text()) if catalog.exists() else []
+
+    def example_folder(example_id):
+        entry = next((entry for entry in examples() if entry["id"] == example_id), None)
+        if entry is None:
+            raise HTTPException(404, "Example not found")
+        return entry, ROOT / "data" / "scenarios" / entry["id"]
+
+    @app.get("/examples")
+    def list_examples():
+        return examples()
+
+    @app.get("/examples/{example_id}")
+    def get_example(example_id: str):
+        entry, folder = example_folder(example_id)
+        return {"id": entry["id"], "title": entry["title"],
+                "files": {kind: (folder / filename).read_text() for filename, kind in FILE_KINDS.items()}}
+
+    @app.get("/examples/{example_id}/download")
+    def download_example(example_id: str):
+        entry, folder = example_folder(example_id)
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
+            for filename in (*FILE_KINDS, "README.md", "mapping.json", "expected.json"):
+                archive.writestr(filename, (folder / filename).read_bytes())
+        return Response(output.getvalue(), media_type="application/zip",
+                        headers={"Content-Disposition": f'attachment; filename="{entry["id"]}-csv-pack.zip"'})
 
     @app.post("/runs")
     def start(body: RunRequest, background: bool = False):

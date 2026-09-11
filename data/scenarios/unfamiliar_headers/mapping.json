@@ -1,0 +1,21 @@
+{
+  "servicing": {
+    "Mortgage reference": "loan_id",
+    "Statement cycle": "period",
+    "Instalment due this cycle": "scheduled_amount",
+    "Agreed margin percent": "contractual_margin"
+  },
+  "payments": {
+    "Collection entry": "posting_id",
+    "Agreement reference": "loan_id",
+    "Collection cycle": "period",
+    "Net amount posted": "received_amount",
+    "Collection route": "payment_method"
+  },
+  "investor": {
+    "Facility reference": "loan_id",
+    "Cash reporting cycle": "period",
+    "Cash credited to investor": "reported_amount",
+    "Applied margin percent": "charged_margin"
+  }
+}

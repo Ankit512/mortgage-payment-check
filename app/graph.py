@@ -18,6 +18,7 @@ from langgraph.types import Command, interrupt
 from app import validators
 from app.engine import CANONICAL_FIELDS, load_mapped, reconcile, score_against_ground_truth
 from app.providers import ProviderError
+from app.payment_summary import payment_summary
 
 
 class GraphState(TypedDict, total=False):
@@ -40,7 +41,7 @@ class Pipeline:
             "ingest_scores": {}, "ingest_findings": {}, "mapping_errors": [],
             "mapping_issues": [], "engine_exceptions": [], "remediation_log": [],
             "held_for_review": [], "score": None, "progress": {"completed": 0, "total": None},
-            "error": None, "active_duration_ms": 0,
+            "error": None, "active_duration_ms": 0, "payment_summary": None,
         }
         builder = StateGraph(GraphState)
         builder.add_node("ingest", self._ingest)
@@ -183,8 +184,9 @@ class Pipeline:
             tables = [load_mapped(self.files[kind], state["mapping"][kind], kind=kind) for kind in CANONICAL_FIELDS]
             issues = [issue for table in tables for issue in table.issues]
             found = reconcile(*tables)
+            summary = payment_summary(*tables, found)
             attributes.update({"uc1.engine.exceptions": found, "uc1.mapping.issues": issues})
-            self._update(engine_exceptions=found, mapping_issues=issues,
+            self._update(engine_exceptions=found, mapping_issues=issues, payment_summary=summary,
                          progress={"completed": 0, "total": len(found)})
         if self.manifest is not None:
             score_attributes = {}
