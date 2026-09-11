@@ -35,6 +35,12 @@ rate, APR, repayment forecast or historical trend is inferred. The data covers
 one reporting month. This remains a local sample-data PoC, not an authenticated
 customer account portal.
 
+The currency selector adds GBP (£), EUR (€), or USD ($) to payment totals,
+charts, explanations and readable source amounts. GBP is the initial display
+label and the browser remembers changes. This is not currency conversion:
+the files do not declare currency, API amounts remain unchanged, and original
+CSV rows stay verbatim. API cost is separately labelled USD.
+
 The main descriptions use fixed templates filled with trusted source figures.
 They are distinct from the optional model rationale. If the rationale fails
 checks, it remains withheld; financial facts and source records stay visible.
@@ -58,8 +64,9 @@ download endpoint. Uploaded checks retain a null generated-fixture score.
 
 ## Verification
 
-- **97 automated tests pass**, including the six-pack integration test and
-  tests for missing mappings, missing lender rows and download/upload parity.
+- **108 automated tests pass**, including the six-pack integration test,
+  missing mappings, missing lender rows, download/upload parity, and the later
+  [payment assistant and Vercel gateway checks](DEPLOYMENT.md#verification-status).
 - The separate-agent harness uploaded every pack twice through FastAPI and the
   real LangGraph interrupt: **12 completed uploads**. Independent CSV/Decimal
   controls match all account totals, chart counts, finding identities and raw

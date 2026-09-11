@@ -72,10 +72,39 @@ let current = null,
   selectedAccount = "",
   examples = [];
 
-// Format exact server decimal strings. Floating point is used only for visual
-// bar proportions, never for sums or the values displayed to the customer.
-const money = (value) =>
-  value == null ? "—" : String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const currencies = { GBP: "£", EUR: "€", USD: "$" };
+let displayCurrency = "GBP";
+try {
+  const saved = localStorage.getItem("uc1-display-currency");
+  if (Object.hasOwn(currencies, saved)) displayCurrency = saved;
+} catch {}
+
+// The source files do not specify currency. This is a display label, not FX.
+// Keep exact decimal strings; floating point is only used for chart proportions.
+function money(value) {
+  if (value == null) return "—";
+  const text = String(value).trim(),
+    negative = text.startsWith("-"),
+    [whole, fraction = "00"] = text.replace(/^[+-]/, "").split(".");
+  return `${negative ? "−" : text.startsWith("+") ? "+" : ""}${currencies[displayCurrency]}${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}.${fraction.padEnd(2, "0")}`;
+}
+function renderCurrency() {
+  $("currency-select").value = displayCurrency;
+  $("currency-note").textContent =
+    `Amounts labelled in ${displayCurrency} (${currencies[displayCurrency]}). Choose the currency used in your files; changing this label does not convert amounts. Received amounts include reversals.`;
+}
+renderCurrency();
+$("currency-select").addEventListener("change", () => {
+  const selected = $("currency-select").value;
+  if (!Object.hasOwn(currencies, selected)) return;
+  displayCurrency = selected;
+  try {
+    localStorage.setItem("uc1-display-currency", displayCurrency);
+  } catch {}
+  renderCurrency();
+  renderPaymentSummary();
+  renderExceptions();
+});
 function month(value) {
   return /^\d{4}-\d{2}$/.test(value || "")
     ? new Date(value + "-01T00:00:00Z").toLocaleDateString(undefined, {
@@ -379,6 +408,7 @@ function displaySummary() {
   };
 }
 function renderPaymentSummary() {
+  document.dispatchEvent(new Event("uc1:scope-changed"));
   const full = current?.payment_summary,
     s = displaySummary();
   const accounts = full?.accounts || [];
@@ -459,7 +489,7 @@ function renderPaymentSummary() {
     ]
       .map(
         (bar) =>
-          `<div class="payment-bar-row ${bar.css}"><div><span>${bar.label}</span><b>${money(bar.value)}</b></div><div class="payment-bar-track" role="img" aria-label="${bar.label}: ${escape(bar.value)}"><span style="width:${(Math.abs(Number(bar.value)) / scale) * 100}%"></span></div></div>`,
+          `<div class="payment-bar-row ${bar.css}"><div><span>${bar.label}</span><b>${money(bar.value)}</b></div><div class="payment-bar-track" role="img" aria-label="${bar.label}: ${money(bar.value)} ${displayCurrency}"><span style="width:${(Math.abs(Number(bar.value)) / scale) * 100}%"></span></div></div>`,
       )
       .join("") +
     `<p class="chart-difference">${differenceText}${Number(s.received) < 0 ? " Net payments are negative because of reversals." : ""}</p>`;
@@ -586,7 +616,7 @@ function describe(item) {
       title: a.posting_count
         ? "Payments were recorded, but the net amount is zero."
         : "No payment is recorded for this month.",
-      body: `${money(a.scheduled)} was due for ${month(a.period)}. ${a.posting_count ? "The payment entries add up to 0.00 after reversals." : "There is no payment entry for this account in the supplied file."}`,
+      body: `${money(a.scheduled)} was due for ${month(a.period)}. ${a.posting_count ? `The payment entries add up to ${money(a.received)} after reversals.` : "There is no payment entry for this account in the supplied file."}`,
       chips: [`Due ${money(a.scheduled)}`, `Recorded ${money(a.received)}`],
       next: "Compare the payment record with the schedule for this account and month. The supplied files may not reflect later payments.",
     };
@@ -709,10 +739,17 @@ function showEvidence(exId) {
         return `<section class="file-evidence"><h3>${escape(fileLabels[kind] || filename)}</h3><small>${escape(filename)} · row ${row.row_number}</small><dl class="source-fields">${Object.entries(
           row.raw,
         )
-          .map(
-            ([raw, value]) =>
-              `<div><dt>${escape(fields[current.confirmed_mapping?.[kind]?.[raw]] || raw)}</dt><dd>${escape(value)}</dd></div>`,
-          )
+          .map(([raw, value]) => {
+            const field = current.confirmed_mapping?.[kind]?.[raw];
+            const formatted = [
+              "scheduled_amount",
+              "received_amount",
+              "reported_amount",
+            ].includes(field)
+              ? money(value)
+              : value;
+            return `<div><dt>${escape(fields[field] || raw)}</dt><dd>${escape(formatted)}</dd></div>`;
+          })
           .join("")}</dl></section>`;
       })
       .join(
@@ -756,7 +793,7 @@ function renderAnalytics() {
     ? `<strong>${Math.round(current.score.recall * 100)}% recall</strong><span>${current.score.true_positives} found · ${current.score.false_positives} unexpected · ${current.score.false_negatives} missed</span>`
     : "<strong>Not scored here</strong><span>Uploaded files do not include a generated answer key.</span>";
   $("analytics-summary").innerHTML =
-    `<div><strong>${(a.active_duration_ms / 1000).toFixed(1)}s</strong><span>Processing time · confirmation wait excluded</span></div><div><strong>${a.model_calls.length}</strong><span>Model operations</span></div><div><strong>${a.token_total === null ? "Unknown" : a.token_total.toLocaleString()}</strong><span>Recorded model tokens</span></div><div><strong>${a.estimated_api_cost_usd === null ? "Unknown" : "$" + a.estimated_api_cost_usd.toFixed(2)}</strong><span>${escape(a.cost_note)}</span></div>`;
+    `<div><strong>${(a.active_duration_ms / 1000).toFixed(1)}s</strong><span>Processing time · confirmation wait excluded</span></div><div><strong>${a.model_calls.length}</strong><span>Model operations</span></div><div><strong>${a.token_total === null ? "Unknown" : a.token_total.toLocaleString()}</strong><span>Recorded model tokens</span></div><div><strong>${a.estimated_api_cost_usd === null ? "Unknown" : "$" + a.estimated_api_cost_usd.toFixed(2) + " USD"}</strong><span>${escape(a.cost_note)}</span></div>`;
   const max = Math.max(1, ...a.span_timeline.map((span) => span.duration_ms));
   $("timeline").innerHTML = a.span_timeline
     .map(
@@ -832,7 +869,7 @@ async function init() {
         '<p class="chart-empty">The example library is unavailable. The monthly sample can still be opened from Check payment files.</p>';
     }
   } catch (error) {
-    notice("Cannot reach the local service: " + error.message);
+    notice("Cannot reach the payment service: " + error.message);
   }
 }
 init();

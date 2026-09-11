@@ -4,4 +4,8 @@ __pycache__/
 .env
 traces/
 tmp/
+dist/
+.vercel/
+.env.*
+!.env.example
 .DS_Store

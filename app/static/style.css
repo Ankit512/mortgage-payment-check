@@ -412,6 +412,7 @@ main {
 }
 .scope-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -433,14 +434,16 @@ main {
   font-size: 16px;
   font-weight: 550;
 }
-.account-picker {
+.account-picker,
+.currency-picker {
   display: flex;
   align-items: center;
   gap: 10px;
   color: #798871;
   font-size: 11px;
 }
-.account-picker select {
+.account-picker select,
+.currency-picker select {
   border: 1px solid #dbe3d4;
   border-radius: 7px;
   padding: 10px 28px 10px 10px;
@@ -448,6 +451,9 @@ main {
   color: #395e40;
   font-size: 12px;
   max-width: 260px;
+}
+.scope-bar .scope-filters {
+  flex-wrap: wrap;
 }
 .run-strip {
   display: flex;

@@ -6,6 +6,7 @@
     <title>Mortgage Capital · Payment overview</title>
     <link rel="stylesheet" href="/static/style.css" />
     <link rel="stylesheet" href="/static/tutorial.css" />
+    <link rel="stylesheet" href="/static/chat.css" />
   </head>
   <body>
     <aside class="sidebar">
@@ -105,16 +106,26 @@
               ><strong id="month-label">Choose files to begin</strong
               ><span id="status-badge" class="badge neutral">Not started</span>
             </div>
-            <label class="account-picker"
-              >Showing
-              <select
-                id="account-select"
-                aria-label="Choose a sample account"
-                disabled
+            <div class="scope-filters">
+              <label class="account-picker"
+                >Showing
+                <select
+                  id="account-select"
+                  aria-label="Choose a sample account"
+                  disabled
+                >
+                  <option value="">All sample accounts</option>
+                </select></label
               >
-                <option value="">All sample accounts</option>
-              </select></label
-            >
+              <label class="currency-picker"
+                >Currency
+                <select id="currency-select" aria-label="Display currency">
+                  <option value="GBP">GBP (£)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="USD">USD ($)</option>
+                </select>
+              </label>
+            </div>
           </div>
           <div class="run-strip">
             <span id="run-title">No check selected</span
@@ -231,9 +242,9 @@
                   another.
                 </p>
               </div>
-              <p class="panel-note">
-                Amounts use the units in your files. No currency is specified.
-                Received amounts include reversals.
+              <p id="currency-note" class="panel-note">
+                Choose the currency used in your files. Changing this label does
+                not convert amounts.
               </p>
             </section>
             <section class="panel account-chart">
@@ -674,7 +685,64 @@
         </div>
       </footer>
     </dialog>
+    <button id="open-chat" class="primary chat-launcher" aria-haspopup="dialog">
+      Ask about this check
+    </button>
+    <dialog id="chat-dialog" aria-labelledby="chat-title">
+      <header class="chat-header">
+        <div>
+          <span class="eyebrow">PAYMENT ASSISTANT</span>
+          <h2 id="chat-title">Let’s make the figures clearer.</h2>
+        </div>
+        <button
+          id="close-chat"
+          class="secondary"
+          aria-label="Close payment assistant"
+        >
+          ×
+        </button>
+      </header>
+      <p id="chat-context" class="chat-context"></p>
+      <div
+        id="chat-messages"
+        class="chat-messages"
+        role="log"
+        aria-label="Payment conversation"
+        aria-live="polite"
+      ></div>
+      <div id="chat-suggestions" class="chat-suggestions">
+        <button type="button" class="secondary">
+          Summarise these payments
+        </button>
+        <button type="button" class="secondary">
+          Why is there a shortfall?
+        </button>
+        <button type="button" class="secondary">
+          Explain the rate margins
+        </button>
+        <button type="button" class="secondary">
+          What should I review next?
+        </button>
+      </div>
+      <p id="chat-status" role="status" class="form-help"></p>
+      <form id="chat-form">
+        <label for="chat-question">Your question about these records</label>
+        <div class="chat-compose">
+          <input
+            id="chat-question"
+            maxlength="600"
+            required
+            autocomplete="off"
+            placeholder="Why is this payment flagged?"
+          /><button id="chat-send" class="primary">Ask</button>
+        </div>
+      </form>
+      <p class="chat-footer">
+        Answers explain this check. No payments or records are changed.
+      </p>
+    </dialog>
     <script src="/static/app.js" defer></script>
     <script src="/static/tutorial.js" defer></script>
+    <script src="/static/chat.js" defer></script>
   </body>
 </html>

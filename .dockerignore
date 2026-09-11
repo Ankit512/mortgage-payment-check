@@ -1,7 +1,11 @@
 .git
 .venv
 .env
+.env.*
 tmp
 traces
-__pycache__
-*.pyc
+dist
+docs
+tests
+**/__pycache__
+**/*.pyc

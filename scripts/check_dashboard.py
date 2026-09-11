@@ -24,7 +24,7 @@ def confirm_labels(page, mapping=None):
 
 def amount(value):
     from decimal import Decimal
-    return f"{Decimal(value):,.2f}"
+    return f"£{Decimal(value):,.2f}"
 
 
 def main():
@@ -38,6 +38,7 @@ def main():
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on("request", lambda request: mutations.append(request.url) if request.method == "POST" else None)
         page.goto(args.url)
+        page.locator("#currency-select").select_option("GBP")
         expect(page.locator("#example-cards .example-card")).to_have_count(6)
         expect(page.locator("#tutorial-welcome")).to_be_visible()
         page.locator("#start-tour").click()
@@ -73,20 +74,50 @@ def main():
         assert len(mutations) == before_help
         target.select_option("scheduled_amount")
         confirm_labels(page)
-        expect(page.locator("#metric-due")).to_have_text("66,561.34")
-        expect(page.locator("#metric-paid")).to_have_text("67,053.18")
-        expect(page.locator("#metric-shortfall")).to_have_text("7,430.01")
-        expect(page.locator("#chart-excess")).to_have_text("7,921.85")
+        expect(page.locator("#metric-due")).to_have_text("£66,561.34")
+        expect(page.locator("#metric-paid")).to_have_text("£67,053.18")
+        expect(page.locator("#metric-shortfall")).to_have_text("£7,430.01")
+        expect(page.locator("#chart-excess")).to_have_text("£7,921.85")
         expect(page.locator("#metric-accounts")).to_have_text("12")
         expect(page.locator(".exception-row")).to_have_count(12)
+        # Currency is a remembered display label, never a conversion or new check.
+        before_currency = len(mutations)
+        for currency, symbol in [("EUR", "€"), ("USD", "$"), ("GBP", "£")]:
+            page.locator("#currency-select").select_option(currency)
+            expect(page.locator("#metric-due")).to_have_text(symbol + "66,561.34")
+            expect(page.locator("#payment-bars")).to_contain_text(symbol + "67,053.18")
+            expect(page.locator("#currency-note")).to_contain_text(currency)
+        assert len(mutations) == before_currency
+        page.reload()
+        expect(page.locator("#currency-select")).to_have_value("GBP")
+        expect(page.locator("#metric-paid")).to_have_text("£67,053.18")
+        page.locator("#open-chat").click()
+        page.get_by_role("button", name="Why is there a shortfall?", exact=True).click()
+        expect(page.locator("#chat-messages .assistant")).to_contain_text("£7,430.01")
+        page.get_by_text("Supporting CSV records", exact=True).click()
+        expect(page.locator("#chat-messages")).to_contain_text("servicing_extract.csv")
+        page.locator("#chat-question").fill("Should I refinance?")
+        page.locator("#chat-send").click()
+        expect(page.locator("#chat-messages .assistant").last).to_contain_text("cannot recommend a mortgage")
+        page.keyboard.press("Escape")
+        expect(page.locator("#open-chat")).to_be_focused()
+        assert all(url.endswith("/chat") for url in mutations[before_currency:])
         page.locator("#account-select").select_option("SYN-L000005")
-        expect(page.locator("#metric-due")).to_have_text("2,580.61")
-        expect(page.locator("#metric-paid")).to_have_text("0.00")
+        expect(page.locator("#metric-due")).to_have_text("£2,580.61")
+        expect(page.locator("#metric-paid")).to_have_text("£0.00")
         expect(page.locator("#donut-total")).to_have_text("1")
+        page.locator("#open-chat").click()
+        expect(page.locator("#chat-messages")).to_be_empty()
+        expect(page.locator("#chat-context")).to_contain_text("SYN-L000005")
+        page.get_by_role("button", name="Summarise these payments", exact=True).click()
+        expect(page.locator("#chat-messages .assistant")).to_contain_text("£2,580.61")
+        expect(page.locator("#chat-messages .assistant")).not_to_contain_text("£66,561.34")
+        assert page.locator("#chat-dialog").evaluate("el => el.scrollWidth <= el.clientWidth")
+        page.locator("#close-chat").click()
         page.locator(".evidence-button").first.click()
         expect(page.locator("#evidence-content")).to_contain_text("No payment row exists")
         expect(page.locator(".source-fields")).to_have_count(2)
-        expect(page.locator(".detail-facts")).to_contain_text("2,580.61")
+        expect(page.locator(".detail-facts")).to_contain_text("£2,580.61")
         expect(page.locator("#evidence-content pre").first).not_to_be_visible()
         page.locator("#close-evidence").click()
         page.locator("#account-select").select_option("")
@@ -101,6 +132,7 @@ def main():
         page.locator('[data-example="mixed_checks"]').click()
         expect(page.locator("#example-select")).to_have_value("mixed_checks")
         expect(page.locator("#synthetic-confirm")).not_to_be_checked()
+        page.locator(".run-options").evaluate("el => el.open = true")
         page.locator("#provider").select_option("mock")
         page.locator("#synthetic-confirm").check()
         page.locator("#start-run").click()
@@ -133,6 +165,7 @@ def main():
                 assert len(mutations) == before_invalid
             for kind, filename in entry["files"].items():
                 page.locator("#upload-" + kind).set_input_files(str(folder / filename))
+            page.locator(".run-options").evaluate("el => el.open = true")
             page.locator("#provider").select_option("mock")
             page.locator("#synthetic-confirm").check()
             page.locator("#start-run").click()

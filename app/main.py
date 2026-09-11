@@ -1,25 +1,27 @@
-"""Local-only FastAPI dashboard and UC1 API. No credentials required."""
+"""FastAPI synthetic-data dashboard and UC1 worker API."""
 
 import os
 import io
 import json
 import zipfile
+import secrets
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from pathlib import Path
-from threading import Lock
+from threading import Lock, BoundedSemaphore
 from typing import Literal
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.disseqt_wire import get_client
+from app import chat
 from app.engine import CANONICAL_FIELDS, FILE_KINDS
 from app.graph import Pipeline
-from app.providers import DEFAULT_OLLAMA_MODEL, ProviderConfigurationError, get_provider
+from app.providers import DEFAULT_OLLAMA_MODEL, CHAT_TOPICS, ProviderError, ProviderConfigurationError, get_provider
 from data.generate_samples import generate_samples
 
 
@@ -48,13 +50,27 @@ class BaselineRequest(BaseModel):
     exception_count: int = Field(ge=0)
 
 
+class ChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    question: str = Field(min_length=1, max_length=600)
+    account_id: str | None = Field(default=None, min_length=1, max_length=100)
+    currency: Literal["GBP", "EUR", "USD"] = "GBP"
+    previous_topic: str | None = Field(default=None, max_length=30)
+
+
 def create_app(*, storage=None, environ=None, provider_factory=None):
+    env = dict(os.environ if environ is None else environ)
+    if storage is None and env.get("UC1_STORAGE_ROOT"):
+        storage = Path(env["UC1_STORAGE_ROOT"]) / "runs"
     trace_directory = ROOT / "traces" if storage is None else Path(storage).parent / "traces"
     storage = Path(storage) if storage is not None else ROOT / "tmp" / "runs"
-    env = dict(os.environ if environ is None else environ)
     runs, registry_lock = {}, Lock()
     executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="uc1-run")
     baseline = None
+    chat_slot = BoundedSemaphore(1)
+    worker_token = env.get("UC1_WORKER_TOKEN", "")
+    if worker_token and len(worker_token) < 32:
+        raise ValueError("UC1_WORKER_TOKEN must contain at least 32 characters")
 
     @asynccontextmanager
     async def lifespan(app):
@@ -66,6 +82,17 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
 
     app = FastAPI(title="Mortgage Capital · Reconciliation", version="0.1.0", lifespan=lifespan)
     app.state.runs = runs
+
+    @app.middleware("http")
+    async def worker_auth(request: Request, call_next):
+        if worker_token and request.url.path != "/health":
+            supplied = request.headers.get("authorization", "")
+            if not secrets.compare_digest(supplied.encode(), ("Bearer " + worker_token).encode()):
+                return JSONResponse({"detail": "Worker authentication required"}, status_code=401)
+        response = await call_next(request)
+        if not request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-store"
+        return response
 
     def find(run_id):
         with registry_lock:
@@ -170,6 +197,53 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
     @app.get("/runs/{run_id}/analytics")
     def analytics(run_id: str):
         return find(run_id).analytics(baseline)
+
+    @app.post("/runs/{run_id}/chat")
+    def ask(run_id: str, body: ChatRequest):
+        run = find(run_id)
+        snapshot = run.snapshot()
+        if snapshot["status"] not in ("explaining", "complete") or not (snapshot.get("payment_summary") or {}).get("available"):
+            raise HTTPException(409, "Confirm the file labels and wait for the payment figures before asking about this check.")
+        if not chat.question_allowed(body.question):
+            raise HTTPException(422, "Ask about the sample payment figures without personal details or instructions to override the checks.")
+        if body.previous_topic is not None and body.previous_topic not in CHAT_TOPICS:
+            raise HTTPException(422, "Unsupported previous topic")
+        try:
+            account_id = chat.explicit_account(body.question,
+                [a["loan_id"] for a in snapshot["payment_summary"]["accounts"]], body.account_id)
+            if account_id and account_id not in {a["loan_id"] for a in snapshot["payment_summary"]["accounts"]}:
+                raise ValueError("Choose an account from this check.")
+        except ValueError as error:
+            raise HTTPException(422, str(error)) from None
+        if not chat_slot.acquire(blocking=False):
+            raise HTTPException(429, "Another question is being answered. Try again shortly.")
+        trace = None
+        try:
+            # Chat never consumes OpenAI tokens. A practice run keeps its labelled mock router.
+            mode = "mock" if snapshot["provider"] == "mock" else "ollama"
+            mode_env = {**env, "LLM_PROVIDER": mode, "OLLAMA_TIMEOUT_SECONDS": "35"}
+            provider = provider_factory(mode_env) if provider_factory else get_provider(mode_env)
+            trace = get_client(str(uuid4()), directory=trace_directory / "chat", environ=env)
+            trace.emit("chat_context", attributes={"run_id": run_id, "account_id": account_id})
+            try:
+                topic = provider.route_question(body.question, body.previous_topic)
+            finally:
+                for call in provider.calls:
+                    trace.model_call(call)
+            result = chat.answer(snapshot, run.files, topic, account_id=account_id, currency=body.currency)
+            result.update({"mode": "quick_guide" if mode == "mock" else "qwen", "model": provider.model,
+                           "audit_id": trace.run_id})
+            trace.emit("chat_answer", attributes={"topic": topic, "read_only": True, "citations": result["citations"]})
+            trace.finish()
+            return result
+        except (ProviderError, ProviderConfigurationError):
+            if trace:
+                trace.finish("error")
+            raise HTTPException(503, "The question assistant is unavailable. Payment figures and See details remain available; try again shortly.") from None
+        finally:
+            if trace and hasattr(trace.remote, "close"):
+                trace.remote.close()
+            chat_slot.release()
 
     @app.post("/baseline")
     def set_baseline(body: BaselineRequest):

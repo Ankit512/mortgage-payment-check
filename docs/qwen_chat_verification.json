@@ -1,0 +1,3537 @@
+{
+  "run": {
+    "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+    "status": "complete",
+    "created_at": "2026-09-11T22:09:29.895205+00:00",
+    "provider": "ollama",
+    "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+    "trace_mode": "local",
+    "synthetic": true,
+    "proposed_mapping": {
+      "servicing": {
+        "ContractMarginPct": "contractual_margin",
+        "LoanIdentifier": "loan_id",
+        "Period": "period",
+        "ScheduledInstalment": "scheduled_amount"
+      },
+      "payments": {
+        "PostingReference": "posting_id",
+        "amount_received": "received_amount",
+        "loan_ref": "loan_id",
+        "payment_method": "payment_method",
+        "payment_period": "period"
+      },
+      "investor": {
+        "ChargedMarginPct": "charged_margin",
+        "Loan_ID": "loan_id",
+        "ReportMonth": "period",
+        "ReportedCash": "reported_amount"
+      }
+    },
+    "confirmed_mapping": {
+      "servicing": {
+        "LoanIdentifier": "loan_id",
+        "Period": "period",
+        "ScheduledInstalment": "scheduled_amount",
+        "ContractMarginPct": "contractual_margin"
+      },
+      "payments": {
+        "PostingReference": "posting_id",
+        "loan_ref": "loan_id",
+        "payment_period": "period",
+        "amount_received": "received_amount",
+        "payment_method": "payment_method"
+      },
+      "investor": {
+        "Loan_ID": "loan_id",
+        "ReportMonth": "period",
+        "ReportedCash": "reported_amount",
+        "ChargedMarginPct": "charged_margin"
+      }
+    },
+    "files": {
+      "servicing": {
+        "filename": "servicing_extract.csv",
+        "headers": [
+          "LoanIdentifier",
+          "Period",
+          "ScheduledInstalment",
+          "ContractMarginPct"
+        ],
+        "row_count": 40,
+        "preview": [
+          {
+            "LoanIdentifier": "SYN-L000001",
+            "Period": "2026-08",
+            "ScheduledInstalment": "2326.21",
+            "ContractMarginPct": "1.78"
+          },
+          {
+            "LoanIdentifier": "SYN-L000002",
+            "Period": "2026-08",
+            "ScheduledInstalment": "715.56",
+            "ContractMarginPct": "3.39"
+          },
+          {
+            "LoanIdentifier": "SYN-L000003",
+            "Period": "2026-08",
+            "ScheduledInstalment": "1370.97",
+            "ContractMarginPct": "2.12"
+          }
+        ]
+      },
+      "payments": {
+        "filename": "payments_file.csv",
+        "headers": [
+          "PostingReference",
+          "loan_ref",
+          "payment_period",
+          "amount_received",
+          "payment_method"
+        ],
+        "row_count": 40,
+        "preview": [
+          {
+            "PostingReference": "SYN-P000001-A",
+            "loan_ref": "SYN-L000001",
+            "payment_period": "2026-08",
+            "amount_received": "2326.21",
+            "payment_method": "DIRECT_DEBIT"
+          },
+          {
+            "PostingReference": "SYN-P000002-A",
+            "loan_ref": "SYN-L000002",
+            "payment_period": "2026-08",
+            "amount_received": "715.56",
+            "payment_method": "DIRECT_DEBIT"
+          },
+          {
+            "PostingReference": "SYN-P000003-A",
+            "loan_ref": "SYN-L000003",
+            "payment_period": "2026-08",
+            "amount_received": "1370.97",
+            "payment_method": "DIRECT_DEBIT"
+          }
+        ]
+      },
+      "investor": {
+        "filename": "investor_report.csv",
+        "headers": [
+          "Loan_ID",
+          "ReportMonth",
+          "ReportedCash",
+          "ChargedMarginPct"
+        ],
+        "row_count": 40,
+        "preview": [
+          {
+            "Loan_ID": "SYN-L000001",
+            "ReportMonth": "2026-08",
+            "ReportedCash": "2326.21",
+            "ChargedMarginPct": "1.78"
+          },
+          {
+            "Loan_ID": "SYN-L000002",
+            "ReportMonth": "2026-08",
+            "ReportedCash": "715.56",
+            "ChargedMarginPct": "3.39"
+          },
+          {
+            "Loan_ID": "SYN-L000003",
+            "ReportMonth": "2026-08",
+            "ReportedCash": "1370.97",
+            "ChargedMarginPct": "2.12"
+          }
+        ]
+      }
+    },
+    "ingest_scores": {
+      "injection_scan": 1.0,
+      "pii_scan": 1.0
+    },
+    "ingest_findings": {
+      "injection_scan": [],
+      "pii_scan": []
+    },
+    "mapping_errors": [],
+    "mapping_issues": [],
+    "engine_exceptions": [
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000005",
+        "ex_type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000005",
+        "detail": "Loan SYN-L000005: scheduled 2580.61 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 6,
+            "raw": {
+              "LoanIdentifier": "SYN-L000005",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2580.61",
+              "ContractMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000005,2026-08,2580.61,1.76\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 6,
+            "raw": {
+              "Loan_ID": "SYN-L000005",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000005,2026-08,0.00,1.76\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000006",
+        "ex_type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000006",
+        "detail": "Loan SYN-L000006: scheduled 2423.92 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 7,
+            "raw": {
+              "LoanIdentifier": "SYN-L000006",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2423.92",
+              "ContractMarginPct": "3.39"
+            },
+            "raw_text": "SYN-L000006,2026-08,2423.92,3.39\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 7,
+            "raw": {
+              "Loan_ID": "SYN-L000006",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "3.39"
+            },
+            "raw_text": "SYN-L000006,2026-08,0.00,3.39\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000011",
+        "ex_type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000011",
+        "detail": "Loan SYN-L000011: 2 direct-debit postings net 2519.80 for 2026-08, exactly 2 times the scheduled 1259.90; total net received 2519.80. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 12,
+            "raw": {
+              "LoanIdentifier": "SYN-L000011",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1259.90",
+              "ContractMarginPct": "2.79"
+            },
+            "raw_text": "SYN-L000011,2026-08,1259.90,2.79\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 10,
+            "raw": {
+              "PostingReference": "SYN-P000011-A",
+              "loan_ref": "SYN-L000011",
+              "payment_period": "2026-08",
+              "amount_received": "1259.90",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000011-A,SYN-L000011,2026-08,1259.90,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 11,
+            "raw": {
+              "PostingReference": "SYN-P000011-B",
+              "loan_ref": "SYN-L000011",
+              "payment_period": "2026-08",
+              "amount_received": "1259.90",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000011-B,SYN-L000011,2026-08,1259.90,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 12,
+            "raw": {
+              "Loan_ID": "SYN-L000011",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "2519.80",
+              "ChargedMarginPct": "2.79"
+            },
+            "raw_text": "SYN-L000011,2026-08,2519.80,2.79\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000013",
+        "ex_type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000013",
+        "detail": "Loan SYN-L000013: charged margin 2.59% exceeds contractual margin 2.00% by 0.59 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 14,
+            "raw": {
+              "LoanIdentifier": "SYN-L000013",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2121.27",
+              "ContractMarginPct": "2.00"
+            },
+            "raw_text": "SYN-L000013,2026-08,2121.27,2.00\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 13,
+            "raw": {
+              "PostingReference": "SYN-P000013-A",
+              "loan_ref": "SYN-L000013",
+              "payment_period": "2026-08",
+              "amount_received": "2121.27",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000013-A,SYN-L000013,2026-08,2121.27,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 14,
+            "raw": {
+              "Loan_ID": "SYN-L000013",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "2121.27",
+              "ChargedMarginPct": "2.59"
+            },
+            "raw_text": "SYN-L000013,2026-08,2121.27,2.59\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000014",
+        "ex_type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000014",
+        "detail": "Loan SYN-L000014: 2 direct-debit postings net 5054.00 for 2026-08, exactly 2 times the scheduled 2527.00; total net received 5054.00. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 15,
+            "raw": {
+              "LoanIdentifier": "SYN-L000014",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2527.00",
+              "ContractMarginPct": "3.16"
+            },
+            "raw_text": "SYN-L000014,2026-08,2527.00,3.16\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 14,
+            "raw": {
+              "PostingReference": "SYN-P000014-A",
+              "loan_ref": "SYN-L000014",
+              "payment_period": "2026-08",
+              "amount_received": "2527.00",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000014-A,SYN-L000014,2026-08,2527.00,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 15,
+            "raw": {
+              "PostingReference": "SYN-P000014-B",
+              "loan_ref": "SYN-L000014",
+              "payment_period": "2026-08",
+              "amount_received": "2527.00",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000014-B,SYN-L000014,2026-08,2527.00,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 15,
+            "raw": {
+              "Loan_ID": "SYN-L000014",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "5054.00",
+              "ChargedMarginPct": "3.16"
+            },
+            "raw_text": "SYN-L000014,2026-08,5054.00,3.16\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000015",
+        "ex_type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000015",
+        "detail": "Loan SYN-L000015: 2 direct-debit postings net 4976.96 for 2026-08, exactly 2 times the scheduled 2488.48; total net received 4976.96. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 16,
+            "raw": {
+              "LoanIdentifier": "SYN-L000015",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2488.48",
+              "ContractMarginPct": "2.89"
+            },
+            "raw_text": "SYN-L000015,2026-08,2488.48,2.89\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 16,
+            "raw": {
+              "PostingReference": "SYN-P000015-A",
+              "loan_ref": "SYN-L000015",
+              "payment_period": "2026-08",
+              "amount_received": "2488.48",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000015-A,SYN-L000015,2026-08,2488.48,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 17,
+            "raw": {
+              "PostingReference": "SYN-P000015-B",
+              "loan_ref": "SYN-L000015",
+              "payment_period": "2026-08",
+              "amount_received": "2488.48",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000015-B,SYN-L000015,2026-08,2488.48,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 16,
+            "raw": {
+              "Loan_ID": "SYN-L000015",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "4976.96",
+              "ChargedMarginPct": "2.89"
+            },
+            "raw_text": "SYN-L000015,2026-08,4976.96,2.89\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000016",
+        "ex_type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000016",
+        "detail": "Loan SYN-L000016: charged margin 3.02% exceeds contractual margin 2.06% by 0.96 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 17,
+            "raw": {
+              "LoanIdentifier": "SYN-L000016",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1749.74",
+              "ContractMarginPct": "2.06"
+            },
+            "raw_text": "SYN-L000016,2026-08,1749.74,2.06\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 18,
+            "raw": {
+              "PostingReference": "SYN-P000016-A",
+              "loan_ref": "SYN-L000016",
+              "payment_period": "2026-08",
+              "amount_received": "1749.74",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000016-A,SYN-L000016,2026-08,1749.74,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 17,
+            "raw": {
+              "Loan_ID": "SYN-L000016",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1749.74",
+              "ChargedMarginPct": "3.02"
+            },
+            "raw_text": "SYN-L000016,2026-08,1749.74,3.02\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000018",
+        "ex_type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000018",
+        "detail": "Loan SYN-L000018: charged margin 2.04% exceeds contractual margin 1.51% by 0.53 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 19,
+            "raw": {
+              "LoanIdentifier": "SYN-L000018",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1379.26",
+              "ContractMarginPct": "1.51"
+            },
+            "raw_text": "SYN-L000018,2026-08,1379.26,1.51\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 20,
+            "raw": {
+              "PostingReference": "SYN-P000018-A",
+              "loan_ref": "SYN-L000018",
+              "payment_period": "2026-08",
+              "amount_received": "1379.26",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000018-A,SYN-L000018,2026-08,1379.26,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 19,
+            "raw": {
+              "Loan_ID": "SYN-L000018",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1379.26",
+              "ChargedMarginPct": "2.04"
+            },
+            "raw_text": "SYN-L000018,2026-08,1379.26,2.04\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000023",
+        "ex_type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000023",
+        "detail": "Loan SYN-L000023: scheduled 1532.36 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 24,
+            "raw": {
+              "LoanIdentifier": "SYN-L000023",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1532.36",
+              "ContractMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000023,2026-08,1532.36,1.76\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 24,
+            "raw": {
+              "Loan_ID": "SYN-L000023",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000023,2026-08,0.00,1.76\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000024",
+        "ex_type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000024",
+        "detail": "Loan SYN-L000024: scheduled 893.12 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 25,
+            "raw": {
+              "LoanIdentifier": "SYN-L000024",
+              "Period": "2026-08",
+              "ScheduledInstalment": "893.12",
+              "ContractMarginPct": "2.47"
+            },
+            "raw_text": "SYN-L000024,2026-08,893.12,2.47\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 25,
+            "raw": {
+              "Loan_ID": "SYN-L000024",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "2.47"
+            },
+            "raw_text": "SYN-L000024,2026-08,0.00,2.47\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000039",
+        "ex_type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000039",
+        "detail": "Loan SYN-L000039: 2 direct-debit postings net 3292.94 for 2026-08, exactly 2 times the scheduled 1646.47; total net received 3292.94. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 40,
+            "raw": {
+              "LoanIdentifier": "SYN-L000039",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1646.47",
+              "ContractMarginPct": "2.21"
+            },
+            "raw_text": "SYN-L000039,2026-08,1646.47,2.21\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 39,
+            "raw": {
+              "PostingReference": "SYN-P000039-A",
+              "loan_ref": "SYN-L000039",
+              "payment_period": "2026-08",
+              "amount_received": "1646.47",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000039-A,SYN-L000039,2026-08,1646.47,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 40,
+            "raw": {
+              "PostingReference": "SYN-P000039-B",
+              "loan_ref": "SYN-L000039",
+              "payment_period": "2026-08",
+              "amount_received": "1646.47",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000039-B,SYN-L000039,2026-08,1646.47,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 40,
+            "raw": {
+              "Loan_ID": "SYN-L000039",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "3292.94",
+              "ChargedMarginPct": "2.21"
+            },
+            "raw_text": "SYN-L000039,2026-08,3292.94,2.21\n"
+          }
+        ]
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000040",
+        "ex_type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000040",
+        "detail": "Loan SYN-L000040: charged margin 3.78% exceeds contractual margin 3.12% by 0.66 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 41,
+            "raw": {
+              "LoanIdentifier": "SYN-L000040",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1838.58",
+              "ContractMarginPct": "3.12"
+            },
+            "raw_text": "SYN-L000040,2026-08,1838.58,3.12\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 41,
+            "raw": {
+              "PostingReference": "SYN-P000040-A",
+              "loan_ref": "SYN-L000040",
+              "payment_period": "2026-08",
+              "amount_received": "1838.58",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000040-A,SYN-L000040,2026-08,1838.58,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 41,
+            "raw": {
+              "Loan_ID": "SYN-L000040",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1838.58",
+              "ChargedMarginPct": "3.78"
+            },
+            "raw_text": "SYN-L000040,2026-08,1838.58,3.78\n"
+          }
+        ]
+      }
+    ],
+    "remediation_log": [
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000005",
+        "type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000005",
+        "engine_detail": "Loan SYN-L000005: scheduled 2580.61 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 6,
+            "raw": {
+              "LoanIdentifier": "SYN-L000005",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2580.61",
+              "ContractMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000005,2026-08,2580.61,1.76\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 6,
+            "raw": {
+              "Loan_ID": "SYN-L000005",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000005,2026-08,0.00,1.76\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "Loan SYN-L000005 has a scheduled instalment of 2580.61 for period 2026-08, but the reported cash received is 0.00 with zero payment postings recorded. The engine type is MISSING_PAYMENT, indicating the scheduled payment was not received or posted. The contract margin is 1.76% and the charged margin is also 1.76%. No payment has been made or recorded for this loan in the specified period."
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000006",
+        "type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000006",
+        "engine_detail": "Loan SYN-L000006: scheduled 2423.92 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 7,
+            "raw": {
+              "LoanIdentifier": "SYN-L000006",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2423.92",
+              "ContractMarginPct": "3.39"
+            },
+            "raw_text": "SYN-L000006,2026-08,2423.92,3.39\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 7,
+            "raw": {
+              "Loan_ID": "SYN-L000006",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "3.39"
+            },
+            "raw_text": "SYN-L000006,2026-08,0.00,3.39\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "Loan SYN-L000006 has a scheduled instalment of 2423.92 for period 2026-08, but the reported cash received is 0.00 with zero payment postings recorded. The engine type is MISSING_PAYMENT, indicating the scheduled payment was not received or posted by the reporting period end. The contract margin is 3.39% and the charged margin is also 3.39%, confirming the loan is active and the shortfall is not due to a margin adjustment. The evidence confirms the scheduled amount and the zero cash received for the same period."
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000011",
+        "type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000011",
+        "engine_detail": "Loan SYN-L000011: 2 direct-debit postings net 2519.80 for 2026-08, exactly 2 times the scheduled 1259.90; total net received 2519.80. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 12,
+            "raw": {
+              "LoanIdentifier": "SYN-L000011",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1259.90",
+              "ContractMarginPct": "2.79"
+            },
+            "raw_text": "SYN-L000011,2026-08,1259.90,2.79\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 10,
+            "raw": {
+              "PostingReference": "SYN-P000011-A",
+              "loan_ref": "SYN-L000011",
+              "payment_period": "2026-08",
+              "amount_received": "1259.90",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000011-A,SYN-L000011,2026-08,1259.90,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 11,
+            "raw": {
+              "PostingReference": "SYN-P000011-B",
+              "loan_ref": "SYN-L000011",
+              "payment_period": "2026-08",
+              "amount_received": "1259.90",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000011-B,SYN-L000011,2026-08,1259.90,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 12,
+            "raw": {
+              "Loan_ID": "SYN-L000011",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "2519.80",
+              "ChargedMarginPct": "2.79"
+            },
+            "raw_text": "SYN-L000011,2026-08,2519.80,2.79\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a duplicate direct debit pattern for loan SYN-L000011 in period 2026-08. Two direct debit postings (SYN-P000011-A and SYN-P000011-B) each received 1259.90, totaling 2519.80, which is exactly double the scheduled instalment of 1259.90. The contract margin percentage is 2.79%. No authorisation is established for the duplicate posting, and the total cash reported (2519.80) matches the sum of the two duplicate postings. The engine has flagged this as a DUPLICATE_DIRECT_DEBIT exception requiring manual review before any reversal or adjustment is made."
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000014",
+        "type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000014",
+        "engine_detail": "Loan SYN-L000014: 2 direct-debit postings net 5054.00 for 2026-08, exactly 2 times the scheduled 2527.00; total net received 5054.00. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 15,
+            "raw": {
+              "LoanIdentifier": "SYN-L000014",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2527.00",
+              "ContractMarginPct": "3.16"
+            },
+            "raw_text": "SYN-L000014,2026-08,2527.00,3.16\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 14,
+            "raw": {
+              "PostingReference": "SYN-P000014-A",
+              "loan_ref": "SYN-L000014",
+              "payment_period": "2026-08",
+              "amount_received": "2527.00",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000014-A,SYN-L000014,2026-08,2527.00,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 15,
+            "raw": {
+              "PostingReference": "SYN-P000014-B",
+              "loan_ref": "SYN-L000014",
+              "payment_period": "2026-08",
+              "amount_received": "2527.00",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000014-B,SYN-L000014,2026-08,2527.00,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 15,
+            "raw": {
+              "Loan_ID": "SYN-L000014",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "5054.00",
+              "ChargedMarginPct": "3.16"
+            },
+            "raw_text": "SYN-L000014,2026-08,5054.00,3.16\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a duplicate direct debit pattern for loan SYN-L000014 in period 2026-08. Two direct debit postings (SYN-P000014-A and SYN-P000014-B) each received 2527.00, totaling 5054.00, which is exactly double the scheduled instalment of 2527.00. The contract margin percentage is 3.16%. No authorisation is established for the duplicate posting, and the engine has flagged this as a DUPLICATE_DIRECT_DEBIT exception."
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000016",
+        "type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000016",
+        "engine_detail": "Loan SYN-L000016: charged margin 3.02% exceeds contractual margin 2.06% by 0.96 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 17,
+            "raw": {
+              "LoanIdentifier": "SYN-L000016",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1749.74",
+              "ContractMarginPct": "2.06"
+            },
+            "raw_text": "SYN-L000016,2026-08,1749.74,2.06\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 18,
+            "raw": {
+              "PostingReference": "SYN-P000016-A",
+              "loan_ref": "SYN-L000016",
+              "payment_period": "2026-08",
+              "amount_received": "1749.74",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000016-A,SYN-L000016,2026-08,1749.74,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 17,
+            "raw": {
+              "Loan_ID": "SYN-L000016",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1749.74",
+              "ChargedMarginPct": "3.02"
+            },
+            "raw_text": "SYN-L000016,2026-08,1749.74,3.02\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "Medium",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a margin breach for loan SYN-L000016 in period 2026-08. The contractual margin is 2.06% but the charged margin is 3.02%, exceeding the contract by 0.96 percentage points. The scheduled instalment of 1749.74 was posted via direct debit, and the reported cash amount matches the scheduled instalment. The engine has flagged this as a margin breach and the loan is marked for review. No remediation has been applied yet."
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000018",
+        "type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000018",
+        "engine_detail": "Loan SYN-L000018: charged margin 2.04% exceeds contractual margin 1.51% by 0.53 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 19,
+            "raw": {
+              "LoanIdentifier": "SYN-L000018",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1379.26",
+              "ContractMarginPct": "1.51"
+            },
+            "raw_text": "SYN-L000018,2026-08,1379.26,1.51\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 20,
+            "raw": {
+              "PostingReference": "SYN-P000018-A",
+              "loan_ref": "SYN-L000018",
+              "payment_period": "2026-08",
+              "amount_received": "1379.26",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000018-A,SYN-L000018,2026-08,1379.26,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 19,
+            "raw": {
+              "Loan_ID": "SYN-L000018",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1379.26",
+              "ChargedMarginPct": "2.04"
+            },
+            "raw_text": "SYN-L000018,2026-08,1379.26,2.04\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "Medium",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a margin breach for loan SYN-L000018 in period 2026-08. The contractual margin is 1.51% but the charged margin is 2.04%, exceeding the contract by 0.53 percentage points. The scheduled instalment of 1379.26 was posted via direct debit, and the reported cash amount matches the scheduled instalment. The engine has flagged this as a margin breach but has not yet determined whether the breach is due to a system error or a legitimate contractual adjustment. The engine has not yet taken any remediation action."
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000023",
+        "type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000023",
+        "engine_detail": "Loan SYN-L000023: scheduled 1532.36 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 24,
+            "raw": {
+              "LoanIdentifier": "SYN-L000023",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1532.36",
+              "ContractMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000023,2026-08,1532.36,1.76\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 24,
+            "raw": {
+              "Loan_ID": "SYN-L000023",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "1.76"
+            },
+            "raw_text": "SYN-L000023,2026-08,0.00,1.76\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The loan SYN-L000023 has a scheduled instalment of 1532.36 for period 2026-08, but the reported cash received is 0.00 with zero payment postings recorded. This indicates a missing payment for the scheduled amount of 1532.36 in period 2026-08, with a contract margin of 1.76% and charged margin of 1.76%."
+      },
+      {
+        "ex_id": "MISSING_PAYMENT:2026-08:SYN-L000024",
+        "type": "MISSING_PAYMENT",
+        "loan_id": "SYN-L000024",
+        "engine_detail": "Loan SYN-L000024: scheduled 893.12 for 2026-08; net received 0.00 across 0 payment postings.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 25,
+            "raw": {
+              "LoanIdentifier": "SYN-L000024",
+              "Period": "2026-08",
+              "ScheduledInstalment": "893.12",
+              "ContractMarginPct": "2.47"
+            },
+            "raw_text": "SYN-L000024,2026-08,893.12,2.47\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 25,
+            "raw": {
+              "Loan_ID": "SYN-L000024",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "0.00",
+              "ChargedMarginPct": "2.47"
+            },
+            "raw_text": "SYN-L000024,2026-08,0.00,2.47\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "Loan SYN-L000024 has a scheduled instalment of 893.12 for period 2026-08, but the reported cash received is 0.00 with zero payment postings recorded. The engine flagged this as a missing payment exception. The contract margin is 2.47% and the charged margin is also 2.47%, indicating the margin rate is correctly applied but no payment has been received. The engine has not yet confirmed or processed any payment for this loan period."
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000039",
+        "type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000039",
+        "engine_detail": "Loan SYN-L000039: 2 direct-debit postings net 3292.94 for 2026-08, exactly 2 times the scheduled 1646.47; total net received 3292.94. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 40,
+            "raw": {
+              "LoanIdentifier": "SYN-L000039",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1646.47",
+              "ContractMarginPct": "2.21"
+            },
+            "raw_text": "SYN-L000039,2026-08,1646.47,2.21\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 39,
+            "raw": {
+              "PostingReference": "SYN-P000039-A",
+              "loan_ref": "SYN-L000039",
+              "payment_period": "2026-08",
+              "amount_received": "1646.47",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000039-A,SYN-L000039,2026-08,1646.47,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 40,
+            "raw": {
+              "PostingReference": "SYN-P000039-B",
+              "loan_ref": "SYN-L000039",
+              "payment_period": "2026-08",
+              "amount_received": "1646.47",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000039-B,SYN-L000039,2026-08,1646.47,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 40,
+            "raw": {
+              "Loan_ID": "SYN-L000039",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "3292.94",
+              "ChargedMarginPct": "2.21"
+            },
+            "raw_text": "SYN-L000039,2026-08,3292.94,2.21\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a duplicate direct debit pattern for loan SYN-L000039 in period 2026-08. Two direct debit postings (SYN-P000039-A and SYN-P000039-B) each received 1646.47, totaling 3292.94, which is exactly double the scheduled instalment of 1646.47. The contract margin of 2.21% is applied to the total received amount. No authorisation is established for the duplicate posting, as the evidence shows two identical direct debit transactions for the same period and loan, with no supporting documentation of a second authorisation. The total net received of 3292.94 matches the sum of the two duplicate postings (1646.47 \u00d7 2 = 3292.94). The engine has flagged this as a DUPLICATE_DIRECT_DEBIT exception requiring manual review before any repayment can be applied."
+      },
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000040",
+        "type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000040",
+        "engine_detail": "Loan SYN-L000040: charged margin 3.78% exceeds contractual margin 3.12% by 0.66 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 41,
+            "raw": {
+              "LoanIdentifier": "SYN-L000040",
+              "Period": "2026-08",
+              "ScheduledInstalment": "1838.58",
+              "ContractMarginPct": "3.12"
+            },
+            "raw_text": "SYN-L000040,2026-08,1838.58,3.12\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 41,
+            "raw": {
+              "PostingReference": "SYN-P000040-A",
+              "loan_ref": "SYN-L000040",
+              "payment_period": "2026-08",
+              "amount_received": "1838.58",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000040-A,SYN-L000040,2026-08,1838.58,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 41,
+            "raw": {
+              "Loan_ID": "SYN-L000040",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "1838.58",
+              "ChargedMarginPct": "3.78"
+            },
+            "raw_text": "SYN-L000040,2026-08,1838.58,3.78\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "Medium",
+        "scores": {
+          "faithfulness": 1.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {},
+        "verdict": "PASS",
+        "rationale": "The engine detected a margin breach for loan SYN-L000040 in period 2026-08. The contractual margin is 3.12% but the charged margin is 3.78%, a difference of 0.66 percentage points. The scheduled instalment of 1838.58 was posted via direct debit, and the reported cash amount matches the scheduled instalment. The engine has not yet determined whether the margin breach is due to a legitimate contractual amendment or an error, so no remediation action is taken at this stage."
+      }
+    ],
+    "held_for_review": [
+      {
+        "ex_id": "RATE_MARGIN_BREACH:2026-08:SYN-L000013",
+        "type": "RATE_MARGIN_BREACH",
+        "loan_id": "SYN-L000013",
+        "engine_detail": "Loan SYN-L000013: charged margin 2.59% exceeds contractual margin 2.00% by 0.59 percentage points for 2026-08.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 14,
+            "raw": {
+              "LoanIdentifier": "SYN-L000013",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2121.27",
+              "ContractMarginPct": "2.00"
+            },
+            "raw_text": "SYN-L000013,2026-08,2121.27,2.00\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 13,
+            "raw": {
+              "PostingReference": "SYN-P000013-A",
+              "loan_ref": "SYN-L000013",
+              "payment_period": "2026-08",
+              "amount_received": "2121.27",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000013-A,SYN-L000013,2026-08,2121.27,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 14,
+            "raw": {
+              "Loan_ID": "SYN-L000013",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "2121.27",
+              "ChargedMarginPct": "2.59"
+            },
+            "raw_text": "SYN-L000013,2026-08,2121.27,2.59\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "Medium",
+        "scores": {
+          "faithfulness": 0.0,
+          "answer_relevance": 1.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 1.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {
+          "faithfulness": [
+            "Ungrounded number: 1",
+            "Ungrounded number: 3"
+          ]
+        },
+        "verdict": "BLOCK"
+      },
+      {
+        "ex_id": "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000015",
+        "type": "DUPLICATE_DIRECT_DEBIT",
+        "loan_id": "SYN-L000015",
+        "engine_detail": "Loan SYN-L000015: 2 direct-debit postings net 4976.96 for 2026-08, exactly 2 times the scheduled 2488.48; total net received 4976.96. This matches the duplicate pattern; authorisation is not established.",
+        "evidence": [
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/servicing_extract.csv",
+            "row_number": 16,
+            "raw": {
+              "LoanIdentifier": "SYN-L000015",
+              "Period": "2026-08",
+              "ScheduledInstalment": "2488.48",
+              "ContractMarginPct": "2.89"
+            },
+            "raw_text": "SYN-L000015,2026-08,2488.48,2.89\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 16,
+            "raw": {
+              "PostingReference": "SYN-P000015-A",
+              "loan_ref": "SYN-L000015",
+              "payment_period": "2026-08",
+              "amount_received": "2488.48",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000015-A,SYN-L000015,2026-08,2488.48,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/payments_file.csv",
+            "row_number": 17,
+            "raw": {
+              "PostingReference": "SYN-P000015-B",
+              "loan_ref": "SYN-L000015",
+              "payment_period": "2026-08",
+              "amount_received": "2488.48",
+              "payment_method": "DIRECT_DEBIT"
+            },
+            "raw_text": "SYN-P000015-B,SYN-L000015,2026-08,2488.48,DIRECT_DEBIT\n"
+          },
+          {
+            "file": "/Users/ankit/orca/workspaces/Dissect Submission - Ankit/hydroid/tmp/runs/39bfc579-e380-42f8-9bb2-72fec036b9c8/investor_report.csv",
+            "row_number": 16,
+            "raw": {
+              "Loan_ID": "SYN-L000015",
+              "ReportMonth": "2026-08",
+              "ReportedCash": "4976.96",
+              "ChargedMarginPct": "2.89"
+            },
+            "raw_text": "SYN-L000015,2026-08,4976.96,2.89\n"
+          }
+        ],
+        "owner": "Unassigned",
+        "priority": "High",
+        "scores": {
+          "faithfulness": 0.0,
+          "answer_relevance": 0.0,
+          "classification_in_set": 1.0,
+          "plan_coherence": 1.0,
+          "injection_scan": 1.0,
+          "pii_scan": 1.0,
+          "provider_success": 0.0,
+          "classification_agreement": 1.0,
+          "mapping_complete": 1.0
+        },
+        "findings": {
+          "faithfulness": [
+            "No completed rationale available"
+          ],
+          "answer_relevance": [
+            "Rationale does not identify the exception loan",
+            "Rationale does not discuss the exception type"
+          ],
+          "provider_success": [
+            "Model step failed: incomplete; deterministic evidence retained"
+          ]
+        },
+        "verdict": "BLOCK"
+      }
+    ],
+    "score": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "true_positives": 12,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "per_type": {
+        "MISSING_PAYMENT": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "true_positives": 4,
+          "false_positives": 0,
+          "false_negatives": 0
+        },
+        "DUPLICATE_DIRECT_DEBIT": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "true_positives": 4,
+          "false_positives": 0,
+          "false_negatives": 0
+        },
+        "RATE_MARGIN_BREACH": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "true_positives": 4,
+          "false_positives": 0,
+          "false_negatives": 0
+        }
+      },
+      "missed": [],
+      "spurious": []
+    },
+    "progress": {
+      "completed": 12,
+      "total": 12
+    },
+    "error": null,
+    "active_duration_ms": 216683.503207998,
+    "payment_summary": {
+      "available": true,
+      "currency": null,
+      "period": "2026-08",
+      "accounts": [
+        {
+          "loan_id": "SYN-L000001",
+          "period": "2026-08",
+          "scheduled": "2326.21",
+          "received": "2326.21",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2326.21",
+          "contractual_margin": "1.78",
+          "charged_margin": "1.78",
+          "reported": "2326.21",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000002",
+          "period": "2026-08",
+          "scheduled": "715.56",
+          "received": "715.56",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "715.56",
+          "contractual_margin": "3.39",
+          "charged_margin": "3.39",
+          "reported": "715.56",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000003",
+          "period": "2026-08",
+          "scheduled": "1370.97",
+          "received": "1370.97",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1370.97",
+          "contractual_margin": "2.12",
+          "charged_margin": "2.12",
+          "reported": "1370.97",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000004",
+          "period": "2026-08",
+          "scheduled": "1235.13",
+          "received": "1235.13",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1235.13",
+          "contractual_margin": "1.85",
+          "charged_margin": "1.85",
+          "reported": "1235.13",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000005",
+          "period": "2026-08",
+          "scheduled": "2580.61",
+          "received": "0.00",
+          "shortfall": "2580.61",
+          "excess": "0.00",
+          "net_difference": "-2580.61",
+          "cash_status": "under",
+          "posting_count": 0,
+          "direct_debit_count": 0,
+          "direct_debit_total": "0.00",
+          "contractual_margin": "1.76",
+          "charged_margin": "1.76",
+          "reported": "0.00",
+          "issue_types": [
+            "MISSING_PAYMENT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000006",
+          "period": "2026-08",
+          "scheduled": "2423.92",
+          "received": "0.00",
+          "shortfall": "2423.92",
+          "excess": "0.00",
+          "net_difference": "-2423.92",
+          "cash_status": "under",
+          "posting_count": 0,
+          "direct_debit_count": 0,
+          "direct_debit_total": "0.00",
+          "contractual_margin": "3.39",
+          "charged_margin": "3.39",
+          "reported": "0.00",
+          "issue_types": [
+            "MISSING_PAYMENT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000007",
+          "period": "2026-08",
+          "scheduled": "2079.64",
+          "received": "2079.64",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2079.64",
+          "contractual_margin": "1.72",
+          "charged_margin": "1.72",
+          "reported": "2079.64",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000008",
+          "period": "2026-08",
+          "scheduled": "2197.94",
+          "received": "2197.94",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2197.94",
+          "contractual_margin": "2.58",
+          "charged_margin": "2.58",
+          "reported": "2197.94",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000009",
+          "period": "2026-08",
+          "scheduled": "733.31",
+          "received": "733.31",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "733.31",
+          "contractual_margin": "1.57",
+          "charged_margin": "1.57",
+          "reported": "733.31",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000010",
+          "period": "2026-08",
+          "scheduled": "895.61",
+          "received": "895.61",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "895.61",
+          "contractual_margin": "2.05",
+          "charged_margin": "2.05",
+          "reported": "895.61",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000011",
+          "period": "2026-08",
+          "scheduled": "1259.90",
+          "received": "2519.80",
+          "shortfall": "0.00",
+          "excess": "1259.90",
+          "net_difference": "1259.90",
+          "cash_status": "over",
+          "posting_count": 2,
+          "direct_debit_count": 2,
+          "direct_debit_total": "2519.80",
+          "contractual_margin": "2.79",
+          "charged_margin": "2.79",
+          "reported": "2519.80",
+          "issue_types": [
+            "DUPLICATE_DIRECT_DEBIT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000012",
+          "period": "2026-08",
+          "scheduled": "2228.15",
+          "received": "2228.15",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2228.15",
+          "contractual_margin": "1.56",
+          "charged_margin": "1.56",
+          "reported": "2228.15",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000013",
+          "period": "2026-08",
+          "scheduled": "2121.27",
+          "received": "2121.27",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2121.27",
+          "contractual_margin": "2.00",
+          "charged_margin": "2.59",
+          "reported": "2121.27",
+          "issue_types": [
+            "RATE_MARGIN_BREACH"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000014",
+          "period": "2026-08",
+          "scheduled": "2527.00",
+          "received": "5054.00",
+          "shortfall": "0.00",
+          "excess": "2527.00",
+          "net_difference": "2527.00",
+          "cash_status": "over",
+          "posting_count": 2,
+          "direct_debit_count": 2,
+          "direct_debit_total": "5054.00",
+          "contractual_margin": "3.16",
+          "charged_margin": "3.16",
+          "reported": "5054.00",
+          "issue_types": [
+            "DUPLICATE_DIRECT_DEBIT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000015",
+          "period": "2026-08",
+          "scheduled": "2488.48",
+          "received": "4976.96",
+          "shortfall": "0.00",
+          "excess": "2488.48",
+          "net_difference": "2488.48",
+          "cash_status": "over",
+          "posting_count": 2,
+          "direct_debit_count": 2,
+          "direct_debit_total": "4976.96",
+          "contractual_margin": "2.89",
+          "charged_margin": "2.89",
+          "reported": "4976.96",
+          "issue_types": [
+            "DUPLICATE_DIRECT_DEBIT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000016",
+          "period": "2026-08",
+          "scheduled": "1749.74",
+          "received": "1749.74",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1749.74",
+          "contractual_margin": "2.06",
+          "charged_margin": "3.02",
+          "reported": "1749.74",
+          "issue_types": [
+            "RATE_MARGIN_BREACH"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000017",
+          "period": "2026-08",
+          "scheduled": "1827.57",
+          "received": "1827.57",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1827.57",
+          "contractual_margin": "3.00",
+          "charged_margin": "3.00",
+          "reported": "1827.57",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000018",
+          "period": "2026-08",
+          "scheduled": "1379.26",
+          "received": "1379.26",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1379.26",
+          "contractual_margin": "1.51",
+          "charged_margin": "2.04",
+          "reported": "1379.26",
+          "issue_types": [
+            "RATE_MARGIN_BREACH"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000019",
+          "period": "2026-08",
+          "scheduled": "1068.53",
+          "received": "1068.53",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1068.53",
+          "contractual_margin": "3.28",
+          "charged_margin": "3.28",
+          "reported": "1068.53",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000020",
+          "period": "2026-08",
+          "scheduled": "1757.85",
+          "received": "1757.85",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1757.85",
+          "contractual_margin": "2.37",
+          "charged_margin": "2.37",
+          "reported": "1757.85",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000021",
+          "period": "2026-08",
+          "scheduled": "1378.42",
+          "received": "1378.42",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1378.42",
+          "contractual_margin": "1.89",
+          "charged_margin": "1.89",
+          "reported": "1378.42",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000022",
+          "period": "2026-08",
+          "scheduled": "1214.43",
+          "received": "1214.43",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1214.43",
+          "contractual_margin": "3.45",
+          "charged_margin": "3.45",
+          "reported": "1214.43",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000023",
+          "period": "2026-08",
+          "scheduled": "1532.36",
+          "received": "0.00",
+          "shortfall": "1532.36",
+          "excess": "0.00",
+          "net_difference": "-1532.36",
+          "cash_status": "under",
+          "posting_count": 0,
+          "direct_debit_count": 0,
+          "direct_debit_total": "0.00",
+          "contractual_margin": "1.76",
+          "charged_margin": "1.76",
+          "reported": "0.00",
+          "issue_types": [
+            "MISSING_PAYMENT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000024",
+          "period": "2026-08",
+          "scheduled": "893.12",
+          "received": "0.00",
+          "shortfall": "893.12",
+          "excess": "0.00",
+          "net_difference": "-893.12",
+          "cash_status": "under",
+          "posting_count": 0,
+          "direct_debit_count": 0,
+          "direct_debit_total": "0.00",
+          "contractual_margin": "2.47",
+          "charged_margin": "2.47",
+          "reported": "0.00",
+          "issue_types": [
+            "MISSING_PAYMENT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000025",
+          "period": "2026-08",
+          "scheduled": "903.53",
+          "received": "903.53",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "903.53",
+          "contractual_margin": "2.41",
+          "charged_margin": "2.41",
+          "reported": "903.53",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000026",
+          "period": "2026-08",
+          "scheduled": "1551.65",
+          "received": "1551.65",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1551.65",
+          "contractual_margin": "3.04",
+          "charged_margin": "3.04",
+          "reported": "1551.65",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000027",
+          "period": "2026-08",
+          "scheduled": "1343.42",
+          "received": "1343.42",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1343.42",
+          "contractual_margin": "1.61",
+          "charged_margin": "1.61",
+          "reported": "1343.42",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000028",
+          "period": "2026-08",
+          "scheduled": "2562.94",
+          "received": "2562.94",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2562.94",
+          "contractual_margin": "2.67",
+          "charged_margin": "2.67",
+          "reported": "2562.94",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000029",
+          "period": "2026-08",
+          "scheduled": "2055.68",
+          "received": "2055.68",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2055.68",
+          "contractual_margin": "1.81",
+          "charged_margin": "1.81",
+          "reported": "2055.68",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000030",
+          "period": "2026-08",
+          "scheduled": "1642.30",
+          "received": "1642.30",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1642.30",
+          "contractual_margin": "1.70",
+          "charged_margin": "1.70",
+          "reported": "1642.30",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000031",
+          "period": "2026-08",
+          "scheduled": "2097.14",
+          "received": "2097.14",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2097.14",
+          "contractual_margin": "2.25",
+          "charged_margin": "2.25",
+          "reported": "2097.14",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000032",
+          "period": "2026-08",
+          "scheduled": "2297.94",
+          "received": "2297.94",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2297.94",
+          "contractual_margin": "3.08",
+          "charged_margin": "3.08",
+          "reported": "2297.94",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000033",
+          "period": "2026-08",
+          "scheduled": "1598.00",
+          "received": "1598.00",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1598.00",
+          "contractual_margin": "2.97",
+          "charged_margin": "2.97",
+          "reported": "1598.00",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000034",
+          "period": "2026-08",
+          "scheduled": "1154.07",
+          "received": "1154.07",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1154.07",
+          "contractual_margin": "3.30",
+          "charged_margin": "3.30",
+          "reported": "1154.07",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000035",
+          "period": "2026-08",
+          "scheduled": "832.33",
+          "received": "832.33",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "832.33",
+          "contractual_margin": "1.61",
+          "charged_margin": "1.61",
+          "reported": "832.33",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000036",
+          "period": "2026-08",
+          "scheduled": "2383.46",
+          "received": "2383.46",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "2383.46",
+          "contractual_margin": "2.08",
+          "charged_margin": "2.08",
+          "reported": "2383.46",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000037",
+          "period": "2026-08",
+          "scheduled": "1408.61",
+          "received": "1408.61",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1408.61",
+          "contractual_margin": "1.70",
+          "charged_margin": "1.70",
+          "reported": "1408.61",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000038",
+          "period": "2026-08",
+          "scheduled": "1260.24",
+          "received": "1260.24",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1260.24",
+          "contractual_margin": "1.75",
+          "charged_margin": "1.75",
+          "reported": "1260.24",
+          "issue_types": []
+        },
+        {
+          "loan_id": "SYN-L000039",
+          "period": "2026-08",
+          "scheduled": "1646.47",
+          "received": "3292.94",
+          "shortfall": "0.00",
+          "excess": "1646.47",
+          "net_difference": "1646.47",
+          "cash_status": "over",
+          "posting_count": 2,
+          "direct_debit_count": 2,
+          "direct_debit_total": "3292.94",
+          "contractual_margin": "2.21",
+          "charged_margin": "2.21",
+          "reported": "3292.94",
+          "issue_types": [
+            "DUPLICATE_DIRECT_DEBIT"
+          ]
+        },
+        {
+          "loan_id": "SYN-L000040",
+          "period": "2026-08",
+          "scheduled": "1838.58",
+          "received": "1838.58",
+          "shortfall": "0.00",
+          "excess": "0.00",
+          "net_difference": "0.00",
+          "cash_status": "matched",
+          "posting_count": 1,
+          "direct_debit_count": 1,
+          "direct_debit_total": "1838.58",
+          "contractual_margin": "3.12",
+          "charged_margin": "3.78",
+          "reported": "1838.58",
+          "issue_types": [
+            "RATE_MARGIN_BREACH"
+          ]
+        }
+      ],
+      "scheduled": "66561.34",
+      "received": "67053.18",
+      "shortfall": "7430.01",
+      "excess": "7921.85",
+      "net_difference": "491.84",
+      "reported": "67053.18",
+      "cash_counts": {
+        "matched": 32,
+        "under": 4,
+        "over": 4
+      },
+      "account_count": 40,
+      "accounts_with_findings": 12,
+      "margin_checked_accounts": 40,
+      "issue_counts": {
+        "MISSING_PAYMENT": 4,
+        "DUPLICATE_DIRECT_DEBIT": 4,
+        "RATE_MARGIN_BREACH": 4
+      }
+    }
+  },
+  "analytics": {
+    "span_timeline": [
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569902,
+        "duration_ms": 1.530833003926091,
+        "span_id": "9505d0fd-6a56-46f0-a2ec-0e24a225553d"
+      },
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569904,
+        "duration_ms": 0.9038329881150275,
+        "span_id": "aac7ca7b-578e-4ac5-a018-9ea081b756d1"
+      },
+      {
+        "name": "read_csv",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569905,
+        "duration_ms": 0.6442919984692708,
+        "span_id": "7230ef67-0232-487d-822f-ea5625597f68"
+      },
+      {
+        "name": "injection_scan",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569906,
+        "duration_ms": 0.6596670136786997,
+        "span_id": "34a9b3b5-46f2-4d3d-aa77-93c9a5205aff"
+      },
+      {
+        "name": "pii_scan",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569907,
+        "duration_ms": 0.8177499985322356,
+        "span_id": "360be989-7dfa-46e8-9c6b-9d0e707d674c"
+      },
+      {
+        "name": "ingest",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789164569902,
+        "duration_ms": 4.993624999769963,
+        "span_id": "5d9e83ab-3f1d-4969-bd7d-d1ad7ffb82f5"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164569908,
+        "duration_ms": 6247.919249988627,
+        "span_id": "daeaea39-8a24-43be-b755-b13d7d8b4060"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164576158,
+        "duration_ms": 3089.175333007006,
+        "span_id": "eaf84102-d020-4aef-8c47-df814ad451eb"
+      },
+      {
+        "name": "propose_mapping",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164579249,
+        "duration_ms": 3107.298165996326,
+        "span_id": "2e9bacfc-8aa5-4e6f-adaf-ac473b0bad42"
+      },
+      {
+        "name": "mapping_confirmed",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789164583055,
+        "duration_ms": 0,
+        "span_id": "a678c823-c42d-4933-8d8b-f7f19039276f"
+      },
+      {
+        "name": "reconcile_engine",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164583057,
+        "duration_ms": 8.664249995490536,
+        "span_id": "fd065fe9-6214-4524-b358-c4d04962ec3e"
+      },
+      {
+        "name": "score_ground_truth",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164583071,
+        "duration_ms": 0.12604099174495786,
+        "span_id": "8dc0e2df-9555-47cf-9091-b1af63c49104"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164583073,
+        "duration_ms": 1937.0625000010477,
+        "span_id": "62318617-c902-4c93-a6a0-801522feeb16"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164585011,
+        "duration_ms": 6592.7312090061605,
+        "span_id": "a1de733d-98ac-4954-b796-375e5fdc0933"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164591605,
+        "duration_ms": 1.491874994826503,
+        "span_id": "54e77771-3e26-4348-acd5-d44bfe4b8700"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164591607,
+        "duration_ms": 1847.1006670006318,
+        "span_id": "6ae0720b-1837-4c25-a711-4034a3b71dde"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164593455,
+        "duration_ms": 7343.0831669975305,
+        "span_id": "51f4b3ef-a060-4fc8-a764-bb988317b876"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164600798,
+        "duration_ms": 0.5692499980796129,
+        "span_id": "54e2cb16-96a6-4a09-8a99-4b4d76be3224"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164600800,
+        "duration_ms": 1778.1049170007464,
+        "span_id": "ee112abc-34e6-4b0a-8a02-2c45289e80b4"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164602578,
+        "duration_ms": 10281.964082998456,
+        "span_id": "08945ba7-0802-4e33-a4fb-3978b11e5dd9"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164612862,
+        "duration_ms": 2.14754200715106,
+        "span_id": "83f1c3fc-9f3e-47bc-be2e-d2fb4083c686"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164612866,
+        "duration_ms": 1838.0728329939302,
+        "span_id": "0caf1af5-f58b-4ead-a266-315cc9a35de9"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164614706,
+        "duration_ms": 8525.783457997022,
+        "span_id": "c47dcee3-8a35-4392-9420-021afdb65988"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164623234,
+        "duration_ms": 1.8339590023970231,
+        "span_id": "dba1daf0-5798-4b62-84a8-f15a10262c38"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164623237,
+        "duration_ms": 2041.2205000029644,
+        "span_id": "416c9157-5ff6-4ed8-bd30-42ef4fcaf566"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164625284,
+        "duration_ms": 8780.44437499193,
+        "span_id": "a2622683-8b89-4e67-801a-3a8426ee8b33"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164634066,
+        "duration_ms": 1.226917011081241,
+        "span_id": "45c4a5cb-92f9-448e-b9d8-323d2d21ad18"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164634069,
+        "duration_ms": 2011.6437499964377,
+        "span_id": "fd62fed1-e05d-4d79-b3fd-5bb5ed6deac9"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "error",
+        "started_ms": 1789164636082,
+        "duration_ms": 60320.673583002645,
+        "span_id": "55cb9499-a941-4ed1-af4e-178aeca6b28f"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164696409,
+        "duration_ms": 1.3015419972361997,
+        "span_id": "2d4a1e77-3788-4824-9743-156a85ed57c7"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164696415,
+        "duration_ms": 2708.7137089984026,
+        "span_id": "18175d9e-2257-4481-89d9-3cca743c1507"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164699126,
+        "duration_ms": 11461.770207999507,
+        "span_id": "92d19930-c104-4ec7-a5b9-220c237296ad"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164710590,
+        "duration_ms": 0.7484579982701689,
+        "span_id": "33057329-2bdf-4097-87ca-0b490f738914"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164710592,
+        "duration_ms": 2750.7234579970827,
+        "span_id": "3124264c-9055-44ed-824e-f457433b151d"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164713345,
+        "duration_ms": 12795.45895800402,
+        "span_id": "b4e7d8bd-f666-4048-a3de-d612c21d6d46"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164726143,
+        "duration_ms": 1.7107079911511391,
+        "span_id": "b5e381da-b146-425a-b215-de254ffb96e7"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164726146,
+        "duration_ms": 2678.982999990694,
+        "span_id": "581d08fb-15dd-46a9-96fd-1c11f985a6c7"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164728826,
+        "duration_ms": 9490.322124998784,
+        "span_id": "7a896dd3-b384-4b24-ba69-8a0348233503"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164738320,
+        "duration_ms": 2.9608750046463683,
+        "span_id": "1c3a7b54-5070-470a-9f42-949bbb80c46c"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164738325,
+        "duration_ms": 2764.4372500071768,
+        "span_id": "afe772b3-68c5-4372-b9f1-a7a236f7d1ea"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164741093,
+        "duration_ms": 11242.462624999462,
+        "span_id": "f0999346-176b-471c-bc5a-05bb5ed01928"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164752337,
+        "duration_ms": 1.0978749924106523,
+        "span_id": "cd6c5c99-f207-49d8-9b38-ef083b644bed"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164752340,
+        "duration_ms": 3063.142291997792,
+        "span_id": "6bd9a485-6e46-483a-a573-4cb92f601ed5"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164755404,
+        "duration_ms": 17591.96495800279,
+        "span_id": "909e0d6e-2d3c-4e07-b64c-f12d6959af4b"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164772997,
+        "duration_ms": 1.8036250112345442,
+        "span_id": "e38e8bde-16f8-4aed-871c-4d57f69587d8"
+      },
+      {
+        "name": "classify",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164773001,
+        "duration_ms": 2730.7029999938095,
+        "span_id": "53dbea46-3538-4260-a605-38e979d43221"
+      },
+      {
+        "name": "draft_rationale",
+        "kind": "MODEL_EXEC",
+        "status": "success",
+        "started_ms": 1789164775741,
+        "duration_ms": 11517.838416999439,
+        "span_id": "e34eaac6-7ab6-4f49-833a-3d8d2e5bb0c7"
+      },
+      {
+        "name": "validate_and_policy",
+        "kind": "TOOL_EXEC",
+        "status": "success",
+        "started_ms": 1789164787260,
+        "duration_ms": 1.2761249963659793,
+        "span_id": "2614fddd-cb96-4baf-aaa5-8b48c816f494"
+      },
+      {
+        "name": "emit",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789164787276,
+        "duration_ms": 0,
+        "span_id": "61431961-355c-46af-977b-7af337cb8bf6"
+      },
+      {
+        "name": "reconciliation_run",
+        "kind": "AGENT_EXEC",
+        "status": "success",
+        "started_ms": 1789164569894,
+        "duration_ms": 217383,
+        "span_id": "1ee8703f-209a-4cca-aa0a-7bdc2d71d119"
+      }
+    ],
+    "validator_means": {
+      "answer_relevance": 0.9166666666666666,
+      "classification_agreement": 1.0,
+      "classification_in_set": 1.0,
+      "faithfulness": 0.8333333333333334,
+      "injection_scan": 1.0,
+      "mapping_complete": 1.0,
+      "pii_scan": 1.0,
+      "plan_coherence": 1.0,
+      "provider_success": 0.9166666666666666
+    },
+    "pass_count": 10,
+    "block_count": 2,
+    "model_calls": [
+      {
+        "call_id": "f8f4ef603dbf49bf905e4541c9bc0cdb",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 6247.919249988627,
+        "usage": {
+          "prompt_tokens": 121,
+          "completion_tokens": 57,
+          "total_tokens": 178
+        },
+        "error": null
+      },
+      {
+        "call_id": "a395a7bbdf3f4cf3934a593ec46c06e2",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 3089.175333007006,
+        "usage": {
+          "prompt_tokens": 125,
+          "completion_tokens": 62,
+          "total_tokens": 187
+        },
+        "error": null
+      },
+      {
+        "call_id": "fbb57219e32d497196aed99e71fd6266",
+        "operation": "propose_mapping",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 3107.298165996326,
+        "usage": {
+          "prompt_tokens": 121,
+          "completion_tokens": 57,
+          "total_tokens": 178
+        },
+        "error": null
+      },
+      {
+        "call_id": "49f3ca7dcba1464e85d50c75441db016",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1937.0625000010477,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "33cfa029409841309cd02377492dd806",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 6592.7312090061605,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 116,
+          "total_tokens": 383
+        },
+        "error": null
+      },
+      {
+        "call_id": "6404468f01cf446e9704180618e75b7b",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1847.1006670006318,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "3303b5d3cea041f680ed7fb3f684cdab",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 7343.0831669975305,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 138,
+          "total_tokens": 405
+        },
+        "error": null
+      },
+      {
+        "call_id": "8e63a68f93bb40a7a388ee8cba5c571a",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1778.1049170007464,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "6de84c19448d490eb74a1bdc124ea0d0",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 10281.964082998456,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 173,
+          "total_tokens": 609
+        },
+        "error": null
+      },
+      {
+        "call_id": "cb0ea6b2aea7453ead41eac63b211297",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 1838.0728329939302,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "4273896fb3894d148dd51cadf59233c2",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 8525.783457997022,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 140,
+          "total_tokens": 481
+        },
+        "error": null
+      },
+      {
+        "call_id": "31dd331063884bd3bcd5fec91a91a3b6",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2041.2205000029644,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "236b4a277e3341b9ab949d3a3dd8fec8",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 8780.44437499193,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 141,
+          "total_tokens": 577
+        },
+        "error": null
+      },
+      {
+        "call_id": "e6d434bf574549c593ec0d18fceebe53",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2011.6437499964377,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "2f1d79073edf4323ab01596a4e2a7f0e",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "error",
+        "latency_ms": 60320.673583002645,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 1024,
+          "total_tokens": 1460
+        },
+        "error": {
+          "code": "incomplete",
+          "message": "The model response did not finish normally"
+        }
+      },
+      {
+        "call_id": "a7a596e0f3a448c5a157d16a25eb3e8f",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2708.7137089984026,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "7ca2512ee5244d90b4ae1c421b71e309",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 11461.770207999507,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 126,
+          "total_tokens": 467
+        },
+        "error": null
+      },
+      {
+        "call_id": "846a0958fc80466ab50fc195b457223d",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2750.7234579970827,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "12760b6ca87445f1b14395f5409bcf47",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 12795.45895800402,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 141,
+          "total_tokens": 482
+        },
+        "error": null
+      },
+      {
+        "call_id": "987e4b0766bf457a87f2776a51804a16",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2678.982999990694,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 25,
+          "total_tokens": 192
+        },
+        "error": null
+      },
+      {
+        "call_id": "883d8e480d4d4cffafcac7d0aee6c22d",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 9490.322124998784,
+        "usage": {
+          "prompt_tokens": 267,
+          "completion_tokens": 114,
+          "total_tokens": 381
+        },
+        "error": null
+      },
+      {
+        "call_id": "ccd5ba2bd56b48c7a247d0c25a670890",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2764.4372500071768,
+        "usage": {
+          "prompt_tokens": 166,
+          "completion_tokens": 25,
+          "total_tokens": 191
+        },
+        "error": null
+      },
+      {
+        "call_id": "3b892a3762ba49beb7849404bb2165cd",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 11242.462624999462,
+        "usage": {
+          "prompt_tokens": 265,
+          "completion_tokens": 122,
+          "total_tokens": 387
+        },
+        "error": null
+      },
+      {
+        "call_id": "7f87acb9c0314dce9ff98d964046893a",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 3063.142291997792,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 26,
+          "total_tokens": 227
+        },
+        "error": null
+      },
+      {
+        "call_id": "d3ba47a2fe104ab29a733df5905b519a",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 17591.96495800279,
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 224,
+          "total_tokens": 660
+        },
+        "error": null
+      },
+      {
+        "call_id": "007b2ed08b6048c0b7e7498a37c2c060",
+        "operation": "classify",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 2730.7029999938095,
+        "usage": {
+          "prompt_tokens": 172,
+          "completion_tokens": 26,
+          "total_tokens": 198
+        },
+        "error": null
+      },
+      {
+        "call_id": "3fd426cb46ad4600b94d030f3b17f30b",
+        "operation": "draft_rationale",
+        "provider": "ollama",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "is_mock": false,
+        "status": "success",
+        "latency_ms": 11517.838416999439,
+        "usage": {
+          "prompt_tokens": 341,
+          "completion_tokens": 132,
+          "total_tokens": 473
+        },
+        "error": null
+      }
+    ],
+    "known_token_total": 9775,
+    "unknown_usage_calls": 0,
+    "token_total": 9775,
+    "estimated_api_cost_usd": 0.0,
+    "cost_note": "Local compute cost excluded",
+    "active_duration_ms": 216683.503207998,
+    "baseline": null,
+    "drift": null,
+    "delivery_errors": []
+  },
+  "questions": [
+    {
+      "question": "Summarise these payments",
+      "latency_seconds": 2.459,
+      "response": {
+        "topic": "summary",
+        "blocks": [
+          {
+            "heading": "Your payment picture",
+            "text": "For 2026-08, \u00a366,561.34 was due and \u00a367,053.18 was recorded across 40 account(s). 12 item(s) need review under the three checks."
+          },
+          {
+            "heading": "Differences between accounts",
+            "text": "Shortfalls total \u00a37,430.01; excess receipts total \u00a37,921.85. Extra money on one account does not settle a shortfall on another."
+          }
+        ],
+        "citations": [
+          {
+            "file": "servicing_extract.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          {
+            "file": "payments_file.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          {
+            "file": "investor_report.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          }
+        ],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": null,
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [
+          "MISSING_PAYMENT:2026-08:SYN-L000005",
+          "MISSING_PAYMENT:2026-08:SYN-L000006",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000011",
+          "RATE_MARGIN_BREACH:2026-08:SYN-L000013",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000014",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000015"
+        ],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "a9cca6b6-d46a-4e98-b09d-c13b8c8a9362"
+      }
+    },
+    {
+      "question": "Why is there a shortfall?",
+      "latency_seconds": 1.11,
+      "response": {
+        "topic": "shortfall",
+        "blocks": [
+          {
+            "heading": "Less received than due",
+            "text": "The shortfall totals \u00a37,430.01 across 4 account(s). This adds each account's difference separately, so unrelated differences do not cancel."
+          },
+          {
+            "heading": "SYN-L000005",
+            "text": "Due \u00a32,580.61; recorded \u00a30.00; shortfall \u00a32,580.61."
+          },
+          {
+            "heading": "SYN-L000006",
+            "text": "Due \u00a32,423.92; recorded \u00a30.00; shortfall \u00a32,423.92."
+          },
+          {
+            "heading": "SYN-L000023",
+            "text": "Due \u00a31,532.36; recorded \u00a30.00; shortfall \u00a31,532.36."
+          },
+          {
+            "heading": "SYN-L000024",
+            "text": "Due \u00a3893.12; recorded \u00a30.00; shortfall \u00a3893.12."
+          }
+        ],
+        "citations": [
+          {
+            "file": "servicing_extract.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          {
+            "file": "payments_file.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          {
+            "file": "investor_report.csv",
+            "rows": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          }
+        ],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": null,
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [
+          "MISSING_PAYMENT:2026-08:SYN-L000005",
+          "MISSING_PAYMENT:2026-08:SYN-L000006",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000011",
+          "RATE_MARGIN_BREACH:2026-08:SYN-L000013",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000014",
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000015"
+        ],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "b6feacd9-1350-4043-9921-011fdf742f4f"
+      }
+    },
+    {
+      "question": "Explain the rate margins",
+      "latency_seconds": 1.039,
+      "response": {
+        "topic": "margin",
+        "blocks": [
+          {
+            "heading": "SYN-L000013",
+            "text": "Agreed margin 2.00%; recorded margin 2.59%. Compare the lender report with the agreement. A margin is part of a rate, not the full interest rate or APR. These files do not establish a monetary overcharge."
+          },
+          {
+            "heading": "Rate coverage",
+            "text": "Margins could be compared for 1 of 1 selected accounts. Payment amounts matching does not establish that the margin is correct."
+          }
+        ],
+        "citations": [
+          {
+            "file": "servicing_extract.csv",
+            "rows": [
+              14
+            ]
+          },
+          {
+            "file": "payments_file.csv",
+            "rows": [
+              13
+            ]
+          },
+          {
+            "file": "investor_report.csv",
+            "rows": [
+              14
+            ]
+          }
+        ],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": "SYN-L000013",
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [
+          "RATE_MARGIN_BREACH:2026-08:SYN-L000013"
+        ],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "d3e4adba-f3d8-40f5-9190-7ab22667441a"
+      }
+    },
+    {
+      "question": "Why was this payment taken twice?",
+      "latency_seconds": 1.037,
+      "response": {
+        "topic": "duplicate",
+        "blocks": [
+          {
+            "heading": "SYN-L000011",
+            "text": "2 direct-debit entries total \u00a32,519.80, against \u00a31,259.90 due. Check the references and whether each collection was intended; the files cannot establish authorisation."
+          }
+        ],
+        "citations": [
+          {
+            "file": "servicing_extract.csv",
+            "rows": [
+              12
+            ]
+          },
+          {
+            "file": "payments_file.csv",
+            "rows": [
+              10,
+              11
+            ]
+          },
+          {
+            "file": "investor_report.csv",
+            "rows": [
+              12
+            ]
+          }
+        ],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": "SYN-L000011",
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [
+          "DUPLICATE_DIRECT_DEBIT:2026-08:SYN-L000011"
+        ],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "98a12f8a-1dae-40e2-830a-a12f1c35c734"
+      }
+    },
+    {
+      "question": "What should I review next?",
+      "latency_seconds": 1.12,
+      "response": {
+        "topic": "next_steps",
+        "blocks": [
+          {
+            "heading": "SYN-L000005",
+            "text": "Due \u00a32,580.61; recorded \u00a30.00. No payment entry was found. Compare the payment record with the schedule for this account and month. Later payments may not be in these files."
+          }
+        ],
+        "citations": [
+          {
+            "file": "servicing_extract.csv",
+            "rows": [
+              6
+            ]
+          },
+          {
+            "file": "payments_file.csv",
+            "rows": []
+          },
+          {
+            "file": "investor_report.csv",
+            "rows": [
+              6
+            ]
+          }
+        ],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": "SYN-L000005",
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [
+          "MISSING_PAYMENT:2026-08:SYN-L000005"
+        ],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "159b0a95-112d-4341-a854-d8c835334e0f"
+      }
+    },
+    {
+      "question": "Should I refinance my mortgage?",
+      "latency_seconds": 1.135,
+      "response": {
+        "topic": "out_of_scope",
+        "blocks": [
+          {
+            "heading": "Ask about this payment check",
+            "text": "I can explain payment amounts, repeated-debit patterns, rate margins and the records to review. I cannot recommend a mortgage, predict future payments, move money or change records."
+          }
+        ],
+        "citations": [],
+        "run_id": "39bfc579-e380-42f8-9bb2-72fec036b9c8",
+        "account_id": null,
+        "period": "2026-08",
+        "currency": "GBP",
+        "currency_note": "GBP is a display label; no conversion is applied.",
+        "read_only": true,
+        "suggestions": [
+          "Summarise these payments",
+          "Why is there a shortfall?",
+          "Explain the rate margins",
+          "What should I review next?"
+        ],
+        "finding_ids": [],
+        "mode": "qwen",
+        "model": "hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M",
+        "audit_id": "370de7f8-f6b2-463a-bdb5-ccf09a5c2241"
+      }
+    }
+  ]
+}

@@ -137,10 +137,19 @@ mapping edits, explicit confirmation, results, evidence and mobile overflow:
 
 See [the consumer dashboard notes](docs/CONSUMER_DASHBOARD.md) for metric
 definitions and verification, and [the CSV pack guide](data/scenarios/README.md)
-for expected outcomes. No currency, outstanding balance, full interest rate,
+for expected outcomes. A currency selector labels amounts in GBP (£), EUR (€),
+or USD ($), remembers the choice in this browser, and does not convert amounts.
+GBP is the initial display label; the CSVs do not declare a currency.
+No currency, outstanding balance, full interest rate,
 repayment forecast or multi-month trend is inferred from these files.
 
 ## Connect credentials later
+
+To package the dashboard, API gateway, reconciliation worker and Qwen model
+configuration, run `make vercel-bundle`. See [deployment instructions](docs/DEPLOYMENT.md).
+Vercel serves the dashboard and FastAPI gateway; the long-running FastAPI/LangGraph
+worker and Qwen use the companion Docker host. **Ask about this check** explains
+confirmed payment figures with source references and cannot change records.
 
 Configuration stays on the server. `.env.example` lists supported variables;
 the application does **not** automatically load `.env`. Export variables or use

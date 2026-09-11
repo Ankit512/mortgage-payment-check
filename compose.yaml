@@ -1,0 +1,49 @@
+services:
+  ollama:
+    image: ollama/ollama:0.34.0
+    volumes:
+      - qwen-models:/root/.ollama
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  model-pull:
+    image: ollama/ollama:0.34.0
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["ollama", "pull"]
+    command: ["hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: "no"
+  worker:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    environment:
+      LLM_PROVIDER: ollama
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M
+      UC1_WORKER_TOKEN: ${UC1_WORKER_TOKEN:?Set a private worker token of at least 32 characters}
+      DISSEQT_TRANSPORT: local
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - payment-audit:/state
+    depends_on:
+      model-pull:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+volumes:
+  qwen-models:
+  payment-audit:
