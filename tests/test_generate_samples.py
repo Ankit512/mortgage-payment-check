@@ -159,6 +159,64 @@ class SampleGeneratorTests(unittest.TestCase):
         self.assertFalse(headers[1] & headers[2])
         self.assertFalse(headers[0] & headers[2])
 
+    def test_manifest_details_quote_actual_source_amounts_and_margins(self):
+        # A refreshed golden file can preserve an incorrect description. Check
+        # the described quantities against CSV facts, not another generated key.
+        def described_number(detail, pattern):
+            match = re.search(pattern, detail)
+            self.assertIsNotNone(match, detail)
+            return Decimal(match.group(1))
+
+        for seed, n_loans in ((42, 40), (7, 3), (99, 100)):
+            generate_samples(self.directory, seed=seed, n_loans=n_loans)
+            manifest = json.loads((self.directory / "ground_truth.json").read_text())
+            servicing = {
+                row["LoanIdentifier"]: row
+                for row in read_csv(self.directory / "servicing_extract.csv")
+            }
+            investors = {
+                row["Loan_ID"]: row
+                for row in read_csv(self.directory / "investor_report.csv")
+            }
+            payments = read_csv(self.directory / "payments_file.csv")
+            for exception in manifest["seeded_exceptions"]:
+                loan_id, detail = exception["loan_id"], exception["detail"]
+                row = servicing[loan_id]
+                ledger = [p for p in payments if p["loan_ref"] == loan_id]
+                received = sum((Decimal(p["amount_received"]) for p in ledger), Decimal(0))
+                with self.subTest(seed=seed, loan_id=loan_id, type=exception["type"]):
+                    if exception["type"] in {"MISSING_PAYMENT", "DUPLICATE_DIRECT_DEBIT"}:
+                        self.assertEqual(
+                            described_number(detail, r"scheduled (\d+\.\d{2})"),
+                            Decimal(row["ScheduledInstalment"]),
+                        )
+                        self.assertEqual(
+                            described_number(detail, r"received (\d+\.\d{2})"), received,
+                        )
+                    if exception["type"] == "DUPLICATE_DIRECT_DEBIT":
+                        self.assertEqual(
+                            described_number(detail, r"(\d+) direct-debit postings"), len(ledger),
+                        )
+                        posting_amount = described_number(detail, r"postings of (\d+\.\d{2})")
+                        self.assertTrue(all(Decimal(p["amount_received"]) == posting_amount for p in ledger))
+                        self.assertEqual(
+                            described_number(detail, r"exactly (\d+) times"),
+                            received / Decimal(row["ScheduledInstalment"]),
+                        )
+                    if exception["type"] == "RATE_MARGIN_BREACH":
+                        charged = Decimal(investors[loan_id]["ChargedMarginPct"])
+                        contractual = Decimal(row["ContractMarginPct"])
+                        self.assertEqual(
+                            described_number(detail, r"charged margin (\d+\.\d{2})%"), charged,
+                        )
+                        self.assertEqual(
+                            described_number(detail, r"contractual margin (\d+\.\d{2})%"), contractual,
+                        )
+                        self.assertEqual(
+                            described_number(detail, r"by (\d+\.\d{2}) percentage points"),
+                            charged - contractual,
+                        )
+
     def test_invalid_counts_do_not_create_output(self):
         target = self.directory / "invalid"
         for invalid in (0, -1, True, 1.5, "40"):

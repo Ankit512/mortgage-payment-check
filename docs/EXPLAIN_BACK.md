@@ -6,10 +6,13 @@ behalf. Each gate is completed before the next implementation milestone begins.
 
 ## M1: Synthetic sample generator and answer key
 
-**Build status:** implemented; all 8 tests pass.
+**Build status:** implemented; 9 tests pass after the reviewer self-audit
+strengthened manifest-description checks (the original M1 suite had 8).
 **Commit subject:** `feat: add reproducible UC1 sample data and answer key`.
-**Comprehension gate:** initial answers received on 2026-09-11; reviewer
-clarifications pending. M2 has not started.
+**Comprehension gate:** the three required answers were received and reviewed
+on 2026-09-11. The extra mandatory follow-up round has been withdrawn after the
+reviewer self-audit. Corrections are documented; owner agreement with revised
+wording is not assumed. M2 has not started during the requested audit.
 
 ### What this piece does
 
@@ -98,8 +101,8 @@ claims need correction before these answers are used in an interview:
    rows in these fixtures, whereas the PRD's engine rule is a positive scheduled
    amount and zero net received. Multiple postings alone are insufficient to
    establish a duplicate: two 500.00 instalments against 1000.00 scheduled are
-   a useful proposed negative test. Matching must account for loan and reporting
-   period, even though these fixtures contain only one month.
+   a useful proposed negative test. Period consistency matters; validating that
+   all files describe the same month is sufficient for this single-month PoC.
 3. **Row-count cancellation does not imply monetary cancellation.** Missing
    amounts and excess duplicate amounts must sum to the same value for that to
    happen. Aggregate controls can detect net differences, but cannot reliably
@@ -128,14 +131,17 @@ claims need correction before these answers are used in an interview:
    A human checkpoint is still useful with identical headers. Semantic reasoning
    is a reason to try an LLM for mapping, not evidence that it is best at that
    task. The PRD also assigns it constrained classification and rationale
-   drafting. The alias-table mock is the deliberate default for keyless runs,
-   not an automatic recovery mechanism when OpenAI fails. Human confirmation
+   drafting. The alias-table mock is the deliberate default for keyless runs.
+   If "fallback" meant automatic recovery when OpenAI fails, the PRD does not
+   specify that behaviour; the owner's wording did not establish that intent.
+   Human confirmation
    establishes an approval event, not proof of a correct mapping; deterministic
    code makes arithmetic repeatable but cannot repair incorrect inputs by itself.
 
-### Follow-up round
+### Proposed follow-up round (optional; mandatory status withdrawn)
 
-These questions address only the unsettled parts of the M1 explanations. The
+These questions were proposed in the first review. The self-audit below withdraws
+their status as a mandatory gate. They remain optional interview practice. The
 recommendations are the reviewer's positions, not the owner's answers.
 
 1. **Coverage:** If the future engine detects all seed-42 exceptions correctly,
@@ -159,8 +165,28 @@ recommendations are the reviewer's positions, not the owner's answers.
    expose issues in the PoC; a production run would not have this synthetic
    answer key, and these checks cannot guarantee every semantic error is caught.
 
-**Owner follow-up:** pending.
+**Owner follow-up:** none recorded; no additional mandatory round imposed.
 
-**Review outcome:** clarification requested. Preserve the original answers and
-record the owner's follow-up separately before closing the M1 gate. M2 remains
-unstarted under PRD section 9.
+### Reviewer self-audit and revised outcome
+
+At the owner's request, an independent worker challenged the assistant's review
+while the assistant ran adversarial tests. See
+[REVIEWER_SELF_AUDIT.md](REVIEWER_SELF_AUDIT.md) for evidence and experiments.
+
+The coverage guarantee and seed-42 totals withstand scrutiny. Other advice is
+narrowed: the >= 2 duplicate threshold is a proposed PoC rule clarification, not
+proof that a collection was unauthorised; the headers-only provider cannot infer
+rate units from values it never receives; and validating one consistent month
+is enough without introducing general multi-month support.
+
+The audit also found a weakness in the assistant's own tests. An incorrect
+manifest description survived the original eight tests after regenerated
+fixtures replaced the snapshots. A new source-based description check closes
+that demonstrated gap. All nine tests pass on the unchanged working generator;
+three separate description mutations are rejected even after regeneration.
+
+**Revised review outcome:** the required three-answer exchange is complete, and
+the reviewer's corrections are recorded. The PRD did not explicitly require the
+extra compulsory round; that was the reviewer's interpretation and is withdrawn.
+This does not claim the owner has endorsed the revised wording. M2 remains
+unstarted while fulfilling the owner's request for this self-audit.

@@ -35,8 +35,8 @@ while its comprehension gate remains pending. Do not invent owner answers.
 
 | Milestone | Scope | State |
 | --- | --- | --- |
-| M1 | R1: sample generator and answer key | Implemented; initial owner answers recorded; reviewer clarifications pending |
-| M2 | R2: deterministic reconciliation engine and scoring | Not started; waits for M1 clarifications |
+| M1 | R1: sample generator and answer key | Implemented; 9 tests pass; three owner answers reviewed; extra mandatory quiz withdrawn after reviewer self-audit |
+| M2 | R2: deterministic reconciliation engine and scoring | Not started during the owner's requested self-audit; next implementation milestone |
 | M3 | R3: mock/OpenAI provider seam | Not started |
 | M4 | R4: validators and PASS/BLOCK policy | Not started |
 | M5 | R5: LangGraph checkpoint, FastAPI, analytics, baseline | Not started |
