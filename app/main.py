@@ -103,7 +103,10 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
 
     @app.get("/health")
     def health():
-        return {"status": "ok", "default_provider": env.get("LLM_PROVIDER", "mock"),
+        provider = env.get("LLM_PROVIDER", "mock")
+        return {"status": "ok", "orchestration": "langgraph",
+                "default_provider": provider,
+                "llm": "qwen" if provider == "ollama" else provider,
                 "ollama_model": env.get("OLLAMA_MODEL", DEFAULT_OLLAMA_MODEL),
                 "openai_configured": bool(env.get("OPENAI_API_KEY")),
                 "trace_mode": env.get("DISSEQT_TRANSPORT", "local"),
@@ -226,7 +229,12 @@ def create_app(*, storage=None, environ=None, provider_factory=None):
             trace = get_client(str(uuid4()), directory=trace_directory / "chat", environ=env)
             trace.emit("chat_context", attributes={"run_id": run_id, "account_id": account_id})
             try:
-                topic = provider.route_question(body.question, body.previous_topic)
+                topic = chat.forced_topic(body.question)
+                if topic is None:
+                    topic = chat.classify_question(
+                        body.question, body.previous_topic,
+                        provider.route_question(body.question, body.previous_topic),
+                    )
             finally:
                 for call in provider.calls:
                     trace.model_call(call)

@@ -1,3 +1,12 @@
+# One appliance: FastAPI + LangGraph + Qwen. OpenAI is not used.
+#   docker compose up --build
+#   open http://127.0.0.1:8080
+#
+# First start downloads ~2.8 GB of model weights into the qwen-models volume.
+# Ollama is not published; the browser only talks to the app.
+
+name: mortgage-payment-check
+
 services:
   ollama:
     image: ollama/ollama:0.34.0
@@ -11,6 +20,7 @@ services:
       timeout: 5s
       retries: 12
     restart: unless-stopped
+
   model-pull:
     image: ollama/ollama:0.34.0
     environment:
@@ -21,29 +31,32 @@ services:
       ollama:
         condition: service_healthy
     restart: "no"
-  worker:
+
+  app:
     build:
       context: .
       dockerfile: deployment/Dockerfile
+    ports:
+      - "8080:8080"
     environment:
       LLM_PROVIDER: ollama
       OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_MODEL: hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M
-      UC1_WORKER_TOKEN: ${UC1_WORKER_TOKEN:?Set a private worker token of at least 32 characters}
       DISSEQT_TRANSPORT: local
-    ports:
-      - "127.0.0.1:8000:8000"
+      UC1_STORAGE_ROOT: /state
+      UC1_WORKER_TOKEN: ${UC1_WORKER_TOKEN:-}
     volumes:
       - payment-audit:/state
     depends_on:
       model-pull:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
-      interval: 30s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 15s
       timeout: 5s
-      retries: 3
+      retries: 8
     restart: unless-stopped
+
 volumes:
   qwen-models:
   payment-audit:

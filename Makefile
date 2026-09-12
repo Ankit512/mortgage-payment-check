@@ -2,9 +2,12 @@ PYTHON ?= .venv/bin/python
 PORT ?= 8765
 OLLAMA_BASE_URL ?= http://127.0.0.1:11434
 
-.PHONY: install test serve dashboard demo sdk-demo vercel-bundle
-vercel-bundle:
+.PHONY: install test serve dashboard demo sdk-demo bundle vercel-bundle stack
+bundle:
 	$(PYTHON) -m scripts.bundle_vercel
+vercel-bundle: bundle
+stack:
+	docker compose up --build
 install:
 	python3 -m venv .venv
 	$(PYTHON) -m pip install -r requirements.txt

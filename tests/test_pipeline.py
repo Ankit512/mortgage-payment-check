@@ -166,6 +166,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(c.get("/baseline").json()["exception_count"], 10)
         self.assertEqual(c.get("/runs/no-such-run").status_code, 404)
         self.assertEqual(c.post("/runs", json={"provider": "openai"}).status_code, 422)
+        health = c.get("/health").json()
+        self.assertEqual(health["orchestration"], "langgraph")
         self.assertNotIn("OPENAI_API_KEY", c.get("/health").text)
         self.assertEqual(c.get("/").status_code, 200)
 

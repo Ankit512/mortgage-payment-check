@@ -1,10 +1,11 @@
-"""Read-only question routing over one confirmed run.
+"""Read-only answers over one confirmed run.
 
-The model selects a topic, never amounts, citations, accounts or answer prose.
-Answers use the same validated summary shown in the dashboard. No write tools.
+The model may suggest a topic. Amounts, citations and account lists come from
+the same validated summary shown on the dashboard. No write tools.
 """
 
 import re
+from collections import Counter
 from decimal import Decimal
 from pathlib import Path
 
@@ -12,12 +13,51 @@ from app.engine import load_mapped
 from app.validators import injection_scan, pii_scan
 
 CURRENCIES = {"GBP": "£", "EUR": "€", "USD": "$"}
-SUGGESTIONS = ["Summarise these payments", "Why is there a shortfall?",
+SUGGESTIONS = ["What's on this screen?", "Why is there a shortfall?",
                "Explain the rate margins", "What should I review next?"]
+SCREEN_QUESTION = re.compile(
+    r"\bscreen\b|\bdashboard\b|this page|this view|looking at|"
+    r"on (this|the) screen|walk me through|what am i looking|"
+    r"what(?:'s|s)? (?:this|on)|these charts?|the bars?|this panel|"
+    r"explain (?:the )?(?:page|view|chart|numbers|figures|screen)",
+    re.I,
+)
+OFF_TOPIC = re.compile(
+    r"ignore previous|refund me|\btransfer\b|investment|refinanc|weather|football|"
+    r"should i (?:buy|sell|pay|invest|refinanc)|next month|\bapr\b forecast|move money",
+    re.I,
+)
+FINDING_LABELS = {
+    "MISSING_PAYMENT": "missing payment",
+    "DUPLICATE_DIRECT_DEBIT": "repeated debit",
+    "RATE_MARGIN_BREACH": "margin difference",
+}
 
 
 def question_allowed(question):
     return injection_scan([question])[0] == 1 and pii_scan([question])[0] == 1
+
+
+def forced_topic(question):
+    if OFF_TOPIC.search(question):
+        return "out_of_scope"
+    if SCREEN_QUESTION.search(question):
+        return "screen"
+    return None
+
+
+def classify_question(question, previous_topic=None, model_topic=None):
+    """Prefer a screen briefing over a canned refusal when the question is about this check."""
+    from app.providers import CHAT_TOPICS
+    forced = forced_topic(question)
+    if forced:
+        return forced
+    if model_topic in CHAT_TOPICS and model_topic != "out_of_scope":
+        return model_topic
+    if previous_topic in CHAT_TOPICS and previous_topic != "out_of_scope":
+        if re.fullmatch(r"(why\??|and that|explain that)\.?", question.strip(), re.I):
+            return previous_topic
+    return "screen"
 
 
 def answer(snapshot, paths, topic, *, account_id=None, currency="GBP"):
@@ -36,9 +76,29 @@ def answer(snapshot, paths, topic, *, account_id=None, currency="GBP"):
         blocks.append({"heading": heading, "text": text})
 
     if topic == "out_of_scope":
-        add("Ask about this payment check", "I can explain payment amounts, repeated-debit patterns, rate margins and the records to review. I cannot recommend a mortgage, predict future payments, move money or change records.")
-    elif topic == "help":
-        add("Start with the overview", "Choose an example or upload three sample CSVs, confirm the file labels, then compare Payment due with Payment recorded. Select an account to focus both the charts and this conversation. Open See details to inspect original records.")
+        add("Ask about this payment check", "I can explain the totals, charts and findings on this screen using these sample records. I cannot recommend a mortgage, predict future payments, move money or change records.")
+    elif topic in ("help", "screen"):
+        counts = Counter(kind for account in accounts for kind in account["issue_types"])
+        if account_id:
+            add("This account on the screen",
+                f"{account_id} for {scoped['period']}: {money(scoped['scheduled'])} was due and {money(scoped['received'])} was recorded. The charts and this answer are limited to the account chosen in Showing.")
+            issues = [FINDING_LABELS[kind] for kind in scoped["issue_types"]]
+            add("What is flagged",
+                ("This account has: " + ", ".join(issues) + ".") if issues else "This account has no flagged finding. Due and recorded amounts can still differ.")
+        else:
+            add("What this screen is",
+                f"A one-month sample payment check for {summary['period']}. The numbers come from three files after the column labels were confirmed. {currency} is a display label only; amounts are not converted.")
+            add("The totals",
+                f"Across {len(accounts)} accounts, {money(summary['scheduled'])} was due and {money(summary['received'])} was recorded. Shortfalls add to {money(summary['shortfall'])}; extra receipts add to {money(summary['excess'])}. Extra money on one account does not settle a shortfall on another.")
+            cash = summary["cash_counts"]
+            add("The charts",
+                f"The due-versus-recorded bars are those two totals. The comparison counts show {cash['matched']} matching account(s), {cash['under']} that received less than due, and {cash['over']} that received more.")
+            add("Accounts to check",
+                f"{summary['accounts_with_findings']} account(s) have a finding: "
+                f"{counts['MISSING_PAYMENT']} missing payment(s), {counts['DUPLICATE_DIRECT_DEBIT']} repeated debit(s), "
+                f"{counts['RATE_MARGIN_BREACH']} margin difference(s). Open See details for the original CSV lines.")
+        add("What I can do next",
+            "Ask about a shortfall, a repeated debit, a margin, or a specific SYN- account. I cannot move money, approve a mapping, or give mortgage advice.")
     elif topic == "summary":
         add("Your payment picture", f"For {scoped['period']}, {money(scoped['scheduled'])} was due and {money(scoped['received'])} was recorded across {len(accounts)} account(s). {len(findings)} item(s) need review under the three checks.")
         add("Differences between accounts", f"Shortfalls total {money(scoped['shortfall'])}; excess receipts total {money(scoped['excess'])}. Extra money on one account does not settle a shortfall on another.")

@@ -113,6 +113,23 @@ class ChatTests(unittest.TestCase):
         self.assertEqual(body["citations"], [])
         self.assertEqual(body["finding_ids"], [])
 
+    def test_screen_question_explains_current_figures_without_picking_an_account(self):
+        client = self.client()
+        response = self.ask(client, "explain me what is on this screen")
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["topic"], "screen")
+        self.assertIsNone(body["account_id"])
+        self.assertIn("£66,561.34", response.text)
+        self.assertIn("£67,053.18", response.text)
+        self.assertIn("£7,430.01", response.text)
+        self.assertIn("4 missing payment", response.text)
+        self.assertNotIn("Choose an account", response.text)
+        self.assertNotIn("Tell me about the account", response.text)
+        review = self.ask(client, "What should I review next?")
+        self.assertEqual(review.json()["topic"], "next_steps")
+        self.assertIn("SYN-L000005", review.text)
+
     def test_poisoned_model_output_and_unavailable_model_have_no_fallback(self):
         for provider in (PoisonChat, DownChat):
             with self.subTest(provider=provider):

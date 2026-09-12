@@ -75,17 +75,33 @@ class DeploymentTests(unittest.TestCase):
             client = TestClient(create_gateway(environ={"UC1_WORKER_URL": "https://worker.example", "UC1_WORKER_TOKEN": TOKEN}, transport=transport))
             self.assertEqual(client.get("/runs").status_code, 502)
 
-    def test_clean_bundle_contains_frontend_gateway_worker_and_exact_model_config(self):
+    def test_clean_bundle_is_a_single_compose_appliance(self):
         target, archive = bundle(Path(self.temp.name) / "bundle")
-        (target / "worker/.env").write_text("UC1_WORKER_TOKEN=PRIVATE_EXISTING_TOKEN")
+        (target / ".env").write_text("UC1_WORKER_TOKEN=PRIVATE_EXISTING_TOKEN")
         target, archive = bundle(target)
-        self.assertIn("PRIVATE_EXISTING_TOKEN", (target / "worker/.env").read_text())
-        self.assertEqual((target / "vercel/public/static/chat.js").read_bytes(), (ROOT / "app/static/chat.js").read_bytes())
-        self.assertIn("hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M", (target / "worker/compose.yaml").read_text())
+        self.assertIn("PRIVATE_EXISTING_TOKEN", (target / ".env").read_text())
+        compose = (target / "compose.yaml").read_text()
+        readme = (target / "README.md").read_text()
+        self.assertIn("8080:8080", compose)
+        self.assertIn("LLM_PROVIDER: ollama", compose)
+        self.assertIn("hf.co/empero-ai/Qwen3.8-4B-Distill-GGUF:Q4_K_M", compose)
+        self.assertNotIn("11434:11434", compose)
+        self.assertIn("langgraph==", (target / "requirements.txt").read_text())
+        self.assertIn("from langgraph.graph import END, START, StateGraph",
+                      (target / "app/graph.py").read_text())
+        self.assertIn("http://127.0.0.1:8080", readme)
+        self.assertIn("docker compose up --build", readme)
+        self.assertEqual((target / "app/static/chat.js").read_bytes(), (ROOT / "app/static/chat.js").read_bytes())
+        self.assertEqual(
+            (target / "optional/vercel/public/static/chat.js").read_bytes(),
+            (ROOT / "app/static/chat.js").read_bytes(),
+        )
         with zipfile.ZipFile(archive) as zipped:
-            self.assertFalse(any(part in name.split("/") for name in zipped.namelist() for part in ("traces", "tmp", ".git", ".env", ".venv")))
-            self.assertFalse(any(name.endswith((".gguf", ".jsonl")) for name in zipped.namelist()))
-        gateway = self.gateway(public=target / "vercel/public")
+            names = zipped.namelist()
+            self.assertFalse(any(part in name.split("/") for name in names for part in ("traces", "tmp", ".git", ".env", ".venv")))
+            self.assertFalse(any(name.endswith((".gguf", ".jsonl")) for name in names))
+            self.assertTrue(any(name.endswith("compose.yaml") for name in names))
+        gateway = self.gateway(public=target / "optional/vercel/public")
         self.assertEqual(gateway.get("/").status_code, 200)
         self.assertEqual(gateway.get("/static/chat.js").status_code, 200)
         self.assertEqual(gateway.get("/examples/mixed_checks/download").status_code, 200)

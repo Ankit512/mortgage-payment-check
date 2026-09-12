@@ -179,7 +179,7 @@ function renderSourceOptions() {
 }
 function openRun(exampleId = "") {
   $("run-form").reset();
-  $("provider").value = health?.default_provider || "mock";
+  $("provider").value = health?.default_provider || "ollama";
   $("example-select").value = typeof exampleId === "string" ? exampleId : "";
   $("run-form-error").hidden = true;
   renderSourceOptions();

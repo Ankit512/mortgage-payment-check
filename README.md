@@ -14,15 +14,24 @@ is preserved unchanged.
 
 ## Start the dashboard
 
-Python 3.11+ is required. From the repository root:
+**Presentable demo (dashboard + API + Qwen in one stack):**
+
+```bash
+docker compose up --build
+```
+
+Open **http://127.0.0.1:8080**. First start downloads about 2.8 GB of Qwen
+weights. Details: [demo stack](docs/DEMO_STACK.md). Zip the same appliance with
+`make bundle`.
+
+Python 3.11+ without Docker, mock mode, no model download:
 
 ```bash
 make install
 make serve
 ```
 
-Open **http://127.0.0.1:8765**. The default is mock mode, requiring no model
-installation or credentials. Click **Example files**, choose **Use these files**,
+Open **http://127.0.0.1:8765**. Click **Example files**, choose **Use these files**,
 confirm that the data is synthetic, then **Read these files**. Review the file
 labels and example values, then **Confirm & check payments**.
 
@@ -145,11 +154,11 @@ repayment forecast or multi-month trend is inferred from these files.
 
 ## Connect credentials later
 
-To package the dashboard, API gateway, reconciliation worker and Qwen model
-configuration, run `make vercel-bundle`. See [deployment instructions](docs/DEPLOYMENT.md).
-Vercel serves the dashboard and FastAPI gateway; the long-running FastAPI/LangGraph
-worker and Qwen use the companion Docker host. **Ask about this check** explains
-confirmed payment figures with source references and cannot change records.
+To package the dashboard, API and Qwen as one Compose appliance, run
+`make bundle`. See [the demo stack](docs/DEMO_STACK.md). Vercel cannot host the
+model or the in-memory graph; `optional/vercel/` in the zip is only a later
+public gateway. **Ask about this check** explains confirmed payment figures
+with source references and cannot change records.
 
 Configuration stays on the server. `.env.example` lists supported variables;
 the application does **not** automatically load `.env`. Export variables or use

@@ -109,7 +109,7 @@ def main():
         page.locator("#open-chat").click()
         expect(page.locator("#chat-messages")).to_be_empty()
         expect(page.locator("#chat-context")).to_contain_text("SYN-L000005")
-        page.get_by_role("button", name="Summarise these payments", exact=True).click()
+        page.get_by_role("button", name="What's on this screen?", exact=True).click()
         expect(page.locator("#chat-messages .assistant")).to_contain_text("£2,580.61")
         expect(page.locator("#chat-messages .assistant")).not_to_contain_text("£66,561.34")
         assert page.locator("#chat-dialog").evaluate("el => el.scrollWidth <= el.clientWidth")
